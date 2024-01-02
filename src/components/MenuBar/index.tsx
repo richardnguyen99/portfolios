@@ -9,11 +9,11 @@ const MenuBar: React.FC = () => {
     <div
       id="menu-bar"
       className={clsx(
-        "relative overflow-hidden",
+        "relative",
         "flex items-center justify-between",
         "bg-gray-900 text-gray-100",
         "font-bold",
-        "h-8 px-4",
+        "h-10 px-4",
       )}
     >
       <div className="flex items-center">

@@ -7,7 +7,7 @@ const Screen: React.FC = () => {
   return (
     <div
       className={clsx(
-        "position-relative flex flex-col overflow-hidden",
+        "relative flex flex-col overflow-hidden",
         "bg-gray-700",
         "w-screen h-screen",
       )}
