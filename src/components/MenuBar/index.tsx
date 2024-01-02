@@ -3,6 +3,7 @@ import clsx from "classnames";
 import ItemHolder from "./ItemHolder";
 import Clock from "./Clock";
 import Logo from "./Logo";
+import { LogoGithubIcon } from "@primer/octicons-react";
 
 const MenuBar: React.FC = () => {
   return (
@@ -27,7 +28,14 @@ const MenuBar: React.FC = () => {
       </div>
       <div className="flex items-center">
         <ItemHolder onClick={() => {}}>
-          <span>GitHub</span>
+          <a
+            href="https://github.com/richardnguyen99/portfolios"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center my-1 justify-center"
+          >
+            <LogoGithubIcon aria-label="Octicon GitHub Logo" />
+          </a>
         </ItemHolder>
         <ItemHolder onClick={() => {}}>
           <Clock />
