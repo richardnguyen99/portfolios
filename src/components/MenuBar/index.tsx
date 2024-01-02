@@ -2,6 +2,7 @@ import * as React from "react";
 import clsx from "classnames";
 import ItemHolder from "./ItemHolder";
 import Clock from "./Clock";
+import Logo from "./Logo";
 
 const MenuBar: React.FC = () => {
   return (
@@ -16,9 +17,7 @@ const MenuBar: React.FC = () => {
       )}
     >
       <div className="flex items-center">
-        <ItemHolder onClick={() => {}}>
-          <span>File</span>
-        </ItemHolder>
+        <Logo />
         <ItemHolder onClick={() => {}}>
           <span>File</span>
         </ItemHolder>
