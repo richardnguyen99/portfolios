@@ -1,24 +1,38 @@
 import * as React from "react";
 import clsx from "classnames";
+import ItemHolder from "./ItemHolder";
 
 const MenuBar: React.FC = () => {
   return (
     <div
       id="menu-bar"
       className={clsx(
-        "relative",
-        "bg-gray-900",
-        "text-gray-100",
+        "relative overflow-hidden",
+        "flex items-center justify-between",
+        "bg-gray-900 text-gray-100",
         "font-bold",
-        "overflow-hidden",
-        "flex",
-        "flex-col",
-        "items-center",
-        "justify-center",
-        "h-6",
+        "h-8 px-4",
       )}
     >
-      Hello
+      <div>
+        <ItemHolder onClick={() => {}}>
+          <span>File</span>
+        </ItemHolder>
+        <ItemHolder onClick={() => {}}>
+          <span>File</span>
+        </ItemHolder>
+        <ItemHolder onClick={() => {}}>
+          <span>File</span>
+        </ItemHolder>
+      </div>
+      <div>
+        <ItemHolder onClick={() => {}}>
+          <span>GitHub</span>
+        </ItemHolder>
+        <ItemHolder onClick={() => {}}>
+          <span>Timer</span>
+        </ItemHolder>
+      </div>
     </div>
   );
 };
