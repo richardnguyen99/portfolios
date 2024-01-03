@@ -27,39 +27,36 @@ type LogoItemProps<T extends HTMLElement> = {
   as?: keyof JSX.IntrinsicElements | React.ComponentType<any>;
   active: boolean;
   children: React.ReactNode | React.ReactNode[];
+
+  // Allow forwardRef to be generic
 } & React.AllHTMLAttributes<T>;
 
 const LogoItemComponent = <T extends HTMLElement>(
   props: LogoItemProps<T>,
   ref: React.ForwardedRef<T>,
 ): JSX.Element => {
-  const { children, active, as: Component = "button", ...rest } = props;
+  const Component = props.as || "button";
 
   return (
     <Component
       ref={ref as React.RefObject<HTMLButtonElement>}
       className={clsx(
         "w-full flex items-center justify-between",
+        "first:rounded-t-md last:rounded-b-md",
         "px-4 py-2 text-sm",
-        "first-of-type:rounded-t-md",
-        "last-of-type:rounded-b-md",
         {
-          "bg-gray-800 text-gray-100": active,
-          "text-gray-100": active,
+          "bg-gray-800 text-gray-100": props.active,
+          "text-gray-100": props.active,
         },
       )}
-      {...rest}
+      {...props}
     >
-      {children}
+      {props.children}
     </Component>
   );
 };
 
-const ForwardedLogoItem = React.forwardRef(LogoItemComponent) as <
-  T extends HTMLElement,
->(
-  props: LogoItemProps<T> & { ref?: React.ForwardedRef<T> },
-) => React.ReactElement<LogoItemProps<T>>;
+const ForwardedLogoItem = React.forwardRef(LogoItemComponent);
 
 const Logo: React.FC = () => {
   return (
@@ -120,8 +117,7 @@ const Logo: React.FC = () => {
 
               <Menu.Item>
                 {({ active }) => (
-                  <ForwardedLogoItem<HTMLAnchorElement>
-                    ref={React.createRef()}
+                  <ForwardedLogoItem
                     as="a"
                     active={active}
                     href="mailto:richard@richardhnguyen.com"
