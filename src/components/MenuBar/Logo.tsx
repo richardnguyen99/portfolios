@@ -3,7 +3,7 @@ import clsx from "classnames";
 import { Menu, Transition } from "@headlessui/react";
 
 import IconHolder from "./IconHolder";
-import NewTerminalHotkey from "@components/HotKey/NewTerminal";
+import { HotKey } from "@components";
 
 const LogoIcon: React.FC = () => {
   return (
@@ -22,43 +22,52 @@ const LogoIcon: React.FC = () => {
   );
 };
 
-type LogoItemProps = {
+type LogoItemProps<T extends HTMLElement> = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  as?: keyof JSX.IntrinsicElements | React.ComponentType<any>;
   active: boolean;
   children: React.ReactNode | React.ReactNode[];
+} & React.AllHTMLAttributes<T>;
+
+const LogoItemComponent = <T extends HTMLElement>(
+  props: LogoItemProps<T>,
+  ref: React.ForwardedRef<T>,
+): JSX.Element => {
+  const { children, active, as: Component = "button", ...rest } = props;
+
+  return (
+    <Component
+      ref={ref as React.RefObject<HTMLButtonElement>}
+      className={clsx(
+        "w-full flex items-center justify-between",
+        "px-4 py-2 text-sm",
+        "first-of-type:rounded-t-md",
+        "last-of-type:rounded-b-md",
+        {
+          "bg-gray-800 text-gray-100": active,
+          "text-gray-100": active,
+        },
+      )}
+      {...rest}
+    >
+      {children}
+    </Component>
+  );
 };
 
-const LogoItem = React.forwardRef<HTMLButtonElement, LogoItemProps>(
-  ({ children, active, ...rest }, ref) => {
-    return (
-      <button
-        ref={ref as React.RefObject<HTMLButtonElement>}
-        className={clsx(
-          "w-full flex items-center justify-between",
-          "px-4 py-2 text-sm",
-          "first-of-type:rounded-t-md",
-          "last-of-type:rounded-b-md",
-          {
-            "bg-gray-800 text-gray-100": active,
-            "text-gray-100": active,
-          },
-        )}
-        {...rest}
-      >
-        {children}
-      </button>
-    );
-  },
-);
+const ForwardedLogoItem = React.forwardRef(LogoItemComponent) as <
+  T extends HTMLElement,
+>(
+  props: LogoItemProps<T> & { ref?: React.ForwardedRef<T> },
+) => React.ReactElement<LogoItemProps<T>>;
 
 const Logo: React.FC = () => {
   return (
-    <div>
+    <div className="flex">
       <Menu as="div" className="relative inline-block text-left">
         <div>
-          <Menu.Button>
-            <IconHolder>
-              <LogoIcon />
-            </IconHolder>
+          <Menu.Button as={IconHolder}>
+            <LogoIcon />
           </Menu.Button>
         </div>
         <Transition
@@ -84,20 +93,41 @@ const Logo: React.FC = () => {
             <div className="">
               <Menu.Item>
                 {({ active }) => (
-                  <LogoItem active={active}>
+                  <ForwardedLogoItem active={active}>
                     <span>New Terminal</span>
-                    <NewTerminalHotkey />
-                  </LogoItem>
+                    <HotKey.NewTerminal />
+                  </ForwardedLogoItem>
                 )}
               </Menu.Item>
 
               <Menu.Item>
-                {({ active }) => <LogoItem active={active}>About</LogoItem>}
+                {({ active }) => (
+                  <ForwardedLogoItem active={active}>
+                    <span>About</span>
+                    <HotKey.About />
+                  </ForwardedLogoItem>
+                )}
               </Menu.Item>
 
               <Menu.Item>
                 {({ active }) => (
-                  <LogoItem active={active}>Preferences</LogoItem>
+                  <ForwardedLogoItem active={active}>
+                    <span>Preferences</span>
+                    <HotKey.Preference />
+                  </ForwardedLogoItem>
+                )}
+              </Menu.Item>
+
+              <Menu.Item>
+                {({ active }) => (
+                  <ForwardedLogoItem<HTMLAnchorElement>
+                    ref={React.createRef()}
+                    as="a"
+                    active={active}
+                    href="mailto:richard@richardhnguyen.com"
+                  >
+                    Hire Me!
+                  </ForwardedLogoItem>
                 )}
               </Menu.Item>
             </div>

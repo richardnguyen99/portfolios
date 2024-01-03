@@ -8,22 +8,25 @@ export interface ItemHolderProps {
 
 type Props = React.HTMLAttributes<HTMLDivElement> & ItemHolderProps;
 
-const IconHolder: React.FC<Props> = ({ children, onClick, ...rest }) => {
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (onClick) {
-      onClick(e);
-    }
-  };
+const IconHolder = React.forwardRef<HTMLDivElement, Props>(
+  ({ children, onClick, ...rest }, ref) => {
+    const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+      if (onClick) {
+        onClick(e);
+      }
+    };
 
-  return (
-    <div
-      {...rest}
-      onClick={handleClick}
-      className={clsx("relative", "px-2 py-2", "hover:bg-sky-500")}
-    >
-      {children}
-    </div>
-  );
-};
+    return (
+      <div
+        ref={ref as React.RefObject<HTMLDivElement>}
+        {...rest}
+        onClick={handleClick}
+        className={clsx("relative", "px-2 py-2", "hover:bg-sky-500")}
+      >
+        {children}
+      </div>
+    );
+  },
+);
 
 export default IconHolder;

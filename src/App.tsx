@@ -6,12 +6,20 @@ import { Screen } from "@components";
 import "./index.css";
 
 const App: React.FC = () => {
-  const isMacOS = navigator.platform.toLowerCase().includes("MAC");
+  const newTerminalHotKey = "ctrl+alt+t";
+  const aboutHotKey = "ctrl+alt+a";
+  const preferenceHotKey = "ctrl+alt+p";
 
-  const hotKey = isMacOS ? "cmd+alt+t" : "ctrl+alt+t";
-
-  useHotkeys(hotKey, () => {
+  useHotkeys(newTerminalHotKey, () => {
     console.log("New Terminal");
+  });
+
+  useHotkeys(aboutHotKey, () => {
+    console.log("About");
+  });
+
+  useHotkeys(preferenceHotKey, () => {
+    console.log("Preference");
   });
 
   return (
