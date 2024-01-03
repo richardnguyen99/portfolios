@@ -3,6 +3,7 @@ import clsx from "classnames";
 import { Menu, Transition } from "@headlessui/react";
 
 import IconHolder from "./IconHolder";
+import NewTerminalHotkey from "@components/HotKey/NewTerminal";
 
 const LogoIcon: React.FC = () => {
   return (
@@ -23,7 +24,7 @@ const LogoIcon: React.FC = () => {
 
 type LogoItemProps = {
   active: boolean;
-  children: React.ReactNode;
+  children: React.ReactNode | React.ReactNode[];
 };
 
 const LogoItem = React.forwardRef<HTMLButtonElement, LogoItemProps>(
@@ -43,7 +44,7 @@ const LogoItem = React.forwardRef<HTMLButtonElement, LogoItemProps>(
         )}
         {...rest}
       >
-        <span>{children}</span>
+        {children}
       </button>
     );
   },
@@ -72,8 +73,9 @@ const Logo: React.FC = () => {
           <Menu.Items
             className={clsx(
               "rounded-md border border-gray-700",
-              "absolute w-56 left-0",
+              "absolute w-72 left-0",
               "mt-2",
+              "text-sm",
               "divide-y divide-gray-100",
               "bg-gray-900 shadow-lg",
               "ring-1 ring-black/5 focus:outline-none",
@@ -82,7 +84,10 @@ const Logo: React.FC = () => {
             <div className="">
               <Menu.Item>
                 {({ active }) => (
-                  <LogoItem active={active}>New Terminal</LogoItem>
+                  <LogoItem active={active}>
+                    <span>New Terminal</span>
+                    <NewTerminalHotkey />
+                  </LogoItem>
                 )}
               </Menu.Item>
 
