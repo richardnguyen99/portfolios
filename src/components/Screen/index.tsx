@@ -1,7 +1,7 @@
 import * as React from "react";
 import clsx from "classnames";
 
-import { MenuBar } from "@components";
+import { MenuBar, Window } from "@components";
 
 const Screen: React.FC = () => {
   return (
@@ -13,7 +13,9 @@ const Screen: React.FC = () => {
       )}
     >
       <MenuBar />
-      <div id="window-container"></div>
+      <div id="window-container">
+        <Window title="something" />
+      </div>
     </div>
   );
 };
