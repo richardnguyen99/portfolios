@@ -2,17 +2,26 @@ import * as React from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { Screen } from "@components";
-import { Modal } from "@contexts";
 
 import "./index.css";
+import useModal from "@contexts/Modal/useModal";
 
 const App: React.FC = () => {
   const newTerminalHotKey = "ctrl+alt+t";
   const aboutHotKey = "ctrl+alt+a";
   const preferenceHotKey = "ctrl+alt+p";
 
+  const { addModal } = useModal();
+
   useHotkeys(newTerminalHotKey, () => {
-    console.log("New Terminal");
+    const id = crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0);
+
+    addModal({
+      id,
+      title: "Terminal",
+      type: "terminal",
+      acitve: true,
+    });
   });
 
   useHotkeys(aboutHotKey, () => {
@@ -25,9 +34,7 @@ const App: React.FC = () => {
 
   return (
     <>
-      <Modal.Provider>
-        <Screen />
-      </Modal.Provider>
+      <Screen />
     </>
   );
 };

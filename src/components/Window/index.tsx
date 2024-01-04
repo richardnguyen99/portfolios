@@ -30,6 +30,8 @@ const Window: React.FC<Props> = ({ title }) => {
       cancel=".action-btn"
       enableUserSelectHack={false}
       style={{ display: "flex" }}
+      minWidth={INITIAL_WIDTH}
+      minHeight={INITIAL_HEIGHT}
       className={clsx(
         "absolute flex flex-col top-[var(--window-y)] left-[var(--window-x)]",
         "rounded-lg w-[var(--window-width)] h-[var(--window-height)]",

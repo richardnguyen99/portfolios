@@ -4,6 +4,7 @@ import { Menu, Transition } from "@headlessui/react";
 
 import IconHolder from "./IconHolder";
 import { HotKey } from "@components";
+import useModal from "@contexts/Modal/useModal";
 
 const LogoIcon: React.FC = () => {
   return (
@@ -35,7 +36,7 @@ const LogoItemComponent = <T extends HTMLElement>(
   props: LogoItemProps<T>,
   ref: React.ForwardedRef<T>,
 ): JSX.Element => {
-  const Component = props.as || "button";
+  const { children, active, as: Component = "button", ...rest } = props;
 
   return (
     <Component
@@ -45,13 +46,13 @@ const LogoItemComponent = <T extends HTMLElement>(
         "first:rounded-t-md last:rounded-b-md",
         "px-4 py-2 text-sm",
         {
-          "bg-gray-800 text-gray-100": props.active,
-          "text-gray-100": props.active,
+          "bg-gray-800 text-gray-100": active,
+          "text-gray-100": active,
         },
       )}
-      {...props}
+      {...rest}
     >
-      {props.children}
+      {children}
     </Component>
   );
 };
@@ -59,6 +60,19 @@ const LogoItemComponent = <T extends HTMLElement>(
 const ForwardedLogoItem = React.forwardRef(LogoItemComponent);
 
 const Logo: React.FC = () => {
+  const { addModal } = useModal();
+
+  const handleNewTerminalClick = React.useCallback(() => {
+    const id = crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0);
+
+    addModal({
+      id,
+      title: "Terminal",
+      type: "terminal",
+      acitve: true,
+    });
+  }, [addModal]);
+
   return (
     <div className="flex">
       <Menu as="div" className="relative inline-block text-left">
@@ -85,12 +99,16 @@ const Logo: React.FC = () => {
               "divide-y divide-gray-100",
               "bg-gray-900 shadow-lg",
               "ring-1 ring-black/5 focus:outline-none",
+              "z-[9999]",
             )}
           >
             <div className="">
               <Menu.Item>
                 {({ active }) => (
-                  <ForwardedLogoItem active={active}>
+                  <ForwardedLogoItem
+                    active={active}
+                    onClick={handleNewTerminalClick}
+                  >
                     <span>New Terminal</span>
                     <HotKey.NewTerminal />
                   </ForwardedLogoItem>

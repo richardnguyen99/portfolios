@@ -1,13 +1,16 @@
 import * as React from "react";
 import ReactDOM from "react-dom/client";
+import { HotkeysProvider } from "react-hotkeys-hook";
 
 import App from "./App.tsx";
-import { HotkeysProvider } from "react-hotkeys-hook";
+import { Modal } from "@contexts";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <HotkeysProvider>
-      <App />
-    </HotkeysProvider>
+    <Modal.Provider>
+      <HotkeysProvider>
+        <App />
+      </HotkeysProvider>
+    </Modal.Provider>
   </React.StrictMode>,
 );
