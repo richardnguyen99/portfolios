@@ -1,5 +1,6 @@
 import * as React from "react";
 import clsx from "classnames";
+import { Rnd } from "react-rnd";
 
 import TitleBar from "./TitleBar";
 
@@ -10,20 +11,33 @@ export type WindowProps = {
 
 type Props = React.HTMLAttributes<HTMLDivElement> & WindowProps;
 
-const Window: React.FC<Props> = ({ children, ...rest }) => {
+const INITIAL_X = 48;
+const INITIAL_Y = 48;
+const INITIAL_WIDTH = 384;
+const INITIAL_HEIGHT = 384;
+
+const Window: React.FC<Props> = ({ children, title, ...rest }) => {
   return (
-    <div
-      {...rest}
+    <Rnd
+      default={{
+        x: INITIAL_X,
+        y: INITIAL_Y,
+        width: INITIAL_WIDTH,
+        height: INITIAL_HEIGHT,
+      }}
+      bounds="body"
+      dragHandleClassName="window-title-bar"
       className={clsx(
-        "absolute top-12 left-12",
-        "rounded-lg w-96 h-96",
+        "absolute flex flex-col top-[var(--window-y)] left-[var(--window-x)]",
+        "rounded-lg w-[var(--window-width)] h-[var(--window-height)]",
         "overflow-hidden",
-        "bg-slate-900",
+        "bg-gray-800",
         "shadow-[0_22px_70px_4px_rgba(0,_0,_0,_0.56)]",
         "border border-gray-700",
+        "cursor-[var(--window-cursor)]",
       )}
     >
-      <TitleBar />
+      <TitleBar title={title} />
       <div
         id="window-content"
         className={clsx(
@@ -59,7 +73,7 @@ const Window: React.FC<Props> = ({ children, ...rest }) => {
         explicabo eaque, deleniti commodi perspiciatis eius doloribus!
         Laboriosam aliquam animi mollitia!
       </div>
-    </div>
+    </Rnd>
   );
 };
 
