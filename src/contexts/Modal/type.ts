@@ -14,6 +14,7 @@ export type ModalProps = {
 export type ModalContextType = {
   addModal: (modalProps: ModalProps) => void;
   selectModal: (id: string) => void;
+  deselectAllModals: () => void;
   closeModal: (id: string) => void;
   closeAllModals: () => void;
   toggleFullScreen: (id: string) => void;

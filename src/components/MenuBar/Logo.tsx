@@ -69,7 +69,7 @@ const Logo: React.FC = () => {
       id,
       title: "Terminal",
       type: "terminal",
-      acitve: true,
+      active: true,
     });
   }, [addModal]);
 

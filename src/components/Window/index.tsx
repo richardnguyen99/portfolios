@@ -6,6 +6,7 @@ import TitleBar from "./TitleBar";
 import useModal from "@contexts/Modal/useModal";
 
 export type WindowProps = {
+  active: boolean;
   title: string;
   children?: React.ReactNode;
 };
@@ -17,7 +18,7 @@ const INITIAL_Y = 48;
 const INITIAL_WIDTH = 384;
 const INITIAL_HEIGHT = 384;
 
-const Window: React.FC<Props> = ({ title, id = "" }) => {
+const Window: React.FC<Props> = ({ active, title, id = "" }) => {
   const { selectModal } = useModal();
 
   const handleSelect = React.useCallback(() => {
@@ -26,6 +27,8 @@ const Window: React.FC<Props> = ({ title, id = "" }) => {
 
   return (
     <Rnd
+      x-data-window-id={id}
+      x-data-active-tab={active.toString()}
       default={{
         x: INITIAL_X,
         y: INITIAL_Y,

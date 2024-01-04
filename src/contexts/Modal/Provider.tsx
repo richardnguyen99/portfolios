@@ -35,13 +35,29 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
     [modals],
   );
 
+  const deselectAllModals = React.useCallback(() => {
+    setModals((prev) =>
+      prev.map((modal) => ({
+        ...modal,
+        active: false,
+      })),
+    );
+  }, []);
+
   const toggleFullScreen = React.useCallback((id: string) => {
     console.log(id);
   }, []);
 
   const renderModals = React.useCallback(() => {
     return modals.map((modal) => {
-      return <Window key={modal.id} title={modal.title} id={modal.id} />;
+      return (
+        <Window
+          key={modal.id}
+          title={modal.title}
+          id={modal.id}
+          active={modal.active}
+        />
+      );
     });
   }, [modals]);
 
@@ -53,6 +69,7 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
       selectModal,
       toggleFullScreen,
       renderModals,
+      deselectAllModals,
     }),
     [
       addModal,
@@ -61,6 +78,7 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
       selectModal,
       toggleFullScreen,
       renderModals,
+      deselectAllModals,
     ],
   );
 

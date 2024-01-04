@@ -20,7 +20,7 @@ const App: React.FC = () => {
       id,
       title: "Terminal",
       type: "terminal",
-      acitve: true,
+      active: true,
     });
   });
 
