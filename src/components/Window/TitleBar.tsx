@@ -7,6 +7,7 @@ import useModal from "@contexts/Modal/useModal";
 export type TitleBarProps = {
   title: string;
   windowId: string;
+  active: boolean;
 
   onClose?: () => void;
   onMinimize?: () => void;
@@ -16,7 +17,7 @@ export type TitleBarProps = {
 type Props = React.HTMLAttributes<HTMLDivElement> & TitleBarProps;
 
 const TitleBar = React.forwardRef<HTMLDivElement, Props>(
-  ({ title, windowId, ...rest }, ref) => {
+  ({ active, title, windowId, ...rest }, ref) => {
     const { closeModal } = useModal();
 
     const handleClose = React.useCallback(() => {
@@ -31,20 +32,22 @@ const TitleBar = React.forwardRef<HTMLDivElement, Props>(
           "window-title-bar", // for Rnd only
           "flex items-center justify-between",
           "px-2 py-1",
-          "bg-gray-900/60",
           "border-b border-gray-700",
           "rounded-t-lg",
-          "text-slate-100",
           "select-none",
+          {
+            "bg-gray-900/20 text-slate-400": !active,
+            "bg-gray-900/60 text-slate-100": active,
+          },
         )}
       >
         <div className="flex gap-2 font-bold">
           <div>{title}</div>
         </div>
         <div className="flex items-center gap-2">
-          <ActionBtn variant="maximize" />
-          <ActionBtn variant="minimize" />
-          <ActionBtn variant="close" onClick={handleClose} />
+          <ActionBtn active={active} variant="maximize" />
+          <ActionBtn active={active} variant="minimize" />
+          <ActionBtn active={active} variant="close" onClick={handleClose} />
         </div>
       </div>
     );

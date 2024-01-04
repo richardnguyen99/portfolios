@@ -47,21 +47,28 @@ const Window: React.FC<Props> = ({ active, title, id = "" }) => {
         "absolute flex flex-col top-[var(--window-y)] left-[var(--window-x)]",
         "rounded-lg w-[var(--window-width)] h-[var(--window-height)]",
         "overflow-hidden",
-        "bg-gray-800",
-        "shadow-[0_22px_70px_4px_rgba(0,_0,_0,_0.56)]",
         "border border-gray-700",
         "cursor-[var(--window-cursor)]",
-        "select-text",
+        {
+          "bg-gray-800 text-slate-100": active,
+          "bg-slate-800 text-slate-400": !active,
+          "shadow-[0_22px_70px_4px_rgba(0,_0,_0,_0.56)]": active,
+          "shadow-[0_22px_70px_4px_rgba(0,_0,_0,_0.16)]": !active,
+        },
       )}
     >
-      <TitleBar windowId={id} title={title} />
+      <TitleBar active={active} windowId={id} title={title} />
       <div
         id="window-content"
         className={clsx(
           "window-scrollbar",
-          "text-slate-100 font-mono text-sm",
+          "font-mono text-sm",
           "relative w-full h-full",
           "pr-1",
+          {
+            "select-text": active,
+            "select-none": !active,
+          },
         )}
       >
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas qui
