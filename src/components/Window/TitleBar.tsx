@@ -23,6 +23,7 @@ const TitleBar = React.forwardRef<HTMLDivElement, Props>(
           "border-b border-gray-700",
           "rounded-t-lg",
           "text-slate-100",
+          "select-none",
         )}
       >
         <div className="flex gap-2 font-bold">

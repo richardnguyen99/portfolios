@@ -27,6 +27,7 @@ const Window: React.FC<Props> = ({ children, title, ...rest }) => {
       }}
       bounds="body"
       dragHandleClassName="window-title-bar"
+      cancel=".action-btn"
       enableUserSelectHack={false}
       style={{ display: "flex" }}
       className={clsx(
