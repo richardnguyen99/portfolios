@@ -16,7 +16,7 @@ const INITIAL_Y = 48;
 const INITIAL_WIDTH = 384;
 const INITIAL_HEIGHT = 384;
 
-const Window: React.FC<Props> = ({ children, title, ...rest }) => {
+const Window: React.FC<Props> = ({ title }) => {
   return (
     <Rnd
       default={{
