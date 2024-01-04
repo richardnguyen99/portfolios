@@ -7,9 +7,17 @@ import { Window } from "@components";
 const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
   const [modals, setModals] = React.useState<ModalProps[]>([]);
 
-  const addModal = React.useCallback((modal: ModalProps) => {
-    setModals((prev) => [...prev, modal]);
-  }, []);
+  const addModal = React.useCallback(
+    (modal: ModalProps) => {
+      const filteredModal = modals.map((modal) => ({
+        ...modal,
+        active: false,
+      }));
+
+      setModals(() => [...filteredModal, modal]);
+    },
+    [modals],
+  );
 
   const closeModal = React.useCallback((id: string) => {
     setModals((prev) => prev.filter((modal) => modal.id !== id));
