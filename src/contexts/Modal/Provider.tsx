@@ -17,9 +17,23 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
 
   const closeAllModals = React.useCallback(() => {}, []);
 
-  const selectModal = React.useCallback((id: string) => {
-    console.log(id);
-  }, []);
+  const selectModal = React.useCallback(
+    (id: string) => {
+      const targetModal = modals.filter((modal) => modal.id === id)[0];
+
+      const filteredModal = modals
+        .filter((modal) => modal.id !== id)
+        .map((modal) => ({
+          ...modal,
+          active: false,
+        }));
+
+      targetModal.active = true;
+
+      setModals(() => [...filteredModal, targetModal]);
+    },
+    [modals],
+  );
 
   const toggleFullScreen = React.useCallback((id: string) => {
     console.log(id);

@@ -3,6 +3,7 @@ import clsx from "classnames";
 import { Rnd } from "react-rnd";
 
 import TitleBar from "./TitleBar";
+import useModal from "@contexts/Modal/useModal";
 
 export type WindowProps = {
   title: string;
@@ -17,6 +18,12 @@ const INITIAL_WIDTH = 384;
 const INITIAL_HEIGHT = 384;
 
 const Window: React.FC<Props> = ({ title, id = "" }) => {
+  const { selectModal } = useModal();
+
+  const handleSelect = React.useCallback(() => {
+    selectModal(id);
+  }, [id, selectModal]);
+
   return (
     <Rnd
       default={{
@@ -32,6 +39,7 @@ const Window: React.FC<Props> = ({ title, id = "" }) => {
       style={{ display: "flex" }}
       minWidth={INITIAL_WIDTH}
       minHeight={INITIAL_HEIGHT}
+      onMouseDown={handleSelect}
       className={clsx(
         "absolute flex flex-col top-[var(--window-y)] left-[var(--window-x)]",
         "rounded-lg w-[var(--window-width)] h-[var(--window-height)]",

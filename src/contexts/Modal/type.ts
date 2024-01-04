@@ -4,7 +4,7 @@ export type ModalProps = {
   id: string;
   title: string;
   type: ModalType;
-  acitve: boolean;
+  active: boolean;
 
   isFullScreenAllowed?: boolean;
   isFullScreen?: boolean;
