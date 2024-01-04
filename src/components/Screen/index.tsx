@@ -1,9 +1,12 @@
 import * as React from "react";
 import clsx from "classnames";
 
-import { MenuBar, Window } from "@components";
+import { MenuBar } from "@components";
+import useModal from "@contexts/Modal/useModal";
 
 const Screen: React.FC = () => {
+  const { renderModals } = useModal();
+
   return (
     <div
       className={clsx(
@@ -14,8 +17,7 @@ const Screen: React.FC = () => {
     >
       <MenuBar />
       <div id="window-container" className="relative">
-        <Window title="Terminal" />
-        <Window title="Terminal" />
+        {renderModals()}
       </div>
     </div>
   );

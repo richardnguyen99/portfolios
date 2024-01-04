@@ -2,6 +2,7 @@ import * as React from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
 import { Screen } from "@components";
+import { Modal } from "@contexts";
 
 import "./index.css";
 
@@ -24,7 +25,9 @@ const App: React.FC = () => {
 
   return (
     <>
-      <Screen />
+      <Modal.Provider>
+        <Screen />
+      </Modal.Provider>
     </>
   );
 };
