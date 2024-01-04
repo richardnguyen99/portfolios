@@ -14,8 +14,8 @@ const Screen: React.FC = () => {
     >
       <MenuBar />
       <div id="window-container" className="relative">
-        <Window title="something" />
-        <Window title="something 1" />
+        <Window title="Terminal" />
+        <Window title="Terminal" />
       </div>
     </div>
   );

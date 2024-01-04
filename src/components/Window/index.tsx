@@ -27,6 +27,8 @@ const Window: React.FC<Props> = ({ children, title, ...rest }) => {
       }}
       bounds="body"
       dragHandleClassName="window-title-bar"
+      enableUserSelectHack={false}
+      style={{ display: "flex" }}
       className={clsx(
         "absolute flex flex-col top-[var(--window-y)] left-[var(--window-x)]",
         "rounded-lg w-[var(--window-width)] h-[var(--window-height)]",
@@ -35,6 +37,7 @@ const Window: React.FC<Props> = ({ children, title, ...rest }) => {
         "shadow-[0_22px_70px_4px_rgba(0,_0,_0,_0.56)]",
         "border border-gray-700",
         "cursor-[var(--window-cursor)]",
+        "select-text",
       )}
     >
       <TitleBar title={title} />

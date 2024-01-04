@@ -26,7 +26,6 @@ const TitleBar = React.forwardRef<HTMLDivElement, Props>(
         )}
       >
         <div className="flex gap-2 font-bold">
-          <div>i</div>
           <div>{title}</div>
         </div>
         <div className="flex items-center gap-2">
