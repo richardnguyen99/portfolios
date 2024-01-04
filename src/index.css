@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.window-scrollbar {
+  overflow: scroll;
+  scrollbar-color: theme("colors.slate.700") theme("colors.slate.800");
+}
+
+.window-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  opacity: 0;
+  background: theme("colors.slate.800");
+}
+
+.window-scrollbar:hover::-webkit-scrollbar {
+  opacity: 1;
+}
+
+.window-scrollbar::-webkit-scrollbar-thumb {
+  background-color: theme("colors.slate.700");
+  border-radius: 8px;
+}

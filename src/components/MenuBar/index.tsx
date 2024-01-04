@@ -12,7 +12,7 @@ const MenuBar: React.FC = () => {
       className={clsx(
         "relative",
         "flex items-center justify-between",
-        "bg-gray-900 text-gray-100",
+        "bg-gray-950 text-gray-100",
         "font-bold",
         "h-10 px-4",
       )}
