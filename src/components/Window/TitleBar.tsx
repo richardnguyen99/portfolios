@@ -2,15 +2,27 @@ import * as React from "react";
 import clsx from "classnames";
 
 import ActionBtn from "./ActionBtn";
+import useModal from "@contexts/Modal/useModal";
 
 export type TitleBarProps = {
   title: string;
+  windowId: string;
+
+  onClose?: () => void;
+  onMinimize?: () => void;
+  onMaximize?: () => void;
 };
 
 type Props = React.HTMLAttributes<HTMLDivElement> & TitleBarProps;
 
 const TitleBar = React.forwardRef<HTMLDivElement, Props>(
-  ({ title, ...rest }, ref) => {
+  ({ title, windowId, ...rest }, ref) => {
+    const { closeModal } = useModal();
+
+    const handleClose = React.useCallback(() => {
+      closeModal(windowId);
+    }, [closeModal, windowId]);
+
     return (
       <div
         {...rest}
@@ -30,9 +42,9 @@ const TitleBar = React.forwardRef<HTMLDivElement, Props>(
           <div>{title}</div>
         </div>
         <div className="flex items-center gap-2">
-          <ActionBtn />
-          <ActionBtn />
-          <ActionBtn />
+          <ActionBtn variant="maximize" />
+          <ActionBtn variant="minimize" />
+          <ActionBtn variant="close" onClick={handleClose} />
         </div>
       </div>
     );

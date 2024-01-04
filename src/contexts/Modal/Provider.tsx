@@ -27,7 +27,7 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
 
   const renderModals = React.useCallback(() => {
     return modals.map((modal) => {
-      return <Window key={modal.id} title={modal.title} />;
+      return <Window key={modal.id} title={modal.title} id={modal.id} />;
     });
   }, [modals]);
 

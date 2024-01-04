@@ -16,7 +16,7 @@ const INITIAL_Y = 48;
 const INITIAL_WIDTH = 384;
 const INITIAL_HEIGHT = 384;
 
-const Window: React.FC<Props> = ({ title }) => {
+const Window: React.FC<Props> = ({ title, id = "" }) => {
   return (
     <Rnd
       default={{
@@ -43,7 +43,7 @@ const Window: React.FC<Props> = ({ title }) => {
         "select-text",
       )}
     >
-      <TitleBar title={title} />
+      <TitleBar windowId={id} title={title} />
       <div
         id="window-content"
         className={clsx(
