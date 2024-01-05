@@ -25,6 +25,7 @@ const Window: React.FC<Props> = ({
   title,
   id = "",
   fullscreen = false,
+  children,
 }) => {
   const { closeModal, selectModal } = useModal();
 
@@ -123,31 +124,7 @@ const Window: React.FC<Props> = ({
           },
         )}
       >
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas qui
-        minima voluptatem amet totam aspernatur, nam dignissimos dicta officiis
-        explicabo eaque, deleniti commodi perspiciatis eius doloribus!
-        Laboriosam aliquam animi mollitia! Lorem ipsum dolor sit amet
-        consectetur adipisicing elit. Voluptas qui minima voluptatem amet totam
-        aspernatur, nam dignissimos dicta officiis explicabo eaque, deleniti
-        commodi perspiciatis eius doloribus! Laboriosam aliquam animi mollitia!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas qui
-        minima voluptatem amet totam aspernatur, nam dignissimos dicta officiis
-        explicabo eaque, deleniti commodi perspiciatis eius doloribus!
-        Laboriosam aliquam animi mollitia! Lorem ipsum dolor sit amet
-        consectetur adipisicing elit. Voluptas qui minima voluptatem amet totam
-        aspernatur, nam dignissimos dicta officiis explicabo eaque, deleniti
-        commodi perspiciatis eius doloribus! Laboriosam aliquam animi mollitia!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas qui
-        minima voluptatem amet totam aspernatur, nam dignissimos dicta officiis
-        explicabo eaque, deleniti commodi perspiciatis eius doloribus!
-        Laboriosam aliquam animi mollitia! Lorem ipsum dolor sit amet
-        consectetur adipisicing elit. Voluptas qui minima voluptatem amet totam
-        aspernatur, nam dignissimos dicta officiis explicabo eaque, deleniti
-        commodi perspiciatis eius doloribus! Laboriosam aliquam animi mollitia!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas qui
-        minima voluptatem amet totam aspernatur, nam dignissimos dicta officiis
-        explicabo eaque, deleniti commodi perspiciatis eius doloribus!
-        Laboriosam aliquam animi mollitia!
+        {children}
       </div>
     </Rnd>
   );
