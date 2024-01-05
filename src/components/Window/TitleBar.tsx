@@ -32,6 +32,7 @@ const TitleBar = React.forwardRef<HTMLDivElement, Props>(
       <div
         {...rest}
         ref={ref}
+        onDoubleClick={handleMaximize}
         className={clsx(
           "window-title-bar", // for Rnd only
           "flex items-center justify-between",
