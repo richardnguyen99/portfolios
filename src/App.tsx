@@ -21,6 +21,9 @@ const App: React.FC = () => {
       title: "Terminal",
       type: "terminal",
       active: true,
+
+      isFullScreen: false,
+      isFullScreenAllowed: true,
     });
   });
 

@@ -12,7 +12,7 @@ const Screen: React.FC = () => {
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       if (
         e.target instanceof Element &&
-        e.target.getAttribute("id") === "screen"
+        e.target.getAttribute("id") === "window-container"
       ) {
         deselectAllModals();
       }
@@ -32,7 +32,7 @@ const Screen: React.FC = () => {
       )}
     >
       <MenuBar />
-      <div id="window-container" className="relative">
+      <div id="window-container" className="relative h-full">
         {renderModals()}
       </div>
     </div>

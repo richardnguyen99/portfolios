@@ -18,11 +18,15 @@ type Props = React.HTMLAttributes<HTMLDivElement> & TitleBarProps;
 
 const TitleBar = React.forwardRef<HTMLDivElement, Props>(
   ({ active, title, windowId, ...rest }, ref) => {
-    const { closeModal } = useModal();
+    const { closeModal, toggleFullScreen } = useModal();
 
     const handleClose = React.useCallback(() => {
       closeModal(windowId);
     }, [closeModal, windowId]);
+
+    const handleMaximize = React.useCallback(() => {
+      toggleFullScreen(windowId);
+    }, [toggleFullScreen, windowId]);
 
     return (
       <div
@@ -45,7 +49,11 @@ const TitleBar = React.forwardRef<HTMLDivElement, Props>(
           <div>{title}</div>
         </div>
         <div className="flex items-center gap-2">
-          <ActionBtn active={active} variant="maximize" />
+          <ActionBtn
+            active={active}
+            variant="maximize"
+            onClick={handleMaximize}
+          />
           <ActionBtn active={active} variant="minimize" />
           <ActionBtn active={active} variant="close" onClick={handleClose} />
         </div>

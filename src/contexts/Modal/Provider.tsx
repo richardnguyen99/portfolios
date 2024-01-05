@@ -52,9 +52,20 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
     );
   }, []);
 
-  const toggleFullScreen = React.useCallback((id: string) => {
-    console.log(id);
-  }, []);
+  const toggleFullScreen = React.useCallback(
+    (id: string) => {
+      const targetModal = modals.filter((modal) => modal.id === id)[0];
+
+      if (targetModal.isFullScreenAllowed === true) {
+        targetModal.isFullScreen = !targetModal.isFullScreen;
+      }
+
+      const filteredModals = modals.filter((modal) => modal.id !== id);
+
+      setModals(() => [...filteredModals, targetModal]);
+    },
+    [modals],
+  );
 
   const renderModals = React.useCallback(() => {
     return modals.map((modal) => {
@@ -64,6 +75,7 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
           title={modal.title}
           id={modal.id}
           active={modal.active}
+          fullscreen={modal.isFullScreen}
         />
       );
     });
