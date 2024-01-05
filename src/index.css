@@ -3,7 +3,8 @@
 @tailwind utilities;
 
 .window-scrollbar {
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
   scrollbar-color: theme("colors.slate.700") theme("colors.slate.800");
 }
 
@@ -20,4 +21,8 @@
 .window-scrollbar::-webkit-scrollbar-thumb {
   background-color: theme("colors.slate.700");
   border-radius: 8px;
+}
+
+.window-scrollbar::-webkit-scrollbar-corner {
+  background-color: theme("colors.slate.800");
 }
