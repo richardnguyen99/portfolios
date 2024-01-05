@@ -4,6 +4,7 @@ import { Rnd } from "react-rnd";
 
 import TitleBar from "./TitleBar";
 import useModal from "@contexts/Modal/useModal";
+import { useHotkeys } from "react-hotkeys-hook";
 
 export type WindowProps = {
   active: boolean;
@@ -25,7 +26,7 @@ const Window: React.FC<Props> = ({
   id = "",
   fullscreen = false,
 }) => {
-  const { selectModal } = useModal();
+  const { closeModal, selectModal } = useModal();
 
   const [pos, setPos] = React.useState({ x: INITIAL_X, y: INITIAL_Y });
   const [size, setSize] = React.useState({
@@ -36,6 +37,16 @@ const Window: React.FC<Props> = ({
   const handleSelect = React.useCallback(() => {
     selectModal(id);
   }, [id, selectModal]);
+
+  const handleClose = React.useCallback(() => {
+    closeModal(id);
+  }, [closeModal, id]);
+
+  useHotkeys("ctrl+alt+w", () => {
+    if (!active) return;
+
+    handleClose();
+  });
 
   return (
     <Rnd
