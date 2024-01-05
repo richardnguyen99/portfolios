@@ -24,6 +24,12 @@
     /* Path aliases */
     "baseUrl": "./src",
     "paths": {
+      "@contexts": [
+        "contexts"
+      ],
+      "@contexts/*": [
+        "contexts/*"
+      ],
       "@components": [
         "components"
       ],

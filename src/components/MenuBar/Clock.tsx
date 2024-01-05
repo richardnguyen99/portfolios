@@ -20,7 +20,7 @@ const Clock: React.FC = () => {
 
   return (
     <div className="w-44">
-      <div className="flex items-center justify-center gap-2">
+      <div className="flex items-center justify-center gap-2 text-sm">
         <MemoDate
           date={date.toLocaleDateString([], {
             year: "numeric",
