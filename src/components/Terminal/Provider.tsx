@@ -3,12 +3,15 @@ import * as React from "react";
 import TerminalContext from "./Context";
 import { TerminalProviderProps } from "./type";
 import exec, { SystemCommand } from "./exec";
+import useModal from "@contexts/Modal/useModal";
 
 const TerminalProvider: React.FC<TerminalProviderProps> = ({
   id,
   children,
 }) => {
-  const [prompt, setPrompt] = React.useState("[root@portlios ~]$ ");
+  const { closeModal } = useModal();
+
+  const [prompt, setPrompt] = React.useState("[richard@portlios ~]$ ");
   const [buffer, setBuffer] = React.useState<string[]>([]);
 
   const addBuffer = React.useCallback((newBuffer: string) => {
@@ -19,11 +22,16 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
     setBuffer([]);
   }, []);
 
+  const exitTerminal = React.useCallback(() => {
+    closeModal(id);
+  }, [closeModal, id]);
+
   const systemCalls = React.useMemo<SystemCommand>(
     () => ({
       clearBuffer,
+      exitTerminal,
     }),
-    [clearBuffer],
+    [clearBuffer, exitTerminal],
   );
 
   const execute = React.useCallback(

@@ -1,13 +1,16 @@
 import clear from "@commands/clear";
+import exit from "@commands/exit";
 import listDir from "@commands/ls";
 
 export type SystemCommand = {
   clearBuffer: () => void;
+  exitTerminal: () => void;
 }
 
 const COMMANDS = {
   "ls": listDir,
   "clear": clear,
+  "exit": exit,
 }
 
 const exec = (cmdStr: string, sysCall: SystemCommand) => {
