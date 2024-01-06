@@ -11,27 +11,47 @@ export type WindowProps = {
   title: string;
   fullscreen?: boolean;
   children?: React.ReactNode;
+  initialSize?: {
+    width: number;
+    height: number;
+  };
+  initialPosition?: {
+    x: number;
+    y: number;
+  };
 };
 
 type Props = React.HTMLAttributes<HTMLDivElement> & WindowProps;
 
-const INITIAL_X = 48;
-const INITIAL_Y = 48;
-const INITIAL_WIDTH = 384;
-const INITIAL_HEIGHT = 384;
+const DEFAULT_X = 48;
+const DEFAULT_Y = 48;
+const DEFAULT_WIDTH = 384;
+const DEFAULT_HEIGHT = 384;
 
 const Window: React.FC<Props> = ({
   active,
   title,
   id = "",
   fullscreen = false,
+  children,
+  initialSize = {
+    width: DEFAULT_WIDTH,
+    height: DEFAULT_HEIGHT,
+  },
+  initialPosition = {
+    x: DEFAULT_X,
+    y: DEFAULT_Y,
+  },
 }) => {
   const { closeModal, selectModal } = useModal();
 
-  const [pos, setPos] = React.useState({ x: INITIAL_X, y: INITIAL_Y });
+  const [pos, setPos] = React.useState({
+    x: initialPosition.x,
+    y: initialPosition.y,
+  });
   const [size, setSize] = React.useState({
-    width: INITIAL_WIDTH,
-    height: INITIAL_HEIGHT,
+    width: initialSize.width,
+    height: initialSize.height,
   });
 
   const handleSelect = React.useCallback(() => {
@@ -53,10 +73,10 @@ const Window: React.FC<Props> = ({
       x-data-window-id={id}
       x-data-active-tab={active.toString()}
       default={{
-        x: INITIAL_X,
-        y: INITIAL_Y,
-        width: INITIAL_WIDTH,
-        height: INITIAL_HEIGHT,
+        x: DEFAULT_X,
+        y: DEFAULT_Y,
+        width: DEFAULT_WIDTH,
+        height: DEFAULT_HEIGHT,
       }}
       disableDragging={fullscreen || !active}
       enableResizing={{
@@ -93,13 +113,13 @@ const Window: React.FC<Props> = ({
       cancel=".action-btn"
       enableUserSelectHack={false}
       style={{ display: "flex" }}
-      minWidth={INITIAL_WIDTH}
-      minHeight={INITIAL_HEIGHT}
+      minWidth={DEFAULT_WIDTH}
+      minHeight={DEFAULT_HEIGHT}
       onMouseDown={handleSelect}
       className={clsx(
         "absolute flex flex-col",
         "rounded-lg",
-        "overflow-hidden",
+        "overflow-clip",
         "border border-gray-700",
         {
           "bg-gray-800 text-slate-100": active,
@@ -123,31 +143,7 @@ const Window: React.FC<Props> = ({
           },
         )}
       >
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas qui
-        minima voluptatem amet totam aspernatur, nam dignissimos dicta officiis
-        explicabo eaque, deleniti commodi perspiciatis eius doloribus!
-        Laboriosam aliquam animi mollitia! Lorem ipsum dolor sit amet
-        consectetur adipisicing elit. Voluptas qui minima voluptatem amet totam
-        aspernatur, nam dignissimos dicta officiis explicabo eaque, deleniti
-        commodi perspiciatis eius doloribus! Laboriosam aliquam animi mollitia!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas qui
-        minima voluptatem amet totam aspernatur, nam dignissimos dicta officiis
-        explicabo eaque, deleniti commodi perspiciatis eius doloribus!
-        Laboriosam aliquam animi mollitia! Lorem ipsum dolor sit amet
-        consectetur adipisicing elit. Voluptas qui minima voluptatem amet totam
-        aspernatur, nam dignissimos dicta officiis explicabo eaque, deleniti
-        commodi perspiciatis eius doloribus! Laboriosam aliquam animi mollitia!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas qui
-        minima voluptatem amet totam aspernatur, nam dignissimos dicta officiis
-        explicabo eaque, deleniti commodi perspiciatis eius doloribus!
-        Laboriosam aliquam animi mollitia! Lorem ipsum dolor sit amet
-        consectetur adipisicing elit. Voluptas qui minima voluptatem amet totam
-        aspernatur, nam dignissimos dicta officiis explicabo eaque, deleniti
-        commodi perspiciatis eius doloribus! Laboriosam aliquam animi mollitia!
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas qui
-        minima voluptatem amet totam aspernatur, nam dignissimos dicta officiis
-        explicabo eaque, deleniti commodi perspiciatis eius doloribus!
-        Laboriosam aliquam animi mollitia!
+        {children}
       </div>
     </Rnd>
   );

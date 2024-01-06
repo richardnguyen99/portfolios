@@ -13,19 +13,26 @@ const App: React.FC = () => {
 
   const { addModal } = useModal();
 
-  useHotkeys(newTerminalHotKey, () => {
-    const id = crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0);
+  useHotkeys(
+    newTerminalHotKey,
+    () => {
+      const id = crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0);
+      console.log("New Terminal", id);
 
-    addModal({
-      id,
-      title: "Terminal",
-      type: "terminal",
-      active: true,
+      addModal({
+        id,
+        title: "Terminal",
+        type: "terminal",
+        active: true,
 
-      isFullScreen: false,
-      isFullScreenAllowed: true,
-    });
-  });
+        isFullScreen: false,
+        isFullScreenAllowed: true,
+      });
+    },
+    {
+      document,
+    },
+  );
 
   useHotkeys(aboutHotKey, () => {
     console.log("About");

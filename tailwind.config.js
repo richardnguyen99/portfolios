@@ -1,8 +1,10 @@
 import defaultTheme from "tailwindcss/defaultTheme";
+import tailwindTypography from "@tailwindcss/typography";
 
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
+  darkMode: "class",
   theme: {
     extend: {
       fontFamily: {
@@ -12,7 +14,7 @@ export default {
   },
   plugins: [
     "@tailwindcss/forms",
-    "@tailwindcss/typography",
+    tailwindTypography,
     "@tailwindcss/aspect-ratio",
   ],
 };

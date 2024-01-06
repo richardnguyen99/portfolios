@@ -24,6 +24,12 @@
     /* Path aliases */
     "baseUrl": "./src",
     "paths": {
+      "@commands": [
+        "commands"
+      ],
+      "@commands/*": [
+        "commands/*"
+      ],
       "@contexts": [
         "contexts"
       ],

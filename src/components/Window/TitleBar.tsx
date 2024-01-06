@@ -35,6 +35,7 @@ const TitleBar = React.forwardRef<HTMLDivElement, Props>(
         onDoubleClick={handleMaximize}
         className={clsx(
           "window-title-bar", // for Rnd only
+          "relative",
           "flex items-center justify-between",
           "px-2 py-1",
           "border-b border-gray-700",
