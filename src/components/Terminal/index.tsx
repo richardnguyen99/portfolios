@@ -11,7 +11,7 @@ type Props = TerminalProps & React.HTMLAttributes<HTMLDivElement>;
 type InternalProps = Pick<TerminalProps, "active">;
 
 const InternalTerminal: React.FC<InternalProps> = ({ active }) => {
-  const { displayPrompt, getWindowId } = useTerminal();
+  const { displayPrompt, getWindowId, execute, renderBuffer } = useTerminal();
   const { closeModal, addModal } = useModal();
 
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -43,11 +43,17 @@ const InternalTerminal: React.FC<InternalProps> = ({ active }) => {
       if (!active) return;
 
       if (e.key === "Enter") {
-        //onKeyEnter();
+        e.preventDefault();
+        e.stopPropagation();
+
+        const cmd = text.trim();
+
+        execute(cmd);
+
         setText("");
       }
     },
-    [setText, active],
+    [active, text, execute],
   );
 
   const handleKeyDown = React.useCallback(
@@ -92,6 +98,16 @@ const InternalTerminal: React.FC<InternalProps> = ({ active }) => {
     setCaretKey(crypto.getRandomValues(new Uint32Array(1))[0]);
   }, []);
 
+  const renderedBuffer = React.useMemo(() => renderBuffer(), [renderBuffer]);
+
+  React.useEffect(() => {
+    if (!active) return;
+
+    if (inputRef.current) {
+      inputRef.current.scrollIntoView();
+    }
+  }, [active, renderedBuffer]);
+
   React.useEffect(() => {
     if (!active) return;
 
@@ -112,24 +128,26 @@ const InternalTerminal: React.FC<InternalProps> = ({ active }) => {
 
   return (
     <>
-      <div className="break-words">
-        <span>{displayPrompt()}</span>
-        <span id="text" ref={textRef}>
-          {text.slice(0, pos)}
-          <Caret key={caretKey} active={active}>
-            {text[pos]}
-          </Caret>
-          {text.slice(pos + 1, text.length)}
-        </span>
+      <div className="break-words whitespace-pre-wrap">
+        {renderedBuffer}
+        <div>
+          <span>{displayPrompt()}</span>
+          <span id="text" ref={textRef}>
+            {text.slice(0, pos)}
+            <Caret key={caretKey} active={active}>
+              {text[pos]}
+            </Caret>
+            {text.slice(pos + 1, text.length)}
+          </span>
+        </div>
       </div>
-
       <input
         ref={inputRef}
         type="text"
         autoFocus={active}
         onChange={handleInputChange}
         onSelect={handleSelect}
-        className="bg-transparent w-full outline-none text-transparent select-none cursor-default selection:bg-transparent"
+        className="bg-transparent w-full outline-none text-transparent select-none cursor-default selection:bg-transparent h-0"
         value={text}
       />
     </>

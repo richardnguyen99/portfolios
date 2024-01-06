@@ -100,7 +100,7 @@ const Window: React.FC<Props> = ({
       className={clsx(
         "absolute flex flex-col",
         "rounded-lg",
-        "overflow-hidden",
+        "overflow-clip",
         "border border-gray-700",
         {
           "bg-gray-800 text-slate-100": active,

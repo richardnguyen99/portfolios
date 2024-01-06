@@ -2,6 +2,7 @@ import * as React from "react";
 
 import TerminalContext from "./Context";
 import { TerminalProviderProps } from "./type";
+import exec from "./exec";
 
 const TerminalProvider: React.FC<TerminalProviderProps> = ({
   id,
@@ -19,7 +20,15 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
   }, []);
 
   const execute = React.useCallback((command: string) => {
-    console.log(command);
+    const bufferedCommand = `> ${command}`;
+
+    const result = exec(command);
+
+    addBuffer(bufferedCommand);
+
+    if (result) {
+      addBuffer(result);
+    }
   }, []);
 
   const displayPrompt = React.useCallback(() => {
@@ -29,7 +38,7 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
   const renderBuffer = React.useCallback(() => {
     return buffer.map((line, index) => (
       <div key={index}>
-        <span>{line}</span>
+        <span dangerouslySetInnerHTML={{ __html: line }}></span>
       </div>
     ));
   }, [buffer]);
