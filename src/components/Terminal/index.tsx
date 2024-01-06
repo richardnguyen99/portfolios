@@ -167,6 +167,7 @@ const Terminal: React.FC<Props> = ({
       active={active}
       title={title}
       fullscreen={fullscreen}
+      initialPosition={{ x: 160, y: 160 }}
       {...rest}
     >
       <TerminalProvider id={id || ""}>
