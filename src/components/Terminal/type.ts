@@ -9,9 +9,11 @@ export type TerminalContextType = {
   execute: (command: string) => void;
   setPrompt: (prompt: string) => void;
   displayPrompt: () => string;
+  getWindowId: () => string;
 }
 
 export type TerminalProviderProps = {
+  id: string;
   children: React.ReactNode;
 };
 

@@ -3,7 +3,10 @@ import * as React from "react";
 import TerminalContext from "./Context";
 import { TerminalProviderProps } from "./type";
 
-const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
+const TerminalProvider: React.FC<TerminalProviderProps> = ({
+  id,
+  children,
+}) => {
   const [prompt, setPrompt] = React.useState("[root@portlios ~]$ ");
   const [buffer, setBuffer] = React.useState<string[]>([]);
 
@@ -31,6 +34,10 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
     ));
   }, [buffer]);
 
+  const getWindowId = React.useCallback(() => {
+    return id;
+  }, [id]);
+
   const contextValue = React.useMemo(
     () => ({
       addBuffer,
@@ -39,8 +46,17 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
       execute,
       displayPrompt,
       setPrompt,
+      getWindowId,
     }),
-    [addBuffer, clearBuffer, execute, displayPrompt, setPrompt, renderBuffer],
+    [
+      addBuffer,
+      clearBuffer,
+      execute,
+      displayPrompt,
+      setPrompt,
+      renderBuffer,
+      getWindowId,
+    ],
   );
 
   return (
