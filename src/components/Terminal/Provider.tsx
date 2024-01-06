@@ -2,7 +2,7 @@ import * as React from "react";
 
 import TerminalContext from "./Context";
 import { TerminalProviderProps } from "./type";
-import exec from "./exec";
+import exec, { SystemCommand } from "./exec";
 
 const TerminalProvider: React.FC<TerminalProviderProps> = ({
   id,
@@ -19,17 +19,26 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
     setBuffer([]);
   }, []);
 
-  const execute = React.useCallback((command: string) => {
-    const bufferedCommand = `> ${command}`;
+  const systemCalls = React.useMemo<SystemCommand>(
+    () => ({
+      clearBuffer,
+    }),
+    [clearBuffer],
+  );
 
-    const result = exec(command);
+  const execute = React.useCallback(
+    (command: string) => {
+      const bufferedCommand = `> ${command}`;
 
-    addBuffer(bufferedCommand);
+      addBuffer(bufferedCommand);
+      const result = exec(command, systemCalls);
 
-    if (result) {
-      addBuffer(result);
-    }
-  }, []);
+      if (result) {
+        addBuffer(result);
+      }
+    },
+    [addBuffer, systemCalls],
+  );
 
   const displayPrompt = React.useCallback(() => {
     return prompt;

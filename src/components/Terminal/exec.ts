@@ -1,10 +1,16 @@
+import clear from "@commands/clear";
 import listDir from "@commands/ls";
 
-const COMMANDS = {
-  "ls": listDir
+export type SystemCommand = {
+  clearBuffer: () => void;
 }
 
-const exec = (cmdStr: string) => {
+const COMMANDS = {
+  "ls": listDir,
+  "clear": clear,
+}
+
+const exec = (cmdStr: string, sysCall: SystemCommand) => {
   if (!cmdStr) {
     return "";
   }
@@ -14,7 +20,7 @@ const exec = (cmdStr: string) => {
   const args = cmd.slice(1);
 
   if (command in COMMANDS) {
-    return COMMANDS[command as keyof typeof COMMANDS](args);
+    return COMMANDS[command as keyof typeof COMMANDS](args, sysCall);
   }
 
 
