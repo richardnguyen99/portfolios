@@ -1,3 +1,4 @@
 import Modal from "./Modal";
+import FileTree from "./FileTree";
 
-export { Modal };
+export { Modal, FileTree };

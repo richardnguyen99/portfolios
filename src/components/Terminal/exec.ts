@@ -1,3 +1,5 @@
+import { FileTreeNode } from "@contexts/FileTree/type";
+
 import clear from "@commands/clear";
 import exit from "@commands/exit";
 import listDir from "@commands/ls";
@@ -13,7 +15,7 @@ const COMMANDS = {
   "exit": exit,
 }
 
-const exec = (cmdStr: string, sysCall: SystemCommand) => {
+const exec = (cmdStr: string, sysCall: SystemCommand, currentDir: FileTreeNode) => {
   if (!cmdStr) {
     return "";
   }
@@ -23,7 +25,7 @@ const exec = (cmdStr: string, sysCall: SystemCommand) => {
   const args = cmd.slice(1);
 
   if (command in COMMANDS) {
-    return COMMANDS[command as keyof typeof COMMANDS](args, sysCall);
+    return COMMANDS[command as keyof typeof COMMANDS](args, sysCall, currentDir);
   }
 
 

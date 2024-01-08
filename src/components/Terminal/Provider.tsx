@@ -4,13 +4,16 @@ import TerminalContext from "./Context";
 import { TerminalProviderProps } from "./type";
 import exec, { SystemCommand } from "./exec";
 import useModal from "@contexts/Modal/useModal";
+import useFileTree from "@contexts/FileTree/useFileTree";
 
 const TerminalProvider: React.FC<TerminalProviderProps> = ({
   id,
   children,
 }) => {
   const { closeModal } = useModal();
+  const { getHomeFolder } = useFileTree();
 
+  const [currentFolder] = React.useState(getHomeFolder());
   const [prompt, setPrompt] = React.useState("[richard@portlios ~]$ ");
   const [buffer, setBuffer] = React.useState<string[]>([]);
 
@@ -39,13 +42,13 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
       const bufferedCommand = `> ${command}`;
 
       addBuffer(bufferedCommand);
-      const result = exec(command, systemCalls);
+      const result = exec(command, systemCalls, currentFolder);
 
       if (result) {
         addBuffer(result);
       }
     },
-    [addBuffer, systemCalls],
+    [addBuffer, systemCalls, currentFolder],
   );
 
   const displayPrompt = React.useCallback(() => {
