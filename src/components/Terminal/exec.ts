@@ -5,12 +5,14 @@ import listDir from "@commands/ls";
 import changeDir from "@commands/cd";
 
 import { SystemCommand } from "./type";
+import pwd from "@commands/pwd";
 
 const COMMANDS = {
   "ls": listDir,
   "clear": clear,
   "exit": exit,
   "cd": changeDir,
+  "pwd": pwd,
 }
 
 const exec = (cmdStr: string, sysCall: SystemCommand, currentDir: FileTreeNode) => {
