@@ -28,5 +28,6 @@ export type FileTreeContextType = {
   moveFolder: (parentNode: FileTreeNode, foldername: string, newParentNode: FileTreeNode) => void;
   copyFile: (parentNode: FileTreeNode, filename: string, newParentNode: FileTreeNode) => void;
   copyFolder: (parentNode: FileTreeNode, foldername: string, newParentNode: FileTreeNode) => void;
+  getRootFolder: () => FileTreeNode;
   getHomeFolder: () => FileTreeNode;
 }

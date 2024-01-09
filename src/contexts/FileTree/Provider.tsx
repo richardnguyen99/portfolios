@@ -139,7 +139,11 @@ const FileTreeProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   );
 
   const getHomeFolder = React.useCallback(() => {
-    return author;
+    return guess;
+  }, []);
+
+  const getRootFolder = React.useCallback(() => {
+    return root;
   }, []);
 
   const contextValue: FileTreeContextType = React.useMemo(() => {
@@ -155,6 +159,7 @@ const FileTreeProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
       copyFile,
       copyFolder,
       getHomeFolder,
+      getRootFolder,
     };
   }, [
     addFile,
@@ -168,6 +173,7 @@ const FileTreeProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     copyFile,
     copyFolder,
     getHomeFolder,
+    getRootFolder,
   ]);
 
   React.useEffect(() => {}, [fileTree]);

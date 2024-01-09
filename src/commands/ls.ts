@@ -1,6 +1,6 @@
 import minimist, { ParsedArgs } from "minimist";
 
-import { SystemCommand } from "@components/Terminal/exec";
+import { SystemCommand } from "@components/Terminal/type";
 import { FileTreeNode } from "@contexts/FileTree/type";
 
 const VERSION = "0.0.1";
@@ -107,7 +107,6 @@ Try 'ls --help' for more information.\n`;
     : 0;
 
   if (showAll) {
-    console.log(maxLength);
     ans += format(".", maxLength);
     ans += format("..", maxLength);
   }

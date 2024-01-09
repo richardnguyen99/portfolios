@@ -50,7 +50,7 @@ const InternalTerminal: React.FC<InternalProps> = ({ active }) => {
 
         execute(cmd);
 
-        setText("");
+        setText((_prev) => "");
       }
     },
     [active, text, execute],

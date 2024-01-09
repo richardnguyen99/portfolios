@@ -1,6 +1,14 @@
 import * as React from "react";
 
 import { WindowProps } from "@components/Window";
+import { FileTreeNode } from "@contexts/FileTree/type";
+
+export type SystemCommand = {
+  clearBuffer: () => void;
+  exitTerminal: () => void;
+  getFileTreeRoot: () => FileTreeNode;
+  changeDirectory: (path?: FileTreeNode | string) => void;
+}
 
 export type TerminalContextType = {
   addBuffer: (buffer: string) => void;

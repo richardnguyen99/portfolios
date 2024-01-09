@@ -1,18 +1,16 @@
 import { FileTreeNode } from "@contexts/FileTree/type";
-
 import clear from "@commands/clear";
 import exit from "@commands/exit";
 import listDir from "@commands/ls";
+import changeDir from "@commands/cd";
 
-export type SystemCommand = {
-  clearBuffer: () => void;
-  exitTerminal: () => void;
-}
+import { SystemCommand } from "./type";
 
 const COMMANDS = {
   "ls": listDir,
   "clear": clear,
   "exit": exit,
+  "cd": changeDir,
 }
 
 const exec = (cmdStr: string, sysCall: SystemCommand, currentDir: FileTreeNode) => {
