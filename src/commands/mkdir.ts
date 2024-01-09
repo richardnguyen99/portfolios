@@ -3,7 +3,7 @@ import minimist, { ParsedArgs } from "minimist";
 import type { SystemCommand } from "@components/Terminal/type";
 import type { FileTreeNode } from "@contexts/FileTree/type";
 
-const VERSION = "0.0.1";
+const VERSION = "0.0.2";
 const AUTHOR = "Richard H. Nguyen";
 const SOURCE = "https://github.com/richardnguyen99/portfolios/tree/main/src/commands/mkdir.ts";
 const SUPPORTED_OPTIONS = ["help", "version", "parents", "verbose"];
@@ -155,12 +155,21 @@ Try 'mkdir --help' for more information.\n";
 
       if (i === pathList.length - 1 && child.type === "folder") {
         return `mkdir: cannot create directory '${path}': File exists\n`;
-
       }
 
       currentDirectory = child;
     } else if (i < pathList.length - 1) {
-      return `mkdir: cannot create directory '${path}': No such file or directory\n`;
+      if (!createParents) {
+        return `mkdir: cannot create directory '${path}': No such file or directory\n`;
+      }
+
+
+      const newDir = _mkdir(path, currentDirectory);
+      currentDirectory = newDir;
+
+      if (verbose) {
+        ans += `mkdir: created directory '${path}'\n`;
+      }
     } else {
       const newDir = _mkdir(path, currentDirectory);
       currentDirectory = newDir;
