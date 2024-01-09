@@ -1,7 +1,7 @@
 import minimist, { ParsedArgs } from "minimist";
 
-import { SystemCommand } from "@components/Terminal/type";
-import { FileTreeNode } from "@contexts/FileTree/type";
+import type { SystemCommand } from "@components/Terminal/type";
+import type { FileTreeNode } from "@contexts/FileTree/type";
 
 const VERSION = "0.0.1";
 const AUTHOR = "Richard H. Nguyen";
