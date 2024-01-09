@@ -128,7 +128,6 @@ Try 'mkdir --help' for more information.\n";
   }
 
   let currentDirectory = currentDir;
-  console.log(pathList);
 
   for (let i = 0; i < pathList.length; i++) {
     const path = pathList[i];
@@ -139,14 +138,19 @@ Try 'mkdir --help' for more information.\n";
 
     if (path === "..") {
       if (currentDirectory.parent) {
+        console.log(currentDirectory.parent.name);
         currentDirectory = currentDirectory.parent;
       }
 
       continue;
     }
 
-    const child = currentDirectory.children.find((child) => child.name === path);
-    console.log(child);
+    const child = currentDirectory.children.find(
+      (child) => (child.name === path
+        && child.type !== "file"
+        && child.name !== "."
+        && child.name !== "..")
+    );
 
     if (child) {
       if (child.type === "file") {
@@ -163,7 +167,6 @@ Try 'mkdir --help' for more information.\n";
         return `mkdir: cannot create directory '${path}': No such file or directory\n`;
       }
 
-
       const newDir = _mkdir(path, currentDirectory);
       currentDirectory = newDir;
 
@@ -171,6 +174,10 @@ Try 'mkdir --help' for more information.\n";
         ans += `mkdir: created directory '${path}'\n`;
       }
     } else {
+      if (currentDirectory.writePermission === false) {
+        return `mkdir: cannot create directory '${path}': Permission denied\n`;
+      }
+
       const newDir = _mkdir(path, currentDirectory);
       currentDirectory = newDir;
 
