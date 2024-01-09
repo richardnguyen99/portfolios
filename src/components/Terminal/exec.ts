@@ -6,6 +6,7 @@ import changeDir from "@commands/cd";
 
 import { SystemCommand } from "./type";
 import pwd from "@commands/pwd";
+import mkdir from "@commands/mkdir";
 
 const COMMANDS = {
   "ls": listDir,
@@ -13,6 +14,7 @@ const COMMANDS = {
   "exit": exit,
   "cd": changeDir,
   "pwd": pwd,
+  "mkdir": mkdir,
 }
 
 const exec = (cmdStr: string, sysCall: SystemCommand, currentDir: FileTreeNode) => {

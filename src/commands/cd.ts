@@ -42,7 +42,6 @@ Written by ${AUTHOR}.\n`;
 }
 
 const _changeDir = (pathList: string[], currentDir: FileTreeNode): FileTreeNode => {
-  console.log(pathList);
   let finalDir = currentDir;
 
   for (const path of pathList) {
