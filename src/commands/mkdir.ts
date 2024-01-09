@@ -138,7 +138,6 @@ Try 'mkdir --help' for more information.\n";
 
     if (path === "..") {
       if (currentDirectory.parent) {
-        console.log(currentDirectory.parent.name);
         currentDirectory = currentDirectory.parent;
       }
 
@@ -147,7 +146,6 @@ Try 'mkdir --help' for more information.\n";
 
     const child = currentDirectory.children.find(
       (child) => (child.name === path
-        && child.type !== "file"
         && child.name !== "."
         && child.name !== "..")
     );
