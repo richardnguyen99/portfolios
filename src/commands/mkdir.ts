@@ -46,6 +46,9 @@ const _mkdir = (path: string, currentDir: FileTreeNode): FileTreeNode => {
     readPermission: true,
     writePermission: true,
     id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
+    accessedAt: new Date(),
+    updatedAt: new Date(),
+    createdAt: new Date(),
   };
 
   currentDir.children.push(newDir);

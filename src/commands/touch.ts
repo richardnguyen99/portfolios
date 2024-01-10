@@ -162,6 +162,9 @@ Try 'touch --help' for more information.\n";
       readPermission: true,
       writePermission: true,
       id: crypto.getRandomValues(new Uint32Array(2))[0].toFixed(0),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      accessedAt: new Date(),
       children: []
     };
 

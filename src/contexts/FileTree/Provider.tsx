@@ -5,6 +5,8 @@ import FileTreeContext from "./Context";
 
 import content from "../../assets/README.md?raw";
 
+const date = new Date("2024-01-01T00:00:00.000Z");
+
 const root: FileTreeNode = {
   name: "root",
   type: "folder",
@@ -14,9 +16,9 @@ const root: FileTreeNode = {
   id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
   children: [],
   parent: null,
-  accessedAt: new Date(),
-  createdAt: new Date(),
-  updatedAt: new Date(),
+  accessedAt: date,
+  createdAt: date,
+  updatedAt: date,
 };
 
 const home: FileTreeNode = {
@@ -28,9 +30,9 @@ const home: FileTreeNode = {
   id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
   children: [],
   parent: root,
-  accessedAt: new Date(),
-  createdAt: new Date(),
-  updatedAt: new Date(),
+  accessedAt: date,
+  createdAt: date,
+  updatedAt: date,
 };
 
 const guess: FileTreeNode = {
@@ -42,9 +44,9 @@ const guess: FileTreeNode = {
   id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
   children: [],
   parent: home,
-  accessedAt: new Date(),
-  createdAt: new Date(),
-  updatedAt: new Date(),
+  accessedAt: date,
+  createdAt: date,
+  updatedAt: date,
 };
 
 const author: FileTreeNode = {
@@ -56,9 +58,9 @@ const author: FileTreeNode = {
   id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
   children: [],
   parent: home,
-  accessedAt: new Date(),
-  createdAt: new Date(),
-  updatedAt: new Date(),
+  accessedAt: date,
+  createdAt: date,
+  updatedAt: date,
 };
 
 const readmd: FileTreeNode = {
@@ -71,9 +73,9 @@ const readmd: FileTreeNode = {
   children: [],
   parent: author,
   content: content,
-  accessedAt: new Date(),
-  createdAt: new Date(),
-  updatedAt: new Date(),
+  accessedAt: date,
+  createdAt: date,
+  updatedAt: date,
 };
 
 root.children.push(home);
