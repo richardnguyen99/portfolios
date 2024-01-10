@@ -8,6 +8,7 @@ import { SystemCommand } from "./type";
 import pwd from "@commands/pwd";
 import mkdir from "@commands/mkdir";
 import touch from "@commands/touch";
+import rm from "@commands/rm";
 
 const COMMANDS = {
   "ls": listDir,
@@ -17,6 +18,7 @@ const COMMANDS = {
   "pwd": pwd,
   "mkdir": mkdir,
   "touch": touch,
+  "rm": rm,
 }
 
 const exec = (cmdStr: string, sysCall: SystemCommand, currentDir: FileTreeNode) => {
