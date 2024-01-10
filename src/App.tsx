@@ -17,7 +17,6 @@ const App: React.FC = () => {
     newTerminalHotKey,
     () => {
       const id = crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0);
-      console.log("New Terminal", id);
 
       addModal({
         id,

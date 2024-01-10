@@ -1,18 +1,33 @@
 import * as React from "react";
 
 import TerminalContext from "./Context";
-import { TerminalProviderProps } from "./type";
-import exec, { SystemCommand } from "./exec";
+import { TerminalProviderProps, SystemCommand } from "./type";
+import exec from "./exec";
 import useModal from "@contexts/Modal/useModal";
+import useFileTree from "@contexts/FileTree/useFileTree";
+import type { FileTreeNode } from "@contexts/FileTree/type";
 
 const TerminalProvider: React.FC<TerminalProviderProps> = ({
   id,
   children,
 }) => {
   const { closeModal } = useModal();
+  const { getHomeFolder, getRootFolder } = useFileTree();
 
+  const [currentFolder, setCurrentFolder] = React.useState({
+    previous: getHomeFolder(),
+    current: getHomeFolder(),
+  });
   const [prompt, setPrompt] = React.useState("[richard@portlios ~]$ ");
-  const [buffer, setBuffer] = React.useState<string[]>([]);
+  const [buffer, setBuffer] = React.useState<string[]>([
+    "Welcome to Portli-OS!",
+    "(Hint): Use `pwd` and start it from there.",
+    "\n",
+  ]);
+
+  const getFileTreeRoot = React.useCallback(() => {
+    return getRootFolder();
+  }, [getRootFolder]);
 
   const addBuffer = React.useCallback((newBuffer: string) => {
     setBuffer((prevBuffer) => [...prevBuffer, newBuffer]);
@@ -26,12 +41,66 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
     closeModal(id);
   }, [closeModal, id]);
 
+  const changeDirectory = React.useCallback(
+    (newDir?: FileTreeNode | string) => {
+      if (typeof newDir === "undefined" || newDir === getHomeFolder()) {
+        setPrompt("[richard@portlios ~]$ ");
+        setCurrentFolder((prev) => ({
+          previous: prev.current,
+          current: getHomeFolder(),
+        }));
+        return;
+      } else if (newDir === getRootFolder()) {
+        setPrompt("[richard@portlios /]$ ");
+        setCurrentFolder((prev) => ({
+          previous: prev.current,
+          current: getRootFolder(),
+        }));
+        return;
+      } else if (typeof newDir === "string") {
+        let newDirString = "";
+        let newDirNode = getHomeFolder();
+
+        if (newDir === "-") {
+          // TODO: Clean this up?
+          newDirString =
+            currentFolder.previous === getHomeFolder()
+              ? "~"
+              : currentFolder.previous === getRootFolder()
+                ? "/"
+                : currentFolder.previous.name;
+          newDirNode = currentFolder.previous;
+        } else if (newDir === "~") {
+          newDirString = "~";
+        } else if (newDir === "/") {
+          newDirString = "/";
+          newDirNode = getRootFolder();
+        }
+
+        setPrompt(`[richard@portlios ${newDirString}]$ `);
+        setCurrentFolder((prev) => ({
+          previous: prev.current,
+          current: newDirNode,
+        }));
+      } else {
+        setPrompt(`[richard@portlios ${newDir.name}]$ `);
+        setCurrentFolder((prev) => ({
+          previous: prev.current,
+          current: newDir,
+        }));
+      }
+    },
+    [currentFolder.previous, getHomeFolder, getRootFolder],
+  );
+
   const systemCalls = React.useMemo<SystemCommand>(
     () => ({
+      getFileTreeRoot,
+      changeDirectory,
       clearBuffer,
       exitTerminal,
     }),
-    [clearBuffer, exitTerminal],
+    [clearBuffer, exitTerminal, changeDirectory, getFileTreeRoot],
   );
 
   const execute = React.useCallback(
@@ -39,13 +108,11 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
       const bufferedCommand = `> ${command}`;
 
       addBuffer(bufferedCommand);
-      const result = exec(command, systemCalls);
+      const result = exec(command, systemCalls, currentFolder.current);
 
-      if (result) {
-        addBuffer(result);
-      }
+      addBuffer(result || "");
     },
-    [addBuffer, systemCalls],
+    [addBuffer, systemCalls, currentFolder],
   );
 
   const displayPrompt = React.useCallback(() => {
