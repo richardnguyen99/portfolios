@@ -145,6 +145,10 @@ Try 'rm --help' for more information.\n";
 
   if (child) {
     if (child.type === "file") {
+      if (child.writePermission === false) {
+        return `rm: cannot remove '${path}': Permission denied\n`;
+      }
+
       currentDirectory.children = currentDirectory.children.filter((child) => child.name !== path);
 
       if (verbal) {
@@ -154,6 +158,10 @@ Try 'rm --help' for more information.\n";
       return "";
     } else {
       if (recursive) {
+        if (child.writePermission === false) {
+          return `rm: cannot remove '${path}': Permission denied\n`;
+        }
+
         currentDirectory.children = currentDirectory.children.filter((child) => child.name !== path);
 
         if (verbal) {

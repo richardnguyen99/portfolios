@@ -19,7 +19,11 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
     current: getHomeFolder(),
   });
   const [prompt, setPrompt] = React.useState("[richard@portlios ~]$ ");
-  const [buffer, setBuffer] = React.useState<string[]>([]);
+  const [buffer, setBuffer] = React.useState<string[]>([
+    "Welcome to Portli-OS!",
+    "(Hint): Use `pwd` and start it from there.",
+    "\n",
+  ]);
 
   const getFileTreeRoot = React.useCallback(() => {
     return getRootFolder();

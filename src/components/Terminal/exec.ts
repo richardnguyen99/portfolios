@@ -9,6 +9,7 @@ import pwd from "@commands/pwd";
 import mkdir from "@commands/mkdir";
 import touch from "@commands/touch";
 import rm from "@commands/rm";
+import concat from "@commands/cat";
 
 const COMMANDS = {
   "ls": listDir,
@@ -19,6 +20,7 @@ const COMMANDS = {
   "mkdir": mkdir,
   "touch": touch,
   "rm": rm,
+  "cat": concat,
 }
 
 const exec = (cmdStr: string, sysCall: SystemCommand, currentDir: FileTreeNode) => {
