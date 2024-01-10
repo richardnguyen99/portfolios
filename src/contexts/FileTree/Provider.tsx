@@ -3,6 +3,8 @@ import * as React from "react";
 import type { FileTreeNode, FileTreeContextType } from "./type";
 import FileTreeContext from "./Context";
 
+import content from "../../assets/README.md?raw";
+
 const root: FileTreeNode = {
   name: "root",
   type: "folder",
@@ -12,6 +14,9 @@ const root: FileTreeNode = {
   id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
   children: [],
   parent: null,
+  accessedAt: new Date(),
+  createdAt: new Date(),
+  updatedAt: new Date(),
 };
 
 const home: FileTreeNode = {
@@ -23,6 +28,9 @@ const home: FileTreeNode = {
   id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
   children: [],
   parent: root,
+  accessedAt: new Date(),
+  createdAt: new Date(),
+  updatedAt: new Date(),
 };
 
 const guess: FileTreeNode = {
@@ -34,6 +42,9 @@ const guess: FileTreeNode = {
   id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
   children: [],
   parent: home,
+  accessedAt: new Date(),
+  createdAt: new Date(),
+  updatedAt: new Date(),
 };
 
 const author: FileTreeNode = {
@@ -45,10 +56,29 @@ const author: FileTreeNode = {
   id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
   children: [],
   parent: home,
+  accessedAt: new Date(),
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
+
+const readmd: FileTreeNode = {
+  name: "readme.md",
+  type: "file",
+  readPermission: true,
+  writePermission: false,
+  executePermission: false,
+  id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
+  children: [],
+  parent: author,
+  content: content,
+  accessedAt: new Date(),
+  createdAt: new Date(),
+  updatedAt: new Date(),
 };
 
 root.children.push(home);
 home.children.push(guess, author);
+author.children.push(readmd);
 
 const FileTreeProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [fileTree] = React.useState<FileTreeNode>(root);

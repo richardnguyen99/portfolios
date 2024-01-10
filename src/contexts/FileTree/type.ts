@@ -14,6 +14,10 @@ export interface FileTreeNode {
   readPermission: boolean;
   writePermission: boolean;
   executePermission: boolean;
+  content?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  accessedAt: Date;
 }
 
 
