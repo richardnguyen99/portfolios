@@ -40,24 +40,6 @@ A copy of this command can found at:\n\
 Written by ${AUTHOR}.\n`;
 }
 
-const _rm = (path: string, currentDir: FileTreeNode): FileTreeNode => {
-
-  const newDir: FileTreeNode = {
-    name: path,
-    type: "folder",
-    children: [],
-    parent: currentDir,
-    executePermission: true,
-    readPermission: true,
-    writePermission: true,
-    id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
-  };
-
-  currentDir.children.push(newDir);
-
-  return newDir
-}
-
 const rm = (
   args: string[],
   _sysCall: SystemCommand,
