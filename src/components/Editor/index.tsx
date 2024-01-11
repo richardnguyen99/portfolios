@@ -10,15 +10,36 @@ type Props = EditorProps & React.HTMLAttributes<HTMLDivElement>;
 
 const Editor: React.FC<Props> = ({
   active,
-  title,
+  title: initialTitle,
   fullscreen,
   id,
   initialText = "",
+  file,
   ...rest
 }) => {
   const editorRef = React.useRef<EditorAPI.IStandaloneCodeEditor | null>(null);
 
+  const [title, setTitle] = React.useState(initialTitle);
+  const [, setSaved] = React.useState(true);
   const [text, setText] = React.useState(initialText);
+
+  const getLanguageId = React.useCallback(() => {
+    const extension = title.split(".").pop() ?? "";
+
+    if (extension === "md") {
+      return "markdown";
+    }
+
+    if (extension === "js") {
+      return "javascript";
+    }
+
+    if (extension === "ts") {
+      return "typescript";
+    }
+
+    return "plaintext";
+  }, [title]);
 
   return (
     <Window
@@ -34,7 +55,7 @@ const Editor: React.FC<Props> = ({
         loading={null}
         width="100%"
         height="100%"
-        defaultLanguage="javascript"
+        defaultLanguage="plaintext"
         defaultValue={initialText}
         options={{
           "semanticHighlighting.enabled": true,
@@ -82,13 +103,22 @@ const Editor: React.FC<Props> = ({
         value={text}
         saveViewState={true}
         onChange={(_value, _event) => {
+          setSaved((prev) => {
+            if (prev === true) {
+              setTitle((prev) => `${prev} *`);
+            }
+
+            return false;
+          });
           setText((prev) => _value ?? prev);
         }}
         onMount={(editor, monaco) => {
           const model = editor.getModel();
 
           model?.setEOL(monaco.editor.EndOfLineSequence.LF);
+
           monaco.editor.setTheme("my-theme");
+          monaco.editor.setModelLanguage(model!, getLanguageId());
 
           editor.onKeyDown((e) => {
             if (e.keyCode === monaco.KeyCode.KeyS && (e.ctrlKey || e.metaKey)) {
@@ -115,7 +145,12 @@ const Editor: React.FC<Props> = ({
               }
 
               // Save the file
-              console.log("Saving...");
+              if (file) {
+                file.content = model?.getValue() ?? "";
+              }
+
+              setSaved(true);
+              setTitle(initialTitle);
             }
           });
 

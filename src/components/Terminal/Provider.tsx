@@ -6,12 +6,13 @@ import exec from "./exec";
 import useModal from "@contexts/Modal/useModal";
 import useFileTree from "@contexts/FileTree/useFileTree";
 import type { FileTreeNode } from "@contexts/FileTree/type";
+import { ModalProps } from "@contexts/Modal/type";
 
 const TerminalProvider: React.FC<TerminalProviderProps> = ({
   id,
   children,
 }) => {
-  const { closeModal } = useModal();
+  const { closeModal, addModal } = useModal();
   const { getHomeFolder, getRootFolder } = useFileTree();
 
   const [currentFolder, setCurrentFolder] = React.useState({
@@ -93,14 +94,32 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
     [currentFolder.previous, getHomeFolder, getRootFolder],
   );
 
+  const openEditor = React.useCallback(
+    (path: FileTreeNode) => {
+      const editorModal: ModalProps = {
+        id: "editor",
+        title: path.name,
+        active: true,
+        isFullScreen: false,
+        isFullScreenAllowed: true,
+        type: "editor",
+        file: path,
+      };
+
+      addModal(editorModal);
+    },
+    [addModal],
+  );
+
   const systemCalls = React.useMemo<SystemCommand>(
     () => ({
       getFileTreeRoot,
       changeDirectory,
       clearBuffer,
       exitTerminal,
+      openEditor,
     }),
-    [clearBuffer, exitTerminal, changeDirectory, getFileTreeRoot],
+    [getFileTreeRoot, changeDirectory, clearBuffer, exitTerminal, openEditor],
   );
 
   const execute = React.useCallback(

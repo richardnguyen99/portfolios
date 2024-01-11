@@ -1,3 +1,5 @@
+import { FileTreeNode } from "@contexts/FileTree/type";
+
 type ModalType = "explorer" | "terminal" | "editor" | "settings";
 
 export type ModalProps = {
@@ -5,10 +7,13 @@ export type ModalProps = {
   title: string;
   type: ModalType;
   active: boolean;
-
   isFullScreenAllowed?: boolean;
   isFullScreen?: boolean;
 
+  /**
+   * File Object referenced
+   */
+  file?: FileTreeNode;
 };
 
 export type ModalContextType = {
