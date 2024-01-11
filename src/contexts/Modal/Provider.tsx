@@ -2,10 +2,19 @@ import * as React from "react";
 
 import { ModalProps, ModalProviderProps } from "./type";
 import ModalContext from "./Context";
-import { Terminal, Window } from "@components";
+import { Terminal, Window, Editor } from "@components";
 
 const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
-  const [modals, setModals] = React.useState<ModalProps[]>([]);
+  const [modals, setModals] = React.useState<ModalProps[]>([
+    {
+      id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
+      title: "Editor",
+      type: "editor",
+      active: true,
+      isFullScreen: false,
+      isFullScreenAllowed: true,
+    },
+  ]);
 
   const addModal = React.useCallback(
     (modal: ModalProps) => {
@@ -69,6 +78,18 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
 
   const renderModals = React.useCallback(() => {
     return modals.map((modal) => {
+      if (modal.type === "editor") {
+        return (
+          <Editor
+            id={modal.id}
+            key={modal.id}
+            active={modal.active}
+            fullscreen={modal.isFullScreen}
+            title="Editor"
+          />
+        );
+      }
+
       if (modal.type === "terminal") {
         return (
           <Terminal
