@@ -97,7 +97,7 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
   const openEditor = React.useCallback(
     (path: FileTreeNode) => {
       const editorModal: ModalProps = {
-        id: "editor",
+        id: crypto.getRandomValues(new Uint32Array(3))[0].toFixed(0),
         title: path.name,
         active: true,
         isFullScreen: false,

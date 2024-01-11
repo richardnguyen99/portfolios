@@ -74,6 +74,9 @@ const Editor: React.FC<Props> = ({
             highlightActiveBracketPair: true,
           },
           renderFinalNewline: "dimmed",
+          rulers: [80],
+          wordWrapColumn: 80,
+          wordWrap: "wordWrapColumn",
         }}
         beforeMount={(monaco) => {
           monaco.editor.defineTheme("my-theme", {
