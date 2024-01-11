@@ -77,6 +77,7 @@ const Editor: React.FC<Props> = ({
           rulers: [80],
           wordWrapColumn: 80,
           wordWrap: "wordWrapColumn",
+          fontFamily: "Menlo, Monaco, Consolas, 'Courier New', monospace",
         }}
         beforeMount={(monaco) => {
           monaco.editor.defineTheme("my-theme", {
@@ -87,6 +88,8 @@ const Editor: React.FC<Props> = ({
               "editorSuggestWidget.border": twColors.gray[600],
               "editorSuggestWidget.selectedBackground": twColors.sky[700],
               "list.hoverBackground": "#0284c75f", // twColors.sky[700] with 37% opacity,
+              "quickInput.background": twColors.gray[800],
+              "input.background": twColors.gray[700],
               "editor.lineHighlightBackground": "#374151",
               "editor.lineHighlightBorder": "#374151",
               "editorCursor.foreground": "#f1f5f9",

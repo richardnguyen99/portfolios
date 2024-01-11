@@ -13,7 +13,7 @@ const _monacoEditorHelp = () => {
 
   return "Usage: code [OPTION] [DIR]\n\
 \n\
-Open the \n\
+Open the Monaco Editor.\n\
 \n\
 Options:\n\
       --help                display this help and exit.\n\
