@@ -138,8 +138,39 @@ Try 'code --help' for more information.\n";
   const file = pathList[pathList.length - 1];
   const child = currentDir.children.find((child) => child.name === file);
 
-  if (!child) {
-    return `code: cannot open '${file}': No such file or directory\n`;
+  if (typeof child === "undefined") {
+    if (file === ".") {
+      return `code: cannot open '${file}': Is a directory\n`;
+    }
+
+    if (file === "..") {
+      return `code: cannot open '${file}': Is a directory\n`;
+    }
+
+    if (currentDir.writePermission === false) {
+      return `code: cannot open '${file}': Permission denied\n`;
+    }
+
+    const newFile: FileTreeNode = {
+      id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
+      name: file,
+      type: "file",
+      parent: currentDir,
+      children: [],
+      content: "",
+      accessedAt: new Date(),
+      updatedAt: new Date(),
+      createdAt: new Date(),
+      writePermission: true,
+      readPermission: true,
+      executePermission: false,
+    };
+
+    currentDir.children.push(newFile);
+
+    _sysCall.openEditor(newFile);
+
+    return undefined;
   }
 
   if (child.type === "folder") {

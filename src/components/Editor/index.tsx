@@ -39,18 +39,46 @@ const Editor: React.FC<Props> = ({
       return "typescript";
     }
 
+    if (extension === "tsx") {
+      return "typescriptreact";
+    }
+
+    if (extension === "jsx") {
+      return "javascriptreact";
+    }
+
+    if (extension === "css") {
+      return "css";
+    }
+
+    if (extension === "scss") {
+      return "scss";
+    }
+
+    if (extension === "html") {
+      return "html";
+    }
+
+    if (extension === "json") {
+      return "json";
+    }
+
+    if (extension === "c") {
+      return "c";
+    }
+
     return "plaintext";
   }, [title]);
 
   const getTitle = React.useCallback(() => {
-    const defaultFileName = file?.name ?? "Editor";
+    const defaultFileName = title ?? "Editor";
 
     if (file?.writePermission === false) {
-      return `${defaultFileName} (read-only)`;
+      return `${title} (read-only)`;
     }
 
     return defaultFileName;
-  }, [file?.name, file?.writePermission]);
+  }, [file?.writePermission, title]);
 
   return (
     <Window
