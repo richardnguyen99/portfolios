@@ -15,6 +15,7 @@ const Editor: React.FC<Props> = ({
   id,
   initialText = "",
   file,
+  readOnly = false,
   ...rest
 }) => {
   const editorRef = React.useRef<EditorAPI.IStandaloneCodeEditor | null>(null);
@@ -41,11 +42,21 @@ const Editor: React.FC<Props> = ({
     return "plaintext";
   }, [title]);
 
+  const getTitle = React.useCallback(() => {
+    const defaultFileName = file?.name ?? "Editor";
+
+    if (file?.writePermission === false) {
+      return `${defaultFileName} (read-only)`;
+    }
+
+    return defaultFileName;
+  }, [file?.name, file?.writePermission]);
+
   return (
     <Window
       id={id}
       active={active}
-      title={title}
+      title={getTitle()}
       fullscreen={fullscreen}
       initialSize={{ width: 1024, height: 768 }}
       initialPosition={{ x: 80, y: 80 }}
@@ -125,6 +136,10 @@ const Editor: React.FC<Props> = ({
 
           monaco.editor.setTheme("my-theme");
           monaco.editor.setModelLanguage(model!, getLanguageId());
+
+          editor.updateOptions({
+            readOnly: file?.writePermission === false || readOnly,
+          });
 
           editor.onKeyDown((e) => {
             if (e.keyCode === monaco.KeyCode.KeyS && (e.ctrlKey || e.metaKey)) {
