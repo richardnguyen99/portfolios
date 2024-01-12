@@ -11,6 +11,7 @@ import touch from "@commands/touch";
 import rm from "@commands/rm";
 import concat from "@commands/cat";
 import help from "@commands/help";
+import monacoEditor from "@commands/code";
 
 const COMMANDS = {
   "ls": listDir,
@@ -23,6 +24,7 @@ const COMMANDS = {
   "rm": rm,
   "cat": concat,
   "help": help,
+  "code": monacoEditor
 }
 
 const exec = (cmdStr: string, sysCall: SystemCommand, currentDir: FileTreeNode) => {

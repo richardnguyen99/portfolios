@@ -8,6 +8,7 @@ export type SystemCommand = {
   exitTerminal: () => void;
   getFileTreeRoot: () => FileTreeNode;
   changeDirectory: (path?: FileTreeNode | string) => void;
+  openEditor: (path: FileTreeNode) => void;
 }
 
 export type TerminalContextType = {

@@ -5,25 +5,23 @@ import type { FileTreeNode } from "@contexts/FileTree/type";
 
 const VERSION = "0.0.1";
 const AUTHOR = "Richard H. Nguyen";
-const SOURCE = "https://github.com/richardnguyen99/portfolios/tree/main/src/commands/touch.ts";
-const SUPPORTED_OPTIONS = ["help", "version", "no-create"];
-const SUPPORTED_ALIASES = {
-  "no-create": ["c"],
-};
+const SOURCE = "https://github.com/richardnguyen99/portfolios/tree/main/src/commands/code.ts";
+const SUPPORTED_OPTIONS = ["help", "version",];
+const SUPPORTED_ALIASES = {};
 
-const _touchHelp = () => {
+const _monacoEditorHelp = () => {
 
-  return "Usage: touch [OPTION]... FILE...\n\
+  return "Usage: code [OPTION] [DIR]\n\
 \n\
-Update the access and modification times of each FILE to the current time\n\
+Open the Monaco Editor.\n\
 \n\
 Options:\n\
-      --help        display this help and exit\n\
-      --version     output version information and exit\n";
+      --help                display this help and exit.\n\
+      --version             output version information and exit.\n";
 }
 
-const _touchVersion = () => {
-  return `touch (portfoli-os) ${VERSION}\n\
+const _monacoEditorVersion = () => {
+  return `code (portfoli-os) ${VERSION}\n\
 This is free software: you are free to change and redistribute it.\n\
 A copy of this command can found at:\n\
 \n\
@@ -32,7 +30,7 @@ A copy of this command can found at:\n\
 Written by ${AUTHOR}.\n`;
 }
 
-const touch = (
+const monacoEditor = (
   args: string[],
   _sysCall: SystemCommand,
   _currentDir: FileTreeNode
@@ -42,17 +40,16 @@ const touch = (
   let showError = false;
   let showHelp = false;
   let showVersion = false;
-  let noCreate = false;
 
   const argv: ParsedArgs = minimist(args, {
-    stopEarly: true,
+
     boolean: SUPPORTED_OPTIONS,
     alias: SUPPORTED_ALIASES,
     unknown: (arg) => {
       if (arg.startsWith("-")) {
         ans = `\
-touch: invalid option -- '${arg.slice(1)}'\n\
-Try 'touch --help' for more information.\n`;
+code: invalid option -- '${arg.slice(1)}'\n\
+Try 'code --help' for more information.\n`;
         showError = true;
         return false;
       }
@@ -75,9 +72,6 @@ Try 'touch --help' for more information.\n`;
         case "version":
           showVersion = true;
           break;
-        case "no-create":
-          noCreate = true;
-          break;
         default: break;
       }
     }
@@ -85,14 +79,18 @@ Try 'touch --help' for more information.\n`;
 
 
   if (showHelp)
-    return _touchHelp();
+    return _monacoEditorHelp();
 
   if (showVersion)
-    return _touchVersion();
+    return _monacoEditorVersion();
+
+  if (!argv._.length) {
+    return undefined;
+  }
 
   if (argv._.length === 0) {
-    ans = "touch: missing file operand\n\
-Try 'touch --help' for more information.\n";
+    ans = "code: missing file operand\n\
+Try 'code --help' for more information.\n";
 
     return ans;
   }
@@ -100,8 +98,8 @@ Try 'touch --help' for more information.\n";
   const pathList = argv._[0].split("/").filter((path) => path !== "");
 
   if (pathList.length === 0) {
-    ans = "touch: missing file operand\n\
-Try 'touch --help' for more information.\n";
+    ans = "code: missing file operand\n\
+Try 'code --help' for more information.\n";
 
     return ans;
   }
@@ -126,13 +124,13 @@ Try 'touch --help' for more information.\n";
 
     if (child) {
       if (child.type === "file") {
-        ans = `touch: cannot touch '${path}': Not a directory\n`;
+        ans = `code: cannot open '${path}': Not a directory\n`;
         return ans;
       }
 
       currentDir = child;
     } else {
-      ans = `touch: cannot touch '${path}': No such file or directory\n`;
+      ans = `touch: cannot open '${path}': No such file or directory\n`;
       return ans;
     }
   }
@@ -140,38 +138,50 @@ Try 'touch --help' for more information.\n";
   const file = pathList[pathList.length - 1];
   const child = currentDir.children.find((child) => child.name === file);
 
-  if (child) {
-    child.accessedAt = new Date();
-  }
-  else {
-    if (noCreate) {
-      return ans;
+  if (typeof child === "undefined") {
+    if (file === ".") {
+      return `code: cannot open '${file}': Is a directory\n`;
     }
 
-    if (!currentDir.writePermission) {
-      ans = `touch: cannot touch '${file}': Permission denied\n`;
-      return ans;
+    if (file === "..") {
+      return `code: cannot open '${file}': Is a directory\n`;
+    }
+
+    if (currentDir.writePermission === false) {
+      return `code: cannot open '${file}': Permission denied\n`;
     }
 
     const newFile: FileTreeNode = {
+      id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
       name: file,
       type: "file",
       parent: currentDir,
-      executePermission: false,
-      readPermission: true,
-      writePermission: true,
-      id: crypto.getRandomValues(new Uint32Array(2))[0].toFixed(0),
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      children: [],
+      content: "",
       accessedAt: new Date(),
-      children: []
+      updatedAt: new Date(),
+      createdAt: new Date(),
+      writePermission: true,
+      readPermission: true,
+      executePermission: false,
     };
 
     currentDir.children.push(newFile);
+
+    _sysCall.openEditor(newFile);
+
+    return undefined;
   }
 
-  return ans;
+  if (child.type === "folder") {
+    return `code: cannot open '${file}': Is a directory\n`;
+  }
+
+  _sysCall.openEditor(child);
+
+  return undefined;
 };
 
-export default touch;
+export default monacoEditor;
+
 
