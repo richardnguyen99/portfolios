@@ -78,7 +78,13 @@ const Editor: React.FC<Props> = ({
     }
 
     return defaultFileName;
-  }, [file?.writePermission, title]);
+  }, [file, title]);
+
+  React.useEffect(() => {
+    if (file) {
+      file.accessedAt = new Date();
+    }
+  }, [file]);
 
   return (
     <Window
@@ -150,7 +156,7 @@ const Editor: React.FC<Props> = ({
         onChange={(_value, _event) => {
           setSaved((prev) => {
             if (prev === true) {
-              setTitle((prev) => `${prev} *`);
+              setTitle((prev) => `${prev} (unsaved)`);
             }
 
             return false;
@@ -196,6 +202,7 @@ const Editor: React.FC<Props> = ({
               // Save the file
               if (file) {
                 file.content = model?.getValue() ?? "";
+                file.updatedAt = new Date();
               }
 
               setSaved(true);

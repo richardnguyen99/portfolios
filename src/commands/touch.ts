@@ -141,8 +141,7 @@ Try 'touch --help' for more information.\n";
   const child = currentDir.children.find((child) => child.name === file);
 
   if (child) {
-    // TODO: Update last modified
-    // child.lastModified = new Date();
+    child.accessedAt = new Date();
   }
   else {
     if (noCreate) {
