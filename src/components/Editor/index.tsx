@@ -4,6 +4,7 @@ import twColors from "tailwindcss/colors";
 import { editor as EditorAPI } from "monaco-editor/esm/vs/editor/editor.api";
 
 import { Window } from "@components";
+import useLocalStorage from "@hooks/useLocalStorage";
 import type { EditorProps } from "./type";
 
 type Props = EditorProps & React.HTMLAttributes<HTMLDivElement>;
@@ -18,11 +19,11 @@ const Editor: React.FC<Props> = ({
   readOnly = false,
   ...rest
 }) => {
+  const [text, setText] = useLocalStorage<string>(`file-${id}`, initialText);
   const editorRef = React.useRef<EditorAPI.IStandaloneCodeEditor | null>(null);
 
   const [title, setTitle] = React.useState(initialTitle);
   const [, setSaved] = React.useState(true);
-  const [text, setText] = React.useState(initialText);
 
   const getLanguageId = React.useCallback(() => {
     const extension = title.split(".").pop() ?? "";
@@ -161,7 +162,7 @@ const Editor: React.FC<Props> = ({
 
             return false;
           });
-          setText((prev) => _value ?? prev);
+          // setText((prev: string) => _value ?? prev);
         }}
         onMount={(editor, monaco) => {
           const model = editor.getModel();
@@ -203,6 +204,8 @@ const Editor: React.FC<Props> = ({
               if (file) {
                 file.content = model?.getValue() ?? "";
                 file.updatedAt = new Date();
+
+                setText(model?.getValue() ?? "");
               }
 
               setSaved(true);

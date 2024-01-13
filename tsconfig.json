@@ -24,6 +24,12 @@
     /* Path aliases */
     "baseUrl": "./src",
     "paths": {
+      "@hooks": [
+        "hooks"
+      ],
+      "@hooks/*": [
+        "hooks/*"
+      ],
       "@commands": [
         "commands"
       ],

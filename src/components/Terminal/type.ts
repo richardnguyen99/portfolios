@@ -9,6 +9,7 @@ export type SystemCommand = {
   getFileTreeRoot: () => FileTreeNode;
   changeDirectory: (path?: FileTreeNode | string) => void;
   openEditor: (path: FileTreeNode) => void;
+  createNewFile: (path: FileTreeNode, name: string) => void;
 }
 
 export type TerminalContextType = {

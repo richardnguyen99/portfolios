@@ -151,24 +151,9 @@ Try 'code --help' for more information.\n";
       return `code: cannot open '${file}': Permission denied\n`;
     }
 
-    const newFile: FileTreeNode = {
-      id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
-      name: file,
-      type: "file",
-      parent: currentDir,
-      children: [],
-      content: "",
-      accessedAt: new Date(),
-      updatedAt: new Date(),
-      createdAt: new Date(),
-      writePermission: true,
-      readPermission: true,
-      executePermission: false,
-    };
+    _sysCall.createNewFile(currentDir, file);
 
-    currentDir.children.push(newFile);
-
-    _sysCall.openEditor(newFile);
+    _sysCall.openEditor(currentDir.children[currentDir.children.length - 1]);
 
     return undefined;
   }

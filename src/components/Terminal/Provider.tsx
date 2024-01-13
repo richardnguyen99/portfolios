@@ -13,7 +13,7 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
   children,
 }) => {
   const { closeModal, addModal } = useModal();
-  const { getHomeFolder, getRootFolder } = useFileTree();
+  const { getHomeFolder, getRootFolder, addFile } = useFileTree();
 
   const [currentFolder, setCurrentFolder] = React.useState({
     previous: getHomeFolder(),
@@ -97,7 +97,7 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
   const openEditor = React.useCallback(
     (path: FileTreeNode) => {
       const editorModal: ModalProps = {
-        id: crypto.getRandomValues(new Uint32Array(3))[0].toFixed(0),
+        id: path.id,
         title: path.name,
         active: true,
         isFullScreen: false,
@@ -111,6 +111,13 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
     [addModal],
   );
 
+  const createNewFile = React.useCallback(
+    (parentNode: FileTreeNode, filename: string) => {
+      addFile(parentNode, filename);
+    },
+    [addFile],
+  );
+
   const systemCalls = React.useMemo<SystemCommand>(
     () => ({
       getFileTreeRoot,
@@ -118,8 +125,16 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
       clearBuffer,
       exitTerminal,
       openEditor,
+      createNewFile,
     }),
-    [getFileTreeRoot, changeDirectory, clearBuffer, exitTerminal, openEditor],
+    [
+      getFileTreeRoot,
+      changeDirectory,
+      clearBuffer,
+      exitTerminal,
+      openEditor,
+      createNewFile,
+    ],
   );
 
   const execute = React.useCallback(
