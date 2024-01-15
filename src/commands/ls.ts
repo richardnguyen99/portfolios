@@ -3,7 +3,7 @@ import minimist, { ParsedArgs } from "minimist";
 import type { SystemCommand } from "@components/Terminal/type";
 import type { FileTreeNode } from "@contexts/FileTree/type";
 
-const VERSION = "0.0.2";
+const VERSION = "0.0.3";
 const AUTHOR = "Richard H. Nguyen";
 const SOURCE =
   "https://github.com/richardnguyen99/portfolios/tree/main/src/commands/ls.ts";
@@ -55,7 +55,7 @@ const bestDimensions = (numItems: number, numColumns: number) => {
   let numFilledRows = Math.floor(numItems / numColumns);
   let lastRowItems = numItems % numColumns;
 
-  while (lastRowItems < numFilledCols - 1) {
+  while (numFilledRows > 0 && lastRowItems < numFilledCols - 1) {
     numFilledCols--;
 
     const totalLastRowItems = lastRowItems + numFilledRows;
@@ -72,6 +72,35 @@ const bestDimensions = (numItems: number, numColumns: number) => {
   }
 
   return { numFilledCols, numFilledRows };
+};
+
+const getFinalDestion = (
+  pathList: string[],
+  currentDir: FileTreeNode,
+): FileTreeNode => {
+  let finalDir = currentDir;
+
+  for (const path of pathList) {
+    if (path === "." || path === "") continue;
+
+    if (path === "..") {
+      finalDir = finalDir && finalDir.parent ? finalDir.parent : finalDir;
+    } else {
+      const child = finalDir.children.find((child) => child.name === path);
+
+      if (!child) {
+        throw new Error(`portfoli-os: ls: ${path}: No such file or directory`);
+      }
+
+      if (child.type !== "folder") {
+        throw new Error(`portfoli-os: ls: ${path}: Not a directory`);
+      }
+
+      finalDir = child;
+    }
+  }
+
+  return finalDir;
 };
 
 const listDir = (
@@ -133,8 +162,29 @@ Try 'ls --help' for more information.\n`;
     return ans;
   }
 
-  const children = currentDir.children
-    .map((child) => child)  // Clone the children array
+  let finalDir = null;
+  let pathList: string[] = [];
+  let startDir = currentDir;
+
+  if (argv._.length > 0) {
+
+    pathList = argv._[0].trim().split("/").filter((path) => path !== "." && path !== "");
+    if (argv._[0].startsWith("/")) {
+      startDir = sysCall.getFileTreeRoot();
+    } else if (argv._[0].startsWith("~")) {
+      startDir = sysCall.getFileTreeHome();
+      pathList = pathList.slice(1);
+    }
+  }
+
+  try {
+    finalDir = getFinalDestion(pathList, startDir);
+  } catch (err) {
+    return (err as Error).message;
+  }
+
+  const children = finalDir.children
+    .map((child) => child) // Clone the children array
     .sort((a, b) => a.name.localeCompare(b.name));
 
   if (showAll) {

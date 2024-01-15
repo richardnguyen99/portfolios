@@ -7,6 +7,7 @@ export type SystemCommand = {
   clearBuffer: () => void;
   exitTerminal: () => void;
   getFileTreeRoot: () => FileTreeNode;
+  getFileTreeHome: () => FileTreeNode;
   changeDirectory: (path?: FileTreeNode | string) => void;
   openEditor: (path: FileTreeNode) => void;
   createNewFile: (path: FileTreeNode, name: string) => void;

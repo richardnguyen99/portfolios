@@ -30,6 +30,10 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
     return getRootFolder();
   }, [getRootFolder]);
 
+  const getFileTreeHome = React.useCallback(() => {
+    return getHomeFolder();
+  }, [getHomeFolder]);
+
   const addBuffer = React.useCallback((newBuffer: string) => {
     setBuffer((prevBuffer) => [...prevBuffer, newBuffer]);
   }, []);
@@ -170,6 +174,7 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
   const systemCalls = React.useMemo<SystemCommand>(
     () => ({
       getFileTreeRoot,
+      getFileTreeHome,
       changeDirectory,
       clearBuffer,
       exitTerminal,
@@ -181,6 +186,7 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
     }),
     [
       getFileTreeRoot,
+      getFileTreeHome,
       changeDirectory,
       clearBuffer,
       exitTerminal,
