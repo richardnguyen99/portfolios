@@ -38,16 +38,14 @@ const formatStyleFileNode = (node: FileTreeNode): string => {
 
   if (type === "folder") {
     return `\
-<span>\
 <span class="[[x-data-active-tab='true']_&]:text-blue-400 [[x-data-active-tab='false']_&]:text-blue-400/50">${name}</span>\
-<span class="[[x-data-active-tab='true']_&]:text-white [[x-data-active-tab='false']_&]:text-slate-400">/</span>\
-</span>`;
+<span class="[[x-data-active-tab='true']_&]:text-white [[x-data-active-tab='false']_&]:text-slate-400">/</span>
+`;
   }
 
   return `\
-<span>\
-<span class="[[x-data-active-tab='true']_&]:text-white [[x-data-active-tab='false']_&]:text-slate-400">${name}</span>\
-</span>`;
+<span class="[[x-data-active-tab='true']_&]:text-white [[x-data-active-tab='false']_&]:text-slate-400">${name}</span>
+`;
 };
 
 const bestDimensions = (numItems: number, numColumns: number) => {
@@ -239,31 +237,52 @@ Try 'ls --help' for more information.\n`;
 
   // Calculate the width of the table based on the number of columns and the
   // maximum length of the file name in pixels.
-  const tableWidth = numFilledCols * (maxLength + 2) * maxLetterWidth;
 
   let childIdx = 0;
-  let cols = "";
+  let cols = 0;
+  const rows: string[][] = [];
+
+  for (let i = 0; i < numFilledRows; i++) {
+    rows.push([]);
+  }
 
   // Build columns
   for (let i = 0; i < numFilledCols && childIdx < children.length; i++) {
-    let rows = "";
 
     // Build rows
     for (let j = 0; j < numFilledRows && childIdx < children.length; j++) {
       const child = formatStyleFileNode(children[childIdx]);
-      rows += child;
+      rows[j].push(child);
+
       childIdx++;
     }
 
-    cols += `\
-<div class="flex flex-col" style="width: ${(1 / numFilledCols) * 100}%">\
-${rows}\
-</div>`;
+    cols++;
   }
 
+  const tableWidth = cols * (maxLength + 2) * maxLetterWidth;
+
+  // Build table
+  const cells = rows.reduce((acc, row) => {
+    const rowContent = row.reduce((acc, cell) => {
+      return `${acc}\
+<div style="width: ${1 / cols * 100}%">\
+${cell}\
+</div>`;
+    }, "");
+
+    return `${acc}\
+<div class="w-full">\
+<div class="flex flex-row flex-wrap" style="width: ${tableWidth}px">\
+${rowContent}\
+</div>\
+</div>`;
+  }, "");
+
+
   const table = `\
-<div class="flex" style="width: ${tableWidth}px">\
-${cols}\
+<div class="relative break-words w-full">\
+${cells}\
 </div>`;
 
   return table;

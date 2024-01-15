@@ -12,6 +12,7 @@ import exit from "./exit";
 
 import type { SystemCommand } from "@components/Terminal/type";
 import type { FileTreeNode } from "@contexts/FileTree/type";
+import monacoEditor from "./code";
 
 const VERSION = "0.0.1";
 const AUTHOR = "Richard H. Nguyen";
@@ -145,6 +146,10 @@ Try 'help --help' for more information.\n`;
 
   if (command === "exit") {
     return exit(["--help"], sysCall, currentDir);
+  }
+
+  if (command === "code") {
+    return monacoEditor(["--help"], sysCall, currentDir);
   }
 
   ans = `help: '${command}' is not a command.\n`;
