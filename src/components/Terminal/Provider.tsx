@@ -30,6 +30,10 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
     return getRootFolder();
   }, [getRootFolder]);
 
+  const getFileTreeHome = React.useCallback(() => {
+    return getHomeFolder();
+  }, [getHomeFolder]);
+
   const addBuffer = React.useCallback((newBuffer: string) => {
     setBuffer((prevBuffer) => [...prevBuffer, newBuffer]);
   }, []);
@@ -118,22 +122,79 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
     [addFile],
   );
 
+  const getCharacterSize = React.useCallback(() => {
+    const terminalId = document.querySelector(`[x-data-window-id="${id}"]`);
+    const terminalCaret = terminalId
+      ?.querySelector("#text")
+      ?.querySelector("span");
+
+    const rect = terminalCaret?.getBoundingClientRect();
+    if (rect) {
+      return {
+        width: rect.width,
+        height: rect.height,
+      };
+    }
+
+    return {
+      width: 0,
+      height: 0,
+    };
+  }, [id]);
+
+  const getWindowSize = React.useCallback(() => {
+    const terminalId = document.querySelector(`[x-data-window-id="${id}"]`);
+    const windowContent = terminalId?.querySelector("#window-content");
+
+    if (windowContent) {
+      return {
+        width: windowContent.clientWidth,
+        height: windowContent.clientHeight,
+      };
+    }
+
+    return {
+      width: 0,
+      height: 0,
+    };
+  }, [id]);
+
+  const getTerminalSize = React.useCallback(() => {
+    const windowSize = getWindowSize();
+    const characterSize = getCharacterSize();
+
+    return {
+      width: Math.floor(windowSize.width / characterSize.width),
+      height: Math.floor(windowSize.height / characterSize.height),
+    };
+
+    // convert px to ch units
+  }, [getCharacterSize, getWindowSize]);
+
   const systemCalls = React.useMemo<SystemCommand>(
     () => ({
       getFileTreeRoot,
+      getFileTreeHome,
       changeDirectory,
       clearBuffer,
       exitTerminal,
       openEditor,
       createNewFile,
+      getWindowSize,
+      getTerminalSize,
+      getCharacterSize,
     }),
     [
       getFileTreeRoot,
+      getFileTreeHome,
       changeDirectory,
       clearBuffer,
       exitTerminal,
       openEditor,
       createNewFile,
+      getWindowSize,
+      getTerminalSize,
+      getCharacterSize,
     ],
   );
 
@@ -174,6 +235,7 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
       displayPrompt,
       setPrompt,
       getWindowId,
+      getWindowSize,
     }),
     [
       addBuffer,
@@ -183,6 +245,7 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
       setPrompt,
       renderBuffer,
       getWindowId,
+      getWindowSize,
     ],
   );
 
