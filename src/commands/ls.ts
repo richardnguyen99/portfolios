@@ -39,14 +39,14 @@ const formatStyleFileNode = (node: FileTreeNode): string => {
   if (type === "folder") {
     return `\
 <span>\
-<span class="text-blue-400">${name}</span>\
-<span class="text-white">/</span>\
+<span class="[[x-data-active-tab='true']_&]:text-blue-400 [[x-data-active-tab='false']_&]:text-blue-400/50">${name}</span>\
+<span class="[[x-data-active-tab='true']_&]:text-white [[x-data-active-tab='false']_&]:text-slate-400">/</span>\
 </span>`;
   }
 
   return `\
 <span>\
-<span class="text-white">${name}</span>\
+<span class="[[x-data-active-tab='true']_&]:text-white [[x-data-active-tab='false']_&]:text-slate-400">${name}</span>\
 </span>`;
 };
 
