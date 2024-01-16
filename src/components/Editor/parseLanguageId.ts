@@ -41,6 +41,10 @@ const parseLanguageId = (title: string) => {
     return "c";
   }
 
+  if (extension === "py") {
+    return "python";
+  }
+
   return "plaintext";
 };
 

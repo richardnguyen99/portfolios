@@ -3,11 +3,11 @@ import * as MonacoEditor from "@monaco-editor/react";
 import twColors from "tailwindcss/colors";
 import { editor as EditorAPI } from "monaco-editor/esm/vs/editor/editor.api";
 
+import type { EditorProps } from "./type";
+import parseLanguageId from "./parseLanguageId";
 import { Window } from "@components";
 import useLocalStorage from "@hooks/useLocalStorage";
-import type { EditorProps } from "./type";
 import useTheme from "@contexts/Theme/useTheme";
-import parseLanguageId from "./parseLanguageId";
 
 type Props = EditorProps & React.HTMLAttributes<HTMLDivElement>;
 
@@ -122,9 +122,11 @@ const Editor: React.FC<Props> = ({
               "scrollbar.shadow":
                 theme === "dark" ? twColors.gray[800] : twColors.gray[200],
               "scrollbarSlider.background":
-                theme === "dark" ? twColors.gray[700] : twColors.gray[200],
+                theme === "dark" ? "#37415180" : twColors.gray[200],
               "scrollbarSlider.hoverBackground":
-                theme === "dark" ? twColors.gray[600] : twColors.gray[300],
+                theme === "dark" ? "#374151bf" : twColors.gray[300],
+              "scrollbarSlider.activeBackground":
+                theme === "dark" ? "#374151ff" : twColors.gray[400],
             },
             inherit: true,
             rules: [
