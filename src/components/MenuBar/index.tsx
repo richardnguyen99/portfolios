@@ -19,6 +19,7 @@ const MenuBar: React.FC = () => {
         "select-none",
         "dark:bg-gray-950 dark:text-gray-100",
         "bg-slate-50 text-slate-900",
+        "z-[9999]",
       )}
     >
       <div className="flex items-center">

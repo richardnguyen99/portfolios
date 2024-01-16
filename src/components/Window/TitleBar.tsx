@@ -38,12 +38,15 @@ const TitleBar = React.forwardRef<HTMLDivElement, Props>(
           "relative",
           "flex items-center justify-between",
           "px-2 py-1",
-          "border-b border-gray-700",
+          "border-b ",
           "rounded-t-lg",
           "select-none",
+          "border-gray-300 dark:border-gray-700",
           {
-            "bg-gray-900/20 text-slate-400": !active,
-            "bg-gray-900/60 text-slate-100": active,
+            "dark:bg-gray-900/20 dark:text-slate-400": !active,
+            "dark:bg-gray-900/60 dark:text-slate-100": active,
+            "bg-gray-300/80 text-slate-900": active,
+            "bg-gray-300/50 text-slate-500": !active,
           },
         )}
       >

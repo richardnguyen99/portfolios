@@ -11,9 +11,11 @@ const Caret: React.FC<{
     typeof children === "undefined" ? (
       <span
         x-data-caret={blinked.toString()}
-        className={clsx("inline h-max", "text-slate-100 bg-slate-100", {
-          "text-slate-800 bg-slate-800": blinked,
-          "text-slate-100 bg-slate-100": !blinked,
+        className={clsx("inline h-max", {
+          "dark:text-slate-800 dark:bg-slate-800": blinked,
+          "dark:text-slate-100 dark:bg-slate-100": !blinked,
+          "text-gray-200 bg-slate-200": blinked,
+          "text-slate-800 bg-slate-800": !blinked,
         })}
       >
         C
@@ -21,9 +23,11 @@ const Caret: React.FC<{
     ) : (
       <span
         x-data-caret={blinked.toString()}
-        className={clsx("inline h-max", "text-slate-100 bg-slate-100", {
-          "text-slate-100 bg-slate-800": blinked,
-          "text-slate-800 bg-slate-100": !blinked,
+        className={clsx("inline h-max", {
+          "dark:text-slate-100 dark:bg-slate-800": blinked,
+          "dark:text-slate-800 dark:bg-slate-100": !blinked,
+          "text-slate-800 bg-slate-200": blinked,
+          "text-slate-200 bg-slate-800": !blinked,
         })}
       >
         {children}

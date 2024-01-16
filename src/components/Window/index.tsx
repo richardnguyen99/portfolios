@@ -120,12 +120,17 @@ const Window: React.FC<Props> = ({
         "absolute flex flex-col",
         "rounded-lg",
         "overflow-clip",
-        "border border-gray-700",
+        "border",
+        "border-gray-300 dark:border-gray-700",
         {
-          "bg-gray-800 text-slate-100": active,
-          "bg-slate-800 text-slate-400": !active,
-          "shadow-[0_22px_70px_4px_rgba(0,_0,_0,_0.56)]": active,
-          "shadow-[0_22px_70px_4px_rgba(0,_0,_0,_0.16)]": !active,
+          "dark:bg-gray-800 dark:text-slate-100": active,
+          "dark:bg-slate-800 dark:text-slate-400": !active,
+          "dark:shadow-[0_22px_70px_4px_rgba(0,_0,_0,_0.56)]": active,
+          "dark:shadow-[0_22px_70px_4px_rgba(0,_0,_0,_0.16)]": !active,
+          "bg-gray-200 text-slate-900": active,
+          "bg-gray-200 text-gray-600": !active,
+          "shadow-[0_22px_70px_4px_rgba(50,_50,_50,_0.56)]": active,
+          "shadow-[0_22px_70px_4px_rgba(0,_0,_0,_0.06)]": !active,
         },
       )}
     >
