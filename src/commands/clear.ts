@@ -5,12 +5,16 @@ import type { FileTreeNode } from "@contexts/FileTree/type";
 
 const VERSION = "0.0.1";
 const AUTHOR = "Richard H. Nguyen";
-const SOURCE = "https://github.com/richardnguyen99/portfolios/tree/main/src/commands/clear.ts";
+const SOURCE =
+  "https://github.com/richardnguyen99/portfolios/tree/main/src/commands/clear.ts";
 const SUPPORTED_OPTIONS = ["help", "version"];
-const SUPPORTED_ALIASES = {
-};
+const SUPPORTED_ALIASES = {};
 
-const clear = (args: string[], sysCall: SystemCommand, _currentDir?: FileTreeNode): string | undefined => {
+const clear = (
+  args: string[],
+  sysCall: SystemCommand,
+  _currentDir?: FileTreeNode,
+): string | undefined => {
   const { clearBuffer } = sysCall;
 
   let ans = "";
@@ -31,7 +35,7 @@ Try 'clear --help' for more information.\n`;
       }
 
       return true;
-    }
+    },
   });
 
   if (showError) {
@@ -47,30 +51,29 @@ Try 'clear --help' for more information.\n`;
         case "version":
           showVersion = true;
           break;
-        default: break;
+        default:
+          break;
       }
     }
   }
 
-
   if (showHelp) {
-    ans += "Usage: clear [OPTIONS]...\n\
+    ans +=
+      "Usage: clear [OPTIONS]...\n\
 \n\
 Clear the terminal buffer.\n\
 \n\
       --help                display this help and exit.\n\
       --version             output version information and exit.\n";
-
   } else if (showVersion) {
     ans += `clear (portfoli-os) ${VERSION}\n\
 This is free software: you are free to change and redistribute it.\n\
 A copy of this command can found at:\n\
 \n\
-<a href="${SOURCE}" target="_blank" rel="noreferrer" class="underline font-black text-white">${SOURCE}</a>\n\
+<a href="${SOURCE}" target="_blank" rel="noreferrer" class="underline font-black dark:text-white text-black">${SOURCE}</a>\n\
 \n\
 Written by ${AUTHOR}.\n`;
   } else {
-
     clearBuffer();
   }
 

@@ -28,7 +28,7 @@ const _listDirVersion = () => {
 This is free software: you are free to change and redistribute it.\n\
 A copy of this command can found at:\n\
 \n\
-<a href="${SOURCE}" target="_blank" rel="noreferrer" class="underline font-black text-white">${SOURCE}</a>\n\
+<a href="${SOURCE}" target="_blank" rel="noreferrer" class="underline font-black dark:text-white text-black">${SOURCE}</a>\n\
 \n\
 Written by ${AUTHOR}.\n`;
 };
@@ -51,13 +51,23 @@ const formatStyleFileNode = (
       .map(
         (letter) => `\
 <span \
-class="[[x-data-active-tab='true']_&]:text-blue-400 [[x-data-active-tab='false']_&]:text-blue-400/50">\
+class="\
+[[x-data-active-tab='true']_&]:dark:text-blue-400 \
+[[x-data-active-tab='false']_&]:dark:text-blue-400/50 \
+[[x-data-active-tab='true']_&]:text-blue-600 \
+[[x-data-active-tab='false']_&]:text-blue-600/50 \
+">\
 ${letter}\
 </span>`,
       )
       .join("")}\
 <span \
-class="[[x-data-active-tab='true']_&]:text-white [[x-data-active-tab='false']_&]:text-slate-400">\
+class="\
+[[x-data-active-tab='true']_&]:dark:text-white \
+[[x-data-active-tab='false']_&]:dark:text-slate-400 \
+[[x-data-active-tab='true']_&]:text-black \
+[[x-data-active-tab='false']_&]:text-gray-600 \
+">\
 /\
 </span>\
 ${
@@ -76,7 +86,12 @@ ${
     .split("")
     .map(
       (letter) => `\
-<span class="[[x-data-active-tab='true']_&]:text-white [[x-data-active-tab='false']_&]:text-slate-400">${letter}</span>\
+<span class="\
+[[x-data-active-tab='true']_&]:dark:text-white \
+[[x-data-active-tab='false']_&]:dark:text-slate-400 \
+[[x-data-active-tab='true']_&]:text-black \
+[[x-data-active-tab='false']_&]:text-gray-600 \
+">${letter}</span>\
 `,
     )
     .join("")}\

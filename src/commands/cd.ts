@@ -5,48 +5,50 @@ import type { FileTreeNode } from "@contexts/FileTree/type";
 
 const VERSION = "0.0.1";
 const AUTHOR = "Richard H. Nguyen";
-const SOURCE = "https://github.com/richardnguyen99/portfolios/tree/main/src/commands/cd.ts";
-const SUPPORTED_OPTIONS = ["help", "version",];
+const SOURCE =
+  "https://github.com/richardnguyen99/portfolios/tree/main/src/commands/cd.ts";
+const SUPPORTED_OPTIONS = ["help", "version"];
 const SUPPORTED_ALIASES = {};
 
 const _changeDirHelp = () => {
-
-  return "Usage: cd [OPTION] [DIR]\n\
+  return 'Usage: cd [OPTION] [DIR]\n\
 \n\
 Change the current directory to DIR.  The default DIR is the value of the\n\
 is the current directory.\n\
 \n\
-- If DIR begins with a slash <span class=\"font-black text-yellow-500\">(/)</span>,\
+- If DIR begins with a slash <span class="font-black dark:text-yellow-500 text-yellow-600">(/)</span>,\
  then command will redirect to the root of\n\
 the file tree and continue from there.\n\
-- If DIR is <span class=\"font-black text-yellow-500\">(~)</span>, its equivalency\
- in absolute path is <span class=\"font-black text-yellow-500\">(/home/guess)</span>.\n\
-- If DIR is <span class=\"font-black text-yellow-500\">(-)</span>, the command\
+- If DIR is <span class="font-black dark:text-yellow-500 text-yellow-600">(~)</span>, its equivalency\
+ in absolute path is <span class="font-black dark:text-yellow-500 text-yellow-600">(/home/guess)</span>.\n\
+- If DIR is <span class="font-black dark:text-yellow-500 text-yellow-600">(-)</span>, the command\
  will redirect to the previous directory.\n\
-- If DIR is <span class=\"font-black text-yellow-500\">(..)</span>, the command\
+- If DIR is <span class="font-black dark:text-yellow-500 text-yellow-600">(..)</span>, the command\
  will redirect to the parent directory.\n\
 \n\
 Options:\n\
       --help                display this help and exit.\n\
-      --version             output version information and exit.\n";
-}
+      --version             output version information and exit.\n';
+};
 
 const _changeDirVersion = () => {
   return `cd (portfoli-os) ${VERSION}\n\
 This is free software: you are free to change and redistribute it.\n\
 A copy of this command can found at:\n\
 \n\
-<a href="${SOURCE}" target="_blank" rel="noreferrer" class="underline font-black text-white">${SOURCE}</a>\n\
+<a href="${SOURCE}" target="_blank" rel="noreferrer" class="underline font-black dark:text-white text-black">${SOURCE}</a>\n\
 \n\
 Written by ${AUTHOR}.\n`;
-}
+};
 
-const _changeDir = (pathList: string[], currentDir: FileTreeNode): FileTreeNode => {
+const _changeDir = (
+  pathList: string[],
+  currentDir: FileTreeNode,
+): FileTreeNode => {
   let finalDir = currentDir;
 
   for (const path of pathList) {
-    if (path === "." || path === "")
-      continue;
+    if (path === "." || path === "") continue;
 
     if (path === "..") {
       finalDir = finalDir && finalDir.parent ? finalDir.parent : finalDir;
@@ -71,7 +73,7 @@ const _changeDir = (pathList: string[], currentDir: FileTreeNode): FileTreeNode 
 const changeDir = (
   args: string[],
   sysCall: SystemCommand,
-  currentDir: FileTreeNode
+  currentDir: FileTreeNode,
 ): string | undefined => {
   let ans = "";
 
@@ -81,7 +83,6 @@ const changeDir = (
   let changeToPreviousDir = false;
 
   const argv: ParsedArgs = minimist(args, {
-
     boolean: SUPPORTED_OPTIONS,
     alias: SUPPORTED_ALIASES,
     unknown: (arg) => {
@@ -99,9 +100,8 @@ Try 'cd --help' for more information.\n`;
       }
 
       return true;
-    }
+    },
   });
-
 
   if (showError) {
     return ans;
@@ -116,17 +116,15 @@ Try 'cd --help' for more information.\n`;
         case "version":
           showVersion = true;
           break;
-        default: break;
+        default:
+          break;
       }
     }
   }
 
+  if (showHelp) return _changeDirHelp();
 
-  if (showHelp)
-    return _changeDirHelp();
-
-  if (showVersion)
-    return _changeDirVersion();
+  if (showVersion) return _changeDirVersion();
 
   if (changeToPreviousDir) {
     sysCall.changeDirectory("-");
@@ -137,8 +135,10 @@ Try 'cd --help' for more information.\n`;
     return undefined;
   }
 
-
-  const pathList = argv._[0].trim().split("/").filter((path) => path !== "." && path !== "");
+  const pathList = argv._[0]
+    .trim()
+    .split("/")
+    .filter((path) => path !== "." && path !== "");
 
   if (pathList.length === 1 && pathList[0] === "~") {
     sysCall.changeDirectory();
@@ -150,14 +150,12 @@ Try 'cd --help' for more information.\n`;
     return;
   }
 
-
   try {
     const finalDir = argv._[0].startsWith("/")
       ? _changeDir(pathList, sysCall.getFileTreeRoot())
       : _changeDir(pathList, currentDir);
 
-    sysCall.changeDirectory(finalDir)
-
+    sysCall.changeDirectory(finalDir);
   } catch (error) {
     return (error as Error).message;
   }
@@ -166,4 +164,3 @@ Try 'cd --help' for more information.\n`;
 };
 
 export default changeDir;
-

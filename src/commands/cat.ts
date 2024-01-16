@@ -5,12 +5,12 @@ import type { FileTreeNode } from "@contexts/FileTree/type";
 
 const VERSION = "0.0.1";
 const AUTHOR = "Richard H. Nguyen";
-const SOURCE = "https://github.com/richardnguyen99/portfolios/tree/main/src/commands/cat.ts";
+const SOURCE =
+  "https://github.com/richardnguyen99/portfolios/tree/main/src/commands/cat.ts";
 const SUPPORTED_OPTIONS = ["help", "version"];
 const SUPPORTED_ALIASES = {};
 
 const _concatHelp = () => {
-
   return "Usage: cat [OPTION]... [FILE]...\n\
 \n\
 Concatenate FILE(s) to standard output.\n\
@@ -18,21 +18,23 @@ Concatenate FILE(s) to standard output.\n\
 Options:\n\
       --help                display this help and exit.\n\
       --version             output version information and exit.\n";
-}
+};
 
 const _concatVersion = () => {
   return `concat (portfoli-os) ${VERSION}\n\
 This is free software: you are free to change and redistribute it.\n\
 A copy of this command can found at:\n\
 \n\
-<a href="${SOURCE}" target="_blank" rel="noreferrer" class="underline font-black text-white">${SOURCE}</a>\n\
+<a href="${SOURCE}" target="_blank" rel="noreferrer" class="underline font-black dark:text-white text-black">${SOURCE}</a>\n\
 \n\
 Written by ${AUTHOR}.\n`;
-}
+};
 
-
-
-const concat = (args: string[], _sysCall: SystemCommand, _currentDir: FileTreeNode) => {
+const concat = (
+  args: string[],
+  _sysCall: SystemCommand,
+  _currentDir: FileTreeNode,
+) => {
   let ans = "";
 
   let showError = false;
@@ -52,9 +54,8 @@ Try 'cat--help' for more information.\n`;
       }
 
       return true;
-    }
+    },
   });
-
 
   if (showError) {
     return ans;
@@ -69,21 +70,22 @@ Try 'cat--help' for more information.\n`;
         case "version":
           showVersion = true;
           break;
-        default: break;
+        default:
+          break;
       }
     }
   }
 
+  if (showHelp) return _concatHelp();
 
-  if (showHelp)
-    return _concatHelp();
-
-  if (showVersion)
-    return _concatVersion();
+  if (showVersion) return _concatVersion();
 
   if (argv._.length > 0) {
     for (let i = 0; i < argv._.length; i++) {
-      const pathList = argv._[i].trim().split("/").filter((path) => path !== "");
+      const pathList = argv._[i]
+        .trim()
+        .split("/")
+        .filter((path) => path !== "");
 
       let currentNode = _currentDir;
       let breakEarly = false;
@@ -98,7 +100,9 @@ Try 'cat--help' for more information.\n`;
         } else if (path === ".") {
           continue;
         } else {
-          const childNode = currentNode.children.find((child) => child.name === path);
+          const childNode = currentNode.children.find(
+            (child) => child.name === path,
+          );
 
           if (childNode && childNode.type === "folder") {
             currentNode = childNode;
@@ -119,7 +123,9 @@ Try 'cat--help' for more information.\n`;
       }
 
       const filename = pathList[pathList.length - 1];
-      const fileNode = currentNode.children.find((child) => child.name === filename);
+      const fileNode = currentNode.children.find(
+        (child) => child.name === filename,
+      );
 
       if (fileNode && fileNode.type === "file") {
         ans += fileNode.content;
@@ -129,9 +135,7 @@ Try 'cat--help' for more information.\n`;
     }
   }
 
-
   return ans;
 };
 
 export default concat;
-

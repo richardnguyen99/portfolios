@@ -16,12 +16,12 @@ import monacoEditor from "./code";
 
 const VERSION = "0.0.1";
 const AUTHOR = "Richard H. Nguyen";
-const SOURCE = "https://github.com/richardnguyen99/portfolios/tree/main/src/commands/help.ts";
-const SUPPORTED_OPTIONS = ["help", "version",];
+const SOURCE =
+  "https://github.com/richardnguyen99/portfolios/tree/main/src/commands/help.ts";
+const SUPPORTED_OPTIONS = ["help", "version"];
 const SUPPORTED_ALIASES = {};
 
 const _helpHelp = () => {
-
   return "Usage: help [COMMAND]\n\
 \n\
 Display the help message of COMMAND.\n\
@@ -30,23 +30,22 @@ Display the help message of COMMAND.\n\
 Options:\n\
       --help                display this help and exit.\n\
       --version             output version information and exit.\n";
-}
+};
 
 const _helpVersion = () => {
   return `help (portfoli-os) ${VERSION}\n\
 This is free software: you are free to change and redistribute it.\n\
 A copy of this command can found at:\n\
 \n\
-<a href="${SOURCE}" target="_blank" rel="noreferrer" class="underline font-black text-white">${SOURCE}</a>\n\
+<a href="${SOURCE}" target="_blank" rel="noreferrer" class="underline font-black dark:text-white text-black">${SOURCE}</a>\n\
 \n\
 Written by ${AUTHOR}.\n`;
-}
-
+};
 
 const help = (
   args: string[],
   sysCall: SystemCommand,
-  currentDir: FileTreeNode
+  currentDir: FileTreeNode,
 ): string | undefined => {
   let ans = "";
 
@@ -55,7 +54,6 @@ const help = (
   let showVersion = false;
 
   const argv: ParsedArgs = minimist(args, {
-
     boolean: SUPPORTED_OPTIONS,
     alias: SUPPORTED_ALIASES,
     unknown: (arg) => {
@@ -68,9 +66,8 @@ Try 'help --help' for more information.\n`;
       }
 
       return true;
-    }
+    },
   });
-
 
   if (showError) {
     return ans;
@@ -85,17 +82,15 @@ Try 'help --help' for more information.\n`;
         case "version":
           showVersion = true;
           break;
-        default: break;
+        default:
+          break;
       }
     }
   }
 
+  if (showHelp) return _helpHelp();
 
-  if (showHelp)
-    return _helpHelp();
-
-  if (showVersion)
-    return _helpVersion();
+  if (showVersion) return _helpVersion();
 
   if (!argv._.length) {
     return _helpHelp();
@@ -158,5 +153,3 @@ Try 'help --help' for more information.\n`;
 };
 
 export default help;
-
-
