@@ -14,10 +14,11 @@ const MenuBar: React.FC = () => {
       className={clsx(
         "relative",
         "flex items-center justify-between",
-        "bg-gray-950 text-gray-100",
         "font-bold",
         "h-10 px-4",
         "select-none",
+        "dark:bg-gray-950 dark:text-gray-100",
+        "bg-slate-50 text-slate-900",
       )}
     >
       <div className="flex items-center">
