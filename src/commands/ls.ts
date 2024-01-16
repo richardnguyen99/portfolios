@@ -33,18 +33,62 @@ A copy of this command can found at:\n\
 Written by ${AUTHOR}.\n`;
 };
 
-const formatStyleFileNode = (node: FileTreeNode): string => {
+// Format the file node to be displayed in the terminal. Primarily focus on
+// styling for the correct file type, padding and word wrapping. The reason why
+// names are broken down into individual letters is to allow for word wrapping
+// to work correctly, which breaks down one row into individual letters when
+// overflowing instead of breaking down one row into individual words.
+const formatStyleFileNode = (
+  node: FileTreeNode,
+  maxLength: number,
+  isLastInRow: boolean,
+): string => {
   const { name, type } = node;
 
   if (type === "folder") {
-    return `\
-<span class="[[x-data-active-tab='true']_&]:text-blue-400 [[x-data-active-tab='false']_&]:text-blue-400/50">${name}</span>\
-<span class="[[x-data-active-tab='true']_&]:text-white [[x-data-active-tab='false']_&]:text-slate-400">/</span>
+    return `${name
+      .split("")
+      .map(
+        (letter) => `\
+<span \
+class="[[x-data-active-tab='true']_&]:text-blue-400 [[x-data-active-tab='false']_&]:text-blue-400/50">\
+${letter}\
+</span>`,
+      )
+      .join("")}\
+<span \
+class="[[x-data-active-tab='true']_&]:text-white [[x-data-active-tab='false']_&]:text-slate-400">\
+/\
+</span>\
+${
+  isLastInRow
+    ? ""
+    : ""
+        .padEnd(maxLength - name.length + 1, "\u00A0")
+        .split("")
+        .map((letter) => `<span>${letter}</span>`)
+        .join("")
+}\
 `;
   }
 
-  return `\
-<span class="[[x-data-active-tab='true']_&]:text-white [[x-data-active-tab='false']_&]:text-slate-400">${name}</span>
+  return `${name
+    .split("")
+    .map(
+      (letter) => `\
+<span class="[[x-data-active-tab='true']_&]:text-white [[x-data-active-tab='false']_&]:text-slate-400">${letter}</span>\
+`,
+    )
+    .join("")}\
+${
+  isLastInRow
+    ? ""
+    : ""
+        .padEnd(maxLength - name.length + 2, "\u00A0")
+        .split("")
+        .map((letter) => `<span>${letter}</span>`)
+        .join("")
+}\
 `;
 };
 
@@ -165,8 +209,10 @@ Try 'ls --help' for more information.\n`;
   let startDir = currentDir;
 
   if (argv._.length > 0) {
-
-    pathList = argv._[0].trim().split("/").filter((path) => path !== "." && path !== "");
+    pathList = argv._[0]
+      .trim()
+      .split("/")
+      .filter((path) => path !== "." && path !== "");
     if (argv._[0].startsWith("/")) {
       startDir = sysCall.getFileTreeRoot();
     } else if (argv._[0].startsWith("~")) {
@@ -218,14 +264,21 @@ Try 'ls --help' for more information.\n`;
 
   const maxLength =
     children.length > 0
-      ? Math.max(...children.map((child) => child.name.length))
+      ? Math.max(
+          ...children.map((child) => {
+            if (child.type === "folder") {
+              return child.name.length + 1;
+            }
+
+            return child.name.length;
+          }),
+        )
       : 0;
 
   // Calculate the maximum number of columns that can be displayed on the
   // terminal based on the maximum length of the file name (+2 for padding)
   // based on the number of characters.
   const { width: maxChWidth } = sysCall.getTerminalSize();
-  const { width: maxLetterWidth } = sysCall.getCharacterSize();
   const maxCols = Math.ceil(maxChWidth / (maxLength + 2));
 
   // However, the correct format of the table is that every column should be
@@ -239,7 +292,6 @@ Try 'ls --help' for more information.\n`;
   // maximum length of the file name in pixels.
 
   let childIdx = 0;
-  let cols = 0;
   const rows: string[][] = [];
 
   for (let i = 0; i < numFilledRows; i++) {
@@ -248,37 +300,37 @@ Try 'ls --help' for more information.\n`;
 
   // Build columns
   for (let i = 0; i < numFilledCols && childIdx < children.length; i++) {
-
     // Build rows
-    for (let j = 0; j < numFilledRows && childIdx < children.length; j++) {
-      const child = formatStyleFileNode(children[childIdx]);
+    const isLastInRow =
+      i === numFilledCols - 1 || childIdx === children.length - 1;
+
+    for (
+      let j = 0;
+      j < numFilledRows && childIdx < children.length;
+      j++, childIdx++
+    ) {
+      const child = formatStyleFileNode(
+        children[childIdx],
+        maxLength,
+        isLastInRow,
+      );
       rows[j].push(child);
-
-      childIdx++;
     }
-
-    cols++;
   }
-
-  const tableWidth = cols * (maxLength + 2) * maxLetterWidth;
 
   // Build table
   const cells = rows.reduce((acc, row) => {
     const rowContent = row.reduce((acc, cell) => {
-      return `${acc}\
-<div style="width: ${1 / cols * 100}%">\
-${cell}\
-</div>`;
+      return `${acc}${cell}`;
     }, "");
 
     return `${acc}\
 <div class="w-full">\
-<div class="flex flex-row flex-wrap" style="width: ${tableWidth}px">\
+<div class="flex flex-row flex-wrap">\
 ${rowContent}\
 </div>\
 </div>`;
   }, "");
-
 
   const table = `\
 <div class="relative break-words w-full">\
