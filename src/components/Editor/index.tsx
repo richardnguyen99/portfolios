@@ -6,6 +6,8 @@ import { editor as EditorAPI } from "monaco-editor/esm/vs/editor/editor.api";
 import { Window } from "@components";
 import useLocalStorage from "@hooks/useLocalStorage";
 import type { EditorProps } from "./type";
+import useTheme from "@contexts/Theme/useTheme";
+import parseLanguageId from "./parseLanguageId";
 
 type Props = EditorProps & React.HTMLAttributes<HTMLDivElement>;
 
@@ -20,55 +22,14 @@ const Editor: React.FC<Props> = ({
   ...rest
 }) => {
   const [text, setText] = useLocalStorage<string>(`file-${id}`, initialText);
+  const { theme } = useTheme();
   const editorRef = React.useRef<EditorAPI.IStandaloneCodeEditor | null>(null);
 
   const [title, setTitle] = React.useState(initialTitle);
   const [, setSaved] = React.useState(true);
 
   const getLanguageId = React.useCallback(() => {
-    const extension = title.split(".").pop() ?? "";
-
-    if (extension === "md") {
-      return "markdown";
-    }
-
-    if (extension === "js") {
-      return "javascript";
-    }
-
-    if (extension === "ts") {
-      return "typescript";
-    }
-
-    if (extension === "tsx") {
-      return "typescriptreact";
-    }
-
-    if (extension === "jsx") {
-      return "javascriptreact";
-    }
-
-    if (extension === "css") {
-      return "css";
-    }
-
-    if (extension === "scss") {
-      return "scss";
-    }
-
-    if (extension === "html") {
-      return "html";
-    }
-
-    if (extension === "json") {
-      return "json";
-    }
-
-    if (extension === "c") {
-      return "c";
-    }
-
-    return "plaintext";
+    return parseLanguageId(title);
   }, [title]);
 
   const getTitle = React.useCallback(() => {
@@ -87,6 +48,8 @@ const Editor: React.FC<Props> = ({
     }
   }, [file]);
 
+  React.useEffect(() => {}, [theme]);
+
   return (
     <Window
       id={id}
@@ -98,6 +61,7 @@ const Editor: React.FC<Props> = ({
       {...rest}
     >
       <MonacoEditor.Editor
+        key={`editor-${id}-${theme}`}
         loading={null}
         width="100%"
         height="100%"
@@ -127,21 +91,40 @@ const Editor: React.FC<Props> = ({
         }}
         beforeMount={(monaco) => {
           monaco.editor.defineTheme("my-theme", {
-            base: "vs-dark",
+            base: theme === "dark" ? "vs-dark" : "vs",
             colors: {
-              "editor.background": twColors.gray[800],
-              "editorSuggestWidget.background": twColors.gray[800],
-              "editorSuggestWidget.border": twColors.gray[600],
-              "editorSuggestWidget.selectedBackground": twColors.sky[700],
-              "list.hoverBackground": "#0284c75f", // twColors.sky[700] with 37% opacity,
-              "quickInput.background": twColors.gray[800],
-              "input.background": twColors.gray[700],
-              "editor.lineHighlightBackground": "#374151",
-              "editor.lineHighlightBorder": "#374151",
-              "editorCursor.foreground": "#f1f5f9",
-              "editor.selectionBackground": "#4b5563ff",
-              "editorLineNumber.foreground": "#9ca3af",
-              "editorLineNumber.dimmedForeground": "#4b5563",
+              "editor.background":
+                theme === "dark" ? twColors.gray[800] : twColors.gray[100],
+              "editorSuggestWidget.background":
+                theme === "dark" ? twColors.gray[800] : twColors.gray[100],
+              "editorSuggestWidget.border":
+                theme === "dark" ? twColors.gray[600] : twColors.gray[300],
+              "editorSuggestWidget.selectedBackground":
+                theme === "dark" ? twColors.sky[700] : twColors.sky[200],
+              "list.hoverBackground":
+                theme === "dark" ? "#0284c75f" : "#bae6fd", // twColors.sky[700] with 37% opacity,
+              "quickInput.background":
+                theme === "dark" ? twColors.gray[800] : twColors.gray[100],
+              "input.background":
+                theme === "dark" ? twColors.gray[700] : twColors.gray[200],
+              "editor.lineHighlightBackground":
+                theme === "dark" ? twColors.gray[700] : twColors.gray[200],
+              "editor.lineHighlightBorder":
+                theme === "dark" ? twColors.gray[700] : twColors.gray[200],
+              "editorCursor.foreground":
+                theme === "dark" ? twColors.gray[100] : twColors.gray[900],
+              "editor.selectionBackground":
+                theme === "dark" ? twColors.gray[600] : twColors.gray[300],
+              "editorLineNumber.foreground":
+                theme === "dark" ? twColors.gray[400] : twColors.gray[600],
+              "editorLineNumber.dimmedForeground":
+                theme === "dark" ? twColors.gray[600] : twColors.gray[400],
+              "scrollbar.shadow":
+                theme === "dark" ? twColors.gray[800] : twColors.gray[200],
+              "scrollbarSlider.background":
+                theme === "dark" ? twColors.gray[700] : twColors.gray[200],
+              "scrollbarSlider.hoverBackground":
+                theme === "dark" ? twColors.gray[600] : twColors.gray[300],
             },
             inherit: true,
             rules: [
