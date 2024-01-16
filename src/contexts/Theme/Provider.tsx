@@ -8,6 +8,7 @@ const ThemeProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
 
   const setTheme = React.useCallback(
     (newTheme: string) => {
+      console.log("setTheme", newTheme);
       setThemeOnStorage(newTheme);
 
       const html = document.querySelector("html");

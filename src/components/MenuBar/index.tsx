@@ -1,9 +1,11 @@
 import * as React from "react";
 import clsx from "classnames";
+import { LogoGithubIcon } from "@primer/octicons-react";
+
 import ItemHolder from "./ItemHolder";
 import Clock from "./Clock";
 import Logo from "./Logo";
-import { LogoGithubIcon } from "@primer/octicons-react";
+import ThemeToggler from "./ThemeToggler";
 
 const MenuBar: React.FC = () => {
   return (
@@ -38,6 +40,7 @@ const MenuBar: React.FC = () => {
             <LogoGithubIcon aria-label="Octicon GitHub Logo" />
           </a>
         </ItemHolder>
+        <ThemeToggler />
         <ItemHolder onClick={() => {}}>
           <Clock />
         </ItemHolder>
