@@ -48,8 +48,6 @@ const Editor: React.FC<Props> = ({
     }
   }, [file]);
 
-  React.useEffect(() => {}, [theme]);
-
   return (
     <Window
       id={id}
