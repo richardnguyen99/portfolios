@@ -11,7 +11,7 @@ import useWindow from "@components/Window/useWindow";
 import { Editor } from "@components";
 
 const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
-  const { getId } = useWindow();
+  const { getId, getSize } = useWindow();
   const { closeModal, addModal } = useModal();
   const { getHomeFolder, getRootFolder, addFile } = useFileTree();
 
@@ -139,6 +139,15 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
     [addFile],
   );
 
+  const getWindowSize = React.useCallback(() => {
+    const { width, height } = getSize();
+
+    return {
+      width,
+      height,
+    };
+  }, [getSize]);
+
   const getCharacterSize = React.useCallback(() => {
     const terminalId = document.querySelector(`[x-data-window-id="${id}"]`);
     const terminalCaret = terminalId
@@ -150,23 +159,6 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
       return {
         width: rect.width,
         height: rect.height,
-      };
-    }
-
-    return {
-      width: 0,
-      height: 0,
-    };
-  }, [id]);
-
-  const getWindowSize = React.useCallback(() => {
-    const terminalId = document.querySelector(`[x-data-window-id="${id}"]`);
-    const windowContent = terminalId?.querySelector("#window-content");
-
-    if (windowContent) {
-      return {
-        width: windowContent.clientWidth,
-        height: windowContent.clientHeight,
       };
     }
 
