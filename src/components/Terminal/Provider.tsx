@@ -111,6 +111,20 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
         type: "editor",
         file: path,
         component: Editor,
+        initialPosition: {
+          x: 80,
+          y: 40,
+        },
+        initialSize: {
+          width: 800,
+          height: 600,
+        },
+
+        componentProps: {
+          file: path,
+          initialText: path.content,
+          readOnly: path.writePermission === false,
+        },
       };
 
       addModal(editorModal);

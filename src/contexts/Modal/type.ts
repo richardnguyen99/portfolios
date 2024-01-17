@@ -1,3 +1,4 @@
+import { WindowPosition, WindowSize } from "@components/Window/type";
 import { FileTreeNode } from "@contexts/FileTree/type";
 
 type ModalType = "explorer" | "terminal" | "editor" | "settings";
@@ -9,6 +10,9 @@ export type ModalProps = {
   active: boolean;
   isFullScreenAllowed?: boolean;
   isFullScreen?: boolean;
+
+  initialSize?: WindowSize;
+  initialPosition?: WindowPosition;
 
   /**
    * File Object referenced
