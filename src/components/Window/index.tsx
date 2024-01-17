@@ -141,7 +141,6 @@ const Window: React.FC<Props> = ({
           "window-scrollbar",
           "font-mono text-sm",
           "relative w-full h-full",
-          "pr-1",
           {
             "select-text": active,
             "select-none": !active,

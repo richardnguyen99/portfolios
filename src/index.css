@@ -5,13 +5,24 @@
 .window-scrollbar {
   overflow-y: scroll;
   overflow-x: hidden;
-  scrollbar-color: theme("colors.slate.700") theme("colors.slate.800");
+  padding-right: 4px;
+
+  @apply [scrollbar-color:_theme("colors.slate.200")_theme("colors.slate.100")];
+  @apply dark:[scrollbar-color:_theme("colors.slate.700")_theme("colors.slate.800")];
 }
 
 .window-scrollbar::-webkit-scrollbar {
   width: 8px;
   opacity: 0;
-  background: theme("colors.slate.800");
+
+  @apply bg-slate-200;
+  @apply dark:bg-slate-800;
+}
+
+/* Hide native scrollbar when on monaco editor */
+#window-content:has(.monaco-editor).window-scrollbar {
+  overflow-y: hidden;
+  padding-right: 0;
 }
 
 .window-scrollbar:hover::-webkit-scrollbar {
@@ -19,10 +30,13 @@
 }
 
 .window-scrollbar::-webkit-scrollbar-thumb {
-  background-color: theme("colors.slate.700");
   border-radius: 8px;
+
+  @apply bg-slate-300;
+  @apply dark:bg-slate-700;
 }
 
 .window-scrollbar::-webkit-scrollbar-corner {
-  background-color: theme("colors.slate.800");
+  @apply bg-slate-200;
+  @apply dark:bg-slate-800;
 }
