@@ -1,10 +1,10 @@
 import * as React from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
-import { Screen } from "@components";
+import { Screen, Terminal } from "@components";
+import useModal from "@contexts/Modal/useModal";
 
 import "./index.css";
-import useModal from "@contexts/Modal/useModal";
 
 const App: React.FC = () => {
   const newTerminalHotKey = "ctrl+alt+t";
@@ -26,6 +26,8 @@ const App: React.FC = () => {
 
         isFullScreen: false,
         isFullScreenAllowed: true,
+        component: Terminal,
+        componentProps: {},
       });
     },
     {

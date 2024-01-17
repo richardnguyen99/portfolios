@@ -1,3 +1,4 @@
+import { WindowPosition, WindowSize } from "@components/Window/type";
 import { FileTreeNode } from "@contexts/FileTree/type";
 
 type ModalType = "explorer" | "terminal" | "editor" | "settings";
@@ -10,10 +11,20 @@ export type ModalProps = {
   isFullScreenAllowed?: boolean;
   isFullScreen?: boolean;
 
+  initialSize?: WindowSize;
+  initialPosition?: WindowPosition;
+
   /**
    * File Object referenced
    */
   file?: FileTreeNode;
+
+  componentProps?: object;
+
+  /**
+   * Children component to be rendered inside the modal (window)
+   */
+  component: React.FC;
 };
 
 export type ModalContextType = {
@@ -25,7 +36,6 @@ export type ModalContextType = {
   toggleFullScreen: (id: string) => void;
   renderModals: () => React.ReactNode[];
 };
-
 
 export type ModalProviderProps = {
   children: React.ReactNode;

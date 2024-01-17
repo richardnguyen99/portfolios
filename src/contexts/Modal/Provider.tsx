@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { ModalProps, ModalProviderProps } from "./type";
 import ModalContext from "./Context";
-import { Terminal, Window, Editor } from "@components";
+import { Window } from "@components";
 
 const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
   const [modals, setModals] = React.useState<ModalProps[]>([]);
@@ -69,36 +69,8 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
 
   const renderModals = React.useCallback(() => {
     return modals.map((modal) => {
-      if (modal.type === "editor") {
-        const file = modal.file;
-
-        const initialText = file?.content || "";
-        const title = file?.name || "Editor";
-
-        return (
-          <Editor
-            id={modal.id}
-            key={modal.id}
-            active={modal.active}
-            fullscreen={modal.isFullScreen}
-            title={title}
-            initialText={initialText}
-            file={file}
-          />
-        );
-      }
-
-      if (modal.type === "terminal") {
-        return (
-          <Terminal
-            id={modal.id}
-            key={modal.id}
-            active={modal.active}
-            fullscreen={modal.isFullScreen}
-            title="Terminal"
-          />
-        );
-      }
+      const Component = modal.component;
+      const props = modal.componentProps;
 
       return (
         <Window
@@ -107,7 +79,11 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
           id={modal.id}
           active={modal.active}
           fullscreen={modal.isFullScreen}
-        />
+          initialPosition={modal.initialPosition}
+          initialSize={modal.initialSize}
+        >
+          <Component {...props} />
+        </Window>
       );
     });
   }, [modals]);

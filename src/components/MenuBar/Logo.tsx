@@ -3,7 +3,7 @@ import clsx from "classnames";
 import { Menu, Transition } from "@headlessui/react";
 
 import IconHolder from "./IconHolder";
-import { HotKey } from "@components";
+import { HotKey, Terminal } from "@components";
 import useModal from "@contexts/Modal/useModal";
 
 const LogoIcon: React.FC = () => {
@@ -66,6 +66,8 @@ const Logo: React.FC = () => {
   const handleNewTerminalClick = React.useCallback(() => {
     const id = crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0);
 
+    console.log(Terminal);
+
     addModal({
       id,
       title: "Terminal",
@@ -74,6 +76,8 @@ const Logo: React.FC = () => {
 
       isFullScreen: false,
       isFullScreenAllowed: true,
+      component: Terminal,
+      componentProps: {},
     });
   }, [addModal]);
 

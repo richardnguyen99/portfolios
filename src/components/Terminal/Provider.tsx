@@ -7,11 +7,11 @@ import useModal from "@contexts/Modal/useModal";
 import useFileTree from "@contexts/FileTree/useFileTree";
 import type { FileTreeNode } from "@contexts/FileTree/type";
 import { ModalProps } from "@contexts/Modal/type";
+import useWindow from "@components/Window/useWindow";
+import { Editor } from "@components";
 
-const TerminalProvider: React.FC<TerminalProviderProps> = ({
-  id,
-  children,
-}) => {
+const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
+  const { getId, getSize } = useWindow();
   const { closeModal, addModal } = useModal();
   const { getHomeFolder, getRootFolder, addFile } = useFileTree();
 
@@ -25,6 +25,8 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
     "(Hint): Use `pwd` and start it from there.",
     "\n",
   ]);
+
+  const id = React.useMemo(() => getId(), [getId]);
 
   const getFileTreeRoot = React.useCallback(() => {
     return getRootFolder();
@@ -108,6 +110,21 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
         isFullScreenAllowed: true,
         type: "editor",
         file: path,
+        component: Editor,
+        initialPosition: {
+          x: 80,
+          y: 40,
+        },
+        initialSize: {
+          width: 800,
+          height: 600,
+        },
+
+        componentProps: {
+          file: path,
+          initialText: path.content,
+          readOnly: path.writePermission === false,
+        },
       };
 
       addModal(editorModal);
@@ -122,6 +139,15 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
     [addFile],
   );
 
+  const getWindowSize = React.useCallback(() => {
+    const { width, height } = getSize();
+
+    return {
+      width,
+      height,
+    };
+  }, [getSize]);
+
   const getCharacterSize = React.useCallback(() => {
     const terminalId = document.querySelector(`[x-data-window-id="${id}"]`);
     const terminalCaret = terminalId
@@ -133,23 +159,6 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
       return {
         width: rect.width,
         height: rect.height,
-      };
-    }
-
-    return {
-      width: 0,
-      height: 0,
-    };
-  }, [id]);
-
-  const getWindowSize = React.useCallback(() => {
-    const terminalId = document.querySelector(`[x-data-window-id="${id}"]`);
-    const windowContent = terminalId?.querySelector("#window-content");
-
-    if (windowContent) {
-      return {
-        width: windowContent.clientWidth,
-        height: windowContent.clientHeight,
       };
     }
 
