@@ -46,7 +46,8 @@ const LogoItemComponent = <T extends HTMLElement>(
         "first:rounded-t-md last:rounded-b-md",
         "px-4 py-2 text-sm",
         {
-          "bg-gray-800 text-gray-100": active,
+          "dark:bg-gray-800 dark:text-gray-100": active,
+          "bg-gray-200 text-gray-900": active,
           "text-gray-100": active,
         },
       )}
@@ -95,13 +96,17 @@ const Logo: React.FC = () => {
         >
           <Menu.Items
             className={clsx(
-              "rounded-md border border-gray-700",
+              "rounded-md border",
               "absolute w-72 left-0",
               "mt-2",
               "text-sm",
-              "divide-y divide-gray-100",
-              "bg-gray-900 shadow-lg",
-              "ring-1 ring-black/5 focus:outline-none",
+              "divide-y",
+              "dark:bg-gray-900 dark:ring-black/5",
+              "dark:border-gray-700 dark:divide-gray-100",
+              "bg-gray-100 ring-gray-300/5",
+              "border-gray-300 divide-gray-700",
+              "shadow-lg",
+              "ring-1 focus:outline-none",
               "z-[9999]",
             )}
           >

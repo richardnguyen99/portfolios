@@ -5,15 +5,15 @@ import type { FileTreeNode } from "@contexts/FileTree/type";
 
 const VERSION = "0.0.2";
 const AUTHOR = "Richard H. Nguyen";
-const SOURCE = "https://github.com/richardnguyen99/portfolios/tree/main/src/commands/mkdir.ts";
+const SOURCE =
+  "https://github.com/richardnguyen99/portfolios/tree/main/src/commands/mkdir.ts";
 const SUPPORTED_OPTIONS = ["help", "version", "parents", "verbose"];
 const SUPPORTED_ALIASES = {
-  "parents": ["p"],
-  "verbose": ["v"],
+  parents: ["p"],
+  verbose: ["v"],
 };
 
 const _mkdirHelp = () => {
-
   return "Usage: mkdir [OPTION]... DIRECTORY...\n\
 \n\
 Create the DIRECTORY(ies), if they do not already exist.\n\
@@ -23,20 +23,19 @@ Options:\n\
   -v, --verbose     print a message for each created directory\n\
       --help        display this help and exit\n\
       --version     output version information and exit\n";
-}
+};
 
 const _mkdirVersion = () => {
   return `mkdir (portfoli-os) ${VERSION}\n\
 This is free software: you are free to change and redistribute it.\n\
 A copy of this command can found at:\n\
 \n\
-<a href="${SOURCE}" target="_blank" rel="noreferrer" class="underline font-black text-white">${SOURCE}</a>\n\
+<a href="${SOURCE}" target="_blank" rel="noreferrer" class="underline font-black dark:text-white text-black">${SOURCE}</a>\n\
 \n\
 Written by ${AUTHOR}.\n`;
-}
+};
 
 const _mkdir = (path: string, currentDir: FileTreeNode): FileTreeNode => {
-
   const newDir: FileTreeNode = {
     name: path,
     type: "folder",
@@ -53,13 +52,13 @@ const _mkdir = (path: string, currentDir: FileTreeNode): FileTreeNode => {
 
   currentDir.children.push(newDir);
 
-  return newDir
-}
+  return newDir;
+};
 
 const mkdir = (
   args: string[],
   _sysCall: SystemCommand,
-  currentDir: FileTreeNode
+  currentDir: FileTreeNode,
 ): string | undefined => {
   let ans = "";
 
@@ -83,9 +82,8 @@ Try 'mkdir --help' for more information.\n`;
       }
 
       return true;
-    }
+    },
   });
-
 
   if (showError) {
     return ans;
@@ -106,17 +104,15 @@ Try 'mkdir --help' for more information.\n`;
         case "verbose":
           verbose = true;
           break;
-        default: break;
+        default:
+          break;
       }
     }
   }
 
+  if (showHelp) return _mkdirHelp();
 
-  if (showHelp)
-    return _mkdirHelp();
-
-  if (showVersion)
-    return _mkdirVersion();
+  if (showVersion) return _mkdirVersion();
 
   if (argv._.length === 0) {
     return "mkdir: missing operand\n\
@@ -148,9 +144,8 @@ Try 'mkdir --help' for more information.\n";
     }
 
     const child = currentDirectory.children.find(
-      (child) => (child.name === path
-        && child.name !== "."
-        && child.name !== "..")
+      (child) =>
+        child.name === path && child.name !== "." && child.name !== "..",
     );
 
     if (child) {

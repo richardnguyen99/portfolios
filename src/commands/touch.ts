@@ -5,14 +5,14 @@ import type { FileTreeNode } from "@contexts/FileTree/type";
 
 const VERSION = "0.0.1";
 const AUTHOR = "Richard H. Nguyen";
-const SOURCE = "https://github.com/richardnguyen99/portfolios/tree/main/src/commands/touch.ts";
+const SOURCE =
+  "https://github.com/richardnguyen99/portfolios/tree/main/src/commands/touch.ts";
 const SUPPORTED_OPTIONS = ["help", "version", "no-create"];
 const SUPPORTED_ALIASES = {
   "no-create": ["c"],
 };
 
 const _touchHelp = () => {
-
   return "Usage: touch [OPTION]... FILE...\n\
 \n\
 Update the access and modification times of each FILE to the current time\n\
@@ -20,22 +20,22 @@ Update the access and modification times of each FILE to the current time\n\
 Options:\n\
       --help        display this help and exit\n\
       --version     output version information and exit\n";
-}
+};
 
 const _touchVersion = () => {
   return `touch (portfoli-os) ${VERSION}\n\
 This is free software: you are free to change and redistribute it.\n\
 A copy of this command can found at:\n\
 \n\
-<a href="${SOURCE}" target="_blank" rel="noreferrer" class="underline font-black text-white">${SOURCE}</a>\n\
+<a href="${SOURCE}" target="_blank" rel="noreferrer" class="underline font-black dark:text-white text-black">${SOURCE}</a>\n\
 \n\
 Written by ${AUTHOR}.\n`;
-}
+};
 
 const touch = (
   args: string[],
   _sysCall: SystemCommand,
-  _currentDir: FileTreeNode
+  _currentDir: FileTreeNode,
 ): string | undefined => {
   let ans = "";
 
@@ -58,9 +58,8 @@ Try 'touch --help' for more information.\n`;
       }
 
       return true;
-    }
+    },
   });
-
 
   if (showError) {
     return ans;
@@ -78,20 +77,19 @@ Try 'touch --help' for more information.\n`;
         case "no-create":
           noCreate = true;
           break;
-        default: break;
+        default:
+          break;
       }
     }
   }
 
+  if (showHelp) return _touchHelp();
 
-  if (showHelp)
-    return _touchHelp();
-
-  if (showVersion)
-    return _touchVersion();
+  if (showVersion) return _touchVersion();
 
   if (argv._.length === 0) {
-    ans = "touch: missing file operand\n\
+    ans =
+      "touch: missing file operand\n\
 Try 'touch --help' for more information.\n";
 
     return ans;
@@ -100,7 +98,8 @@ Try 'touch --help' for more information.\n";
   const pathList = argv._[0].split("/").filter((path) => path !== "");
 
   if (pathList.length === 0) {
-    ans = "touch: missing file operand\n\
+    ans =
+      "touch: missing file operand\n\
 Try 'touch --help' for more information.\n";
 
     return ans;
@@ -122,7 +121,10 @@ Try 'touch --help' for more information.\n";
       continue;
     }
 
-    const child = currentDir.children.find((child) => child.name === path && child.name !== "." && child.name !== "..");
+    const child = currentDir.children.find(
+      (child) =>
+        child.name === path && child.name !== "." && child.name !== "..",
+    );
 
     if (child) {
       if (child.type === "file") {
@@ -142,8 +144,7 @@ Try 'touch --help' for more information.\n";
 
   if (child) {
     child.accessedAt = new Date();
-  }
-  else {
+  } else {
     if (noCreate) {
       return ans;
     }
@@ -164,7 +165,7 @@ Try 'touch --help' for more information.\n";
       createdAt: new Date(),
       updatedAt: new Date(),
       accessedAt: new Date(),
-      children: []
+      children: [],
     };
 
     currentDir.children.push(newFile);
@@ -174,4 +175,3 @@ Try 'touch --help' for more information.\n";
 };
 
 export default touch;
-

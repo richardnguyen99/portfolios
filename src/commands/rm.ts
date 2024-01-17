@@ -5,16 +5,16 @@ import type { FileTreeNode } from "@contexts/FileTree/type";
 
 const VERSION = "0.0.1";
 const AUTHOR = "Richard H. Nguyen";
-const SOURCE = "https://github.com/richardnguyen99/portfolios/tree/main/src/commands/rm.ts";
+const SOURCE =
+  "https://github.com/richardnguyen99/portfolios/tree/main/src/commands/rm.ts";
 const SUPPORTED_OPTIONS = ["help", "version", "recursive", "verbal", "force"];
 const SUPPORTED_ALIASES = {
-  "recursive": ["r", "R"],
-  "verbal": ["v"],
-  "force": ["f"],
+  recursive: ["r", "R"],
+  verbal: ["v"],
+  force: ["f"],
 };
 
 const _rmHelp = () => {
-
   return "Usage: rm [OPTION]... FILE...\n\
 \n\
 Remove files or directories\n\
@@ -28,22 +28,22 @@ Options:\n\
 \n\
 By default, rm does not remove directories.  Use the --recursive (-r or -R)\n\
 option to remove each listed directory, too, along with all of its contents\n";
-}
+};
 
 const _rmVersion = () => {
   return `rm (portfoli-os) ${VERSION}\n\
 This is free software: you are free to change and redistribute it.\n\
 A copy of this command can found at:\n\
 \n\
-<a href="${SOURCE}" target="_blank" rel="noreferrer" class="underline font-black text-white">${SOURCE}</a>\n\
+<a href="${SOURCE}" target="_blank" rel="noreferrer" class="underline font-black dark:text-white text-black">${SOURCE}</a>\n\
 \n\
 Written by ${AUTHOR}.\n`;
-}
+};
 
 const rm = (
   args: string[],
   _sysCall: SystemCommand,
-  currentDir: FileTreeNode
+  currentDir: FileTreeNode,
 ): string | undefined => {
   let ans = "";
 
@@ -68,9 +68,8 @@ Try 'rm --help' for more information.\n`;
       }
 
       return true;
-    }
+    },
   });
-
 
   if (showError) {
     return ans;
@@ -94,17 +93,15 @@ Try 'rm --help' for more information.\n`;
         case "verbal":
           verbal = true;
           break;
-        default: break;
+        default:
+          break;
       }
     }
   }
 
+  if (showHelp) return _rmHelp();
 
-  if (showHelp)
-    return _rmHelp();
-
-  if (showVersion)
-    return _rmVersion();
+  if (showVersion) return _rmVersion();
 
   if (argv._.length === 0) {
     return "rm: missing operand\n\
@@ -130,7 +127,9 @@ Try 'rm --help' for more information.\n";
     } else if (path === ".") {
       continue;
     } else {
-      const child = currentDirectory.children.find((child) => child.name === path);
+      const child = currentDirectory.children.find(
+        (child) => child.name === path,
+      );
 
       if (child && child.type === "folder") {
         currentDirectory = child;
@@ -149,7 +148,9 @@ Try 'rm --help' for more information.\n";
         return `rm: cannot remove '${path}': Permission denied\n`;
       }
 
-      currentDirectory.children = currentDirectory.children.filter((child) => child.name !== path);
+      currentDirectory.children = currentDirectory.children.filter(
+        (child) => child.name !== path,
+      );
 
       if (verbal) {
         return "rm: removed file '" + path + "'\n";
@@ -162,7 +163,9 @@ Try 'rm --help' for more information.\n";
           return `rm: cannot remove '${path}': Permission denied\n`;
         }
 
-        currentDirectory.children = currentDirectory.children.filter((child) => child.name !== path);
+        currentDirectory.children = currentDirectory.children.filter(
+          (child) => child.name !== path,
+        );
 
         if (verbal) {
           return "rm: removed directory '" + path + "'\n";
@@ -181,4 +184,3 @@ Try 'rm --help' for more information.\n";
 };
 
 export default rm;
-

@@ -27,7 +27,8 @@ const Screen: React.FC = () => {
       onMouseDown={handleMouseDown}
       className={clsx(
         "relative flex flex-col overflow-hidden",
-        "bg-gray-900",
+        "bg-gray-200",
+        "dark:bg-gray-900",
         "w-screen h-screen",
       )}
     >
