@@ -99,7 +99,6 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
           />
         );
       }
-
       return (
         <Window
           key={modal.id}
@@ -107,7 +106,9 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
           id={modal.id}
           active={modal.active}
           fullscreen={modal.isFullScreen}
-        />
+        >
+          <></>
+        </Window>
       );
     });
   }, [modals]);
