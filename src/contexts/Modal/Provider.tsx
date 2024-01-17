@@ -2,7 +2,7 @@ import * as React from "react";
 
 import { ModalProps, ModalProviderProps } from "./type";
 import ModalContext from "./Context";
-import { Terminal, Window, Editor } from "@components";
+import { Window, Editor } from "@components";
 
 const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
   const [modals, setModals] = React.useState<ModalProps[]>([]);
@@ -88,17 +88,9 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
         );
       }
 
-      if (modal.type === "terminal") {
-        return (
-          <Terminal
-            id={modal.id}
-            key={modal.id}
-            active={modal.active}
-            fullscreen={modal.isFullScreen}
-            title="Terminal"
-          />
-        );
-      }
+      const Component = modal.component;
+      const props = modal.componentProps;
+
       return (
         <Window
           key={modal.id}
@@ -107,7 +99,7 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
           active={modal.active}
           fullscreen={modal.isFullScreen}
         >
-          <></>
+          <Component {...props} />
         </Window>
       );
     });

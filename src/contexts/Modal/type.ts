@@ -14,6 +14,13 @@ export type ModalProps = {
    * File Object referenced
    */
   file?: FileTreeNode;
+
+  componentProps?: object;
+
+  /**
+   * Children component to be rendered inside the modal (window)
+   */
+  component: React.FC;
 };
 
 export type ModalContextType = {
@@ -25,7 +32,6 @@ export type ModalContextType = {
   toggleFullScreen: (id: string) => void;
   renderModals: () => React.ReactNode[];
 };
-
 
 export type ModalProviderProps = {
   children: React.ReactNode;

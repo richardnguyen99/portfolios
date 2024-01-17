@@ -14,6 +14,7 @@ export type SetPositionParams =
 export type SetTitleParams = string | ((title: string) => string);
 
 export type WindowContextType = {
+  getId: () => string;
   getActiveState: () => boolean;
   getFullScreenState: () => boolean;
   getTitle: () => string;

@@ -7,11 +7,11 @@ import useModal from "@contexts/Modal/useModal";
 import useFileTree from "@contexts/FileTree/useFileTree";
 import type { FileTreeNode } from "@contexts/FileTree/type";
 import { ModalProps } from "@contexts/Modal/type";
+import useWindow from "@components/Window/useWindow";
+import { Editor } from "@components";
 
-const TerminalProvider: React.FC<TerminalProviderProps> = ({
-  id,
-  children,
-}) => {
+const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
+  const { getId } = useWindow();
   const { closeModal, addModal } = useModal();
   const { getHomeFolder, getRootFolder, addFile } = useFileTree();
 
@@ -25,6 +25,8 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
     "(Hint): Use `pwd` and start it from there.",
     "\n",
   ]);
+
+  const id = React.useMemo(() => getId(), [getId]);
 
   const getFileTreeRoot = React.useCallback(() => {
     return getRootFolder();
@@ -108,6 +110,7 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
         isFullScreenAllowed: true,
         type: "editor",
         file: path,
+        component: Editor,
       };
 
       addModal(editorModal);

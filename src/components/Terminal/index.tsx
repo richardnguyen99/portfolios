@@ -1,16 +1,13 @@
 import * as React from "react";
 
-import { Window } from "@components";
+import useModal from "@contexts/Modal/useModal";
+import useWindow from "@components/Window/useWindow";
 import TerminalProvider from "./Provider";
-import { TerminalProps } from "./type";
 import useTerminal from "./useTerminal";
 import Caret from "./Caret";
-import useModal from "@contexts/Modal/useModal";
 
-type Props = TerminalProps & React.HTMLAttributes<HTMLDivElement>;
-type InternalProps = Pick<TerminalProps, "active">;
-
-const InternalTerminal: React.FC<InternalProps> = ({ active }) => {
+const InternalTerminal: React.FC = () => {
+  const { getActiveState } = useWindow();
   const { displayPrompt, getWindowId, execute, renderBuffer } = useTerminal();
   const { closeModal, addModal } = useModal();
 
@@ -20,6 +17,8 @@ const InternalTerminal: React.FC<InternalProps> = ({ active }) => {
   const [caretKey, setCaretKey] = React.useState(0);
   const [text, setText] = React.useState("");
   const [pos, setPos] = React.useState(0);
+
+  const active = React.useMemo(() => getActiveState(), [getActiveState]);
 
   const handleInputChange = React.useCallback(
     (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,6 +79,7 @@ const InternalTerminal: React.FC<InternalProps> = ({ active }) => {
 
           isFullScreen: false,
           isFullScreenAllowed: true,
+          component: Terminal,
         });
       }
 
@@ -154,26 +154,11 @@ const InternalTerminal: React.FC<InternalProps> = ({ active }) => {
   );
 };
 
-const Terminal: React.FC<Props> = ({
-  active,
-  title,
-  fullscreen,
-  id,
-  ...rest
-}) => {
+const Terminal: React.FC = () => {
   return (
-    <Window
-      id={id}
-      active={active}
-      title={title}
-      fullscreen={fullscreen}
-      initialPosition={{ x: 160, y: 160 }}
-      {...rest}
-    >
-      <TerminalProvider id={id || ""}>
-        <InternalTerminal active={active} {...rest} />
-      </TerminalProvider>
-    </Window>
+    <TerminalProvider>
+      <InternalTerminal />
+    </TerminalProvider>
   );
 };
 

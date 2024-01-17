@@ -39,6 +39,10 @@ const WindowProvider: React.FC<Props> = ({
     height: initialSize.height,
   });
 
+  const getId = React.useCallback(() => {
+    return id;
+  }, [id]);
+
   const getTitle: WindowContextType["getTitle"] = React.useCallback(() => {
     return title;
   }, [title]);
@@ -64,6 +68,7 @@ const WindowProvider: React.FC<Props> = ({
 
   const contextValue = React.useMemo<WindowContextType>(
     () => ({
+      getId,
       getActiveState,
       getFullScreenState,
       getTitle,
@@ -73,7 +78,7 @@ const WindowProvider: React.FC<Props> = ({
       setSize,
       setTitle,
     }),
-    [getActiveState, getFullScreenState, getPosition, getSize, getTitle],
+    [getActiveState, getFullScreenState, getId, getPosition, getSize, getTitle],
   );
 
   return (
