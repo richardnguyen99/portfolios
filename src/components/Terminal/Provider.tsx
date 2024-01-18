@@ -8,7 +8,7 @@ import useFileTree from "@contexts/FileTree/useFileTree";
 import type { FileTreeNode } from "@contexts/FileTree/type";
 import { ModalProps } from "@contexts/Modal/type";
 import useWindow from "@components/Window/useWindow";
-import { Editor } from "@components";
+import { Editor, Remark } from "@components";
 
 const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
   const { getId, getSize } = useWindow();
@@ -100,6 +100,55 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
     [currentFolder.previous, getHomeFolder, getRootFolder],
   );
 
+  const open = React.useCallback(
+    (path: FileTreeNode) => {
+      const modal: ModalProps = {
+        id: path.id,
+        title: path.name,
+        active: true,
+        isFullScreen: false,
+        isFullScreenAllowed: true,
+        type: "editor",
+        file: path,
+        component: Editor,
+        initialPosition: {
+          x: 80,
+          y: 40,
+        },
+        initialSize: {
+          width: 800,
+          height: 600,
+        },
+        componentProps: {
+          file: path,
+          initialText: path.content,
+          readOnly: path.writePermission === false,
+        },
+      };
+
+      if (path.type === "file") {
+        if (path.name.endsWith(".md")) {
+          modal.type = "reader";
+          modal.component = Remark as React.FC;
+          modal.componentProps = {
+            rawContent: path.content,
+          };
+        } else {
+          modal.type = "editor";
+          modal.component = Editor;
+          modal.componentProps = {
+            file: path,
+            initialText: path.content,
+            readOnly: true,
+          };
+        }
+      }
+
+      addModal(modal);
+    },
+    [addModal],
+  );
+
   const openEditor = React.useCallback(
     (path: FileTreeNode) => {
       const editorModal: ModalProps = {
@@ -188,6 +237,7 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
       clearBuffer,
       exitTerminal,
       openEditor,
+      open,
       createNewFile,
       getWindowSize,
       getTerminalSize,
@@ -200,6 +250,7 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
       clearBuffer,
       exitTerminal,
       openEditor,
+      open,
       createNewFile,
       getWindowSize,
       getTerminalSize,

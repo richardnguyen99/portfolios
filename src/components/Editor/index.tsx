@@ -36,12 +36,12 @@ const Editor: React.FC<Props> = ({
   const updateTitle = React.useCallback(() => {
     const defaultFileName = title ?? "Editor";
 
-    if (file?.writePermission === false) {
+    if (file?.writePermission === false || readOnly) {
       return `${title} (read-only)`;
     }
 
     return defaultFileName;
-  }, [file, title]);
+  }, [file?.writePermission, readOnly, title]);
 
   React.useEffect(() => {
     if (file) {
@@ -186,6 +186,7 @@ const Editor: React.FC<Props> = ({
         });
 
         editorRef.current = editor;
+        setTitle(updateTitle());
       }}
     />
   );

@@ -9,6 +9,7 @@ export type SystemCommand = {
   getFileTreeHome: () => FileTreeNode;
   changeDirectory: (path?: FileTreeNode | string) => void;
   openEditor: (path: FileTreeNode) => void;
+  open: (path: FileTreeNode) => void;
   createNewFile: (path: FileTreeNode, name: string) => void;
   getWindowSize: () => { width: number; height: number };
   getTerminalSize: () => { width: number; height: number };

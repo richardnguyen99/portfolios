@@ -1,16 +1,21 @@
 import * as React from "react";
 import { useRemark } from "react-remark";
 
-import type { RemarkProps } from "./type";
+import { RemarkProps } from "./type";
+import useWindow from "@components/Window/useWindow";
 
-const Remark: React.FC<RemarkProps> = ({ rawContent }) => {
+type Props = RemarkProps & React.HTMLAttributes<HTMLDivElement>;
+
+const Remark: React.FC<Props> = ({ rawContent, ...rest }) => {
+  const { setTitle } = useWindow();
   const [renderedContent, setRenderedContent] = useRemark();
 
   React.useEffect(() => {
+    setTitle((prev) => `Remark - ${prev}`);
     setRenderedContent(rawContent);
-  }, [rawContent, setRenderedContent]);
+  }, [rawContent, setRenderedContent, setTitle]);
 
-  return renderedContent;
+  return <div {...rest}>{renderedContent}</div>;
 };
 
 export default Remark;

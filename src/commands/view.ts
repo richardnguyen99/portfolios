@@ -1,0 +1,171 @@
+import minimist, { ParsedArgs } from "minimist";
+
+import type { SystemCommand } from "@components/Terminal/type";
+import type { FileTreeNode } from "@contexts/FileTree/type";
+
+const VERSION = "0.0.1";
+const AUTHOR = "Richard H. Nguyen";
+const SOURCE =
+  "https://github.com/richardnguyen99/portfolios/tree/main/src/commands/view.ts";
+const SUPPORTED_OPTIONS = ["help", "version"];
+const SUPPORTED_ALIASES = {};
+
+const _viewHelp = () => {
+  return "Usage: view [OPTION] [DIR]\n\
+\n\
+Open a file or directory with specified apps.\n\
+\n\
+Options:\n\
+      --help                display this help and exit.\n\
+      --version             output version information and exit.\n";
+};
+
+const _viewVersion = () => {
+  return `view (portfoli-os) ${VERSION}\n\
+This is free software: you are free to change and redistribute it.\n\
+A copy of this command can found at:\n\
+\n\
+<a href="${SOURCE}" target="_blank" rel="noreferrer" class="underline font-black dark:text-white text-black">${SOURCE}</a>\n\
+\n\
+Written by ${AUTHOR}.\n`;
+};
+
+const view = (
+  args: string[],
+  _sysCall: SystemCommand,
+  _currentDir: FileTreeNode,
+): string | undefined => {
+  let ans = "";
+
+  let showError = false;
+  let showHelp = false;
+  let showVersion = false;
+
+  const argv: ParsedArgs = minimist(args, {
+    boolean: SUPPORTED_OPTIONS,
+    alias: SUPPORTED_ALIASES,
+    unknown: (arg) => {
+      if (arg.startsWith("-")) {
+        ans = `\
+view: invalid option -- '${arg.slice(1)}'\n\
+Try 'view --help' for more information.\n`;
+        showError = true;
+        return false;
+      }
+
+      return true;
+    },
+  });
+
+  if (showError) {
+    return ans;
+  }
+
+  for (const option of SUPPORTED_OPTIONS) {
+    if (argv[option]) {
+      switch (option) {
+        case "help":
+          showHelp = true;
+          break;
+        case "version":
+          showVersion = true;
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
+  if (showHelp) return _viewHelp();
+
+  if (showVersion) return _viewVersion();
+
+  if (!argv._.length) {
+    return undefined;
+  }
+
+  if (argv._.length === 0) {
+    ans =
+      "view: missing file operand\n\
+Try 'view --help' for more information.\n";
+
+    return ans;
+  }
+
+  const pathList = argv._[0].split("/").filter((path) => path !== "");
+
+  if (pathList.length === 0) {
+    ans =
+      "view: missing file operand\n\
+Try 'view --help' for more information.\n";
+
+    return ans;
+  }
+
+  let currentDir = _currentDir;
+
+  for (let i = 0; i < pathList.length - 1; i++) {
+    const path = pathList[i];
+
+    if (path === ".") {
+      continue;
+    }
+
+    if (path === "..") {
+      if (currentDir.parent) {
+        currentDir = currentDir.parent;
+      }
+      continue;
+    }
+
+    const child = currentDir.children.find(
+      (child) =>
+        child.name === path && child.name !== "." && child.name !== "..",
+    );
+
+    if (child) {
+      if (child.type === "file") {
+        ans = `view: cannot open '${path}': Not a directory\n`;
+        return ans;
+      }
+
+      currentDir = child;
+    } else {
+      ans = `touch: cannot open '${path}': No such file or directory\n`;
+      return ans;
+    }
+  }
+
+  const file = pathList[pathList.length - 1];
+  const child = currentDir.children.find((child) => child.name === file);
+
+  if (typeof child === "undefined") {
+    if (file === ".") {
+      return `view: cannot open '${file}': Is a directory\n`;
+    }
+
+    if (file === "..") {
+      return `view: cannot open '${file}': Is a directory\n`;
+    }
+
+    if (currentDir.writePermission === false) {
+      return `view: cannot open '${file}': Permission denied\n`;
+    }
+
+    _sysCall.createNewFile(currentDir, file);
+
+    _sysCall.open(currentDir.children[currentDir.children.length - 1]);
+
+    return undefined;
+  }
+
+  if (child.type === "folder") {
+    return `view: cannot open '${file}': Is a directory\n`;
+  }
+
+  _sysCall.open(child);
+
+  return undefined;
+};
+
+export default view;

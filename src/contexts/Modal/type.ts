@@ -1,7 +1,7 @@
 import { WindowPosition, WindowSize } from "@components/Window/type";
 import { FileTreeNode } from "@contexts/FileTree/type";
 
-type ModalType = "explorer" | "terminal" | "editor" | "settings";
+type ModalType = "explorer" | "terminal" | "editor" | "settings" | "reader";
 
 export type ModalProps = {
   id: string;
