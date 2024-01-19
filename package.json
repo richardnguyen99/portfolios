@@ -25,7 +25,8 @@
     "react-hotkeys-hook": "^4.4.1",
     "react-remark": "^2.1.0",
     "react-rnd": "^10.4.1",
-    "remark-gemoji": "^8.0.0"
+    "remark-gemoji": "^8.0.0",
+    "unist-util-is": "^6.0.0"
   },
   "devDependencies": {
     "@types/minimist": "^1.2.5",
