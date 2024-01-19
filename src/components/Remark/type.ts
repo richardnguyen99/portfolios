@@ -9,3 +9,9 @@ export type RemarkHeadingProps = React.HTMLAttributes<HTMLHeadingElement> &
 
 export type RemarkParagraphProps = React.HTMLAttributes<HTMLParagraphElement> &
   React.PropsWithChildren;
+
+export type RemarkCodeProps = React.HTMLAttributes<HTMLElement> &
+  React.PropsWithChildren;
+
+export type RemarkPreProps = React.HTMLAttributes<HTMLPreElement> &
+  React.PropsWithChildren;

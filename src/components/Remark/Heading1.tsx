@@ -7,7 +7,10 @@ const RemarkHeading1: React.FC<RemarkHeadingProps> = ({
   ...rest
 }) => {
   return (
-    <h1 {...rest} className="mb-7 text-3xl font-extrabold">
+    <h1
+      {...rest}
+      className="mb-7 dark:text-white text-black text-3xl font-extrabold"
+    >
       {children}
     </h1>
   );

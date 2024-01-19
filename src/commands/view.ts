@@ -30,6 +30,37 @@ A copy of this command can found at:\n\
 Written by ${AUTHOR}.\n`;
 };
 
+const getFinalDestion = (
+  pathList: string[],
+  currentDir: FileTreeNode,
+): FileTreeNode => {
+  let finalDir = currentDir;
+
+  for (const path of pathList) {
+    if (path === "." || path === "") continue;
+
+    if (path === "..") {
+      finalDir = finalDir && finalDir.parent ? finalDir.parent : finalDir;
+    } else {
+      const child = finalDir.children.find((child) => child.name === path);
+
+      if (!child) {
+        throw new Error(
+          `portfoli-os: view: ${path}: No such file or directory`,
+        );
+      }
+
+      if (child.type !== "folder") {
+        throw new Error(`portfoli-os: view: ${path}: Not a directory`);
+      }
+
+      finalDir = child;
+    }
+  }
+
+  return finalDir;
+};
+
 const view = (
   args: string[],
   _sysCall: SystemCommand,
@@ -92,71 +123,32 @@ Try 'view --help' for more information.\n";
     return ans;
   }
 
-  const pathList = argv._[0].split("/").filter((path) => path !== "");
+  let finalDir = null;
+  let startDir = _currentDir;
 
-  if (pathList.length === 0) {
-    ans =
-      "view: missing file operand\n\
-Try 'view --help' for more information.\n";
+  let pathList = argv._[0]
+    .trim()
+    .split("/")
+    .filter((path) => path !== "." && path !== "");
 
-    return ans;
+  if (argv._[0].startsWith("/")) {
+    startDir = _sysCall.getFileTreeRoot();
+  } else if (argv._[0].startsWith("~")) {
+    startDir = _sysCall.getFileTreeHome();
+    pathList = pathList.slice(1);
   }
 
-  let currentDir = _currentDir;
-
-  for (let i = 0; i < pathList.length - 1; i++) {
-    const path = pathList[i];
-
-    if (path === ".") {
-      continue;
-    }
-
-    if (path === "..") {
-      if (currentDir.parent) {
-        currentDir = currentDir.parent;
-      }
-      continue;
-    }
-
-    const child = currentDir.children.find(
-      (child) =>
-        child.name === path && child.name !== "." && child.name !== "..",
-    );
-
-    if (child) {
-      if (child.type === "file") {
-        ans = `view: cannot open '${path}': Not a directory\n`;
-        return ans;
-      }
-
-      currentDir = child;
-    } else {
-      ans = `touch: cannot open '${path}': No such file or directory\n`;
-      return ans;
-    }
+  try {
+    finalDir = getFinalDestion(pathList.slice(0, -1), startDir);
+  } catch (err) {
+    return (err as Error).message;
   }
 
   const file = pathList[pathList.length - 1];
-  const child = currentDir.children.find((child) => child.name === file);
+  const child = finalDir.children.find((child) => child.name === file);
 
-  if (typeof child === "undefined") {
-    if (file === ".") {
-      return `view: cannot open '${file}': Is a directory\n`;
-    }
-
-    if (file === "..") {
-      return `view: cannot open '${file}': Is a directory\n`;
-    }
-
-    if (currentDir.writePermission === false) {
-      return `view: cannot open '${file}': Permission denied\n`;
-    }
-
-    _sysCall.createNewFile(currentDir, file);
-
-    _sysCall.open(currentDir.children[currentDir.children.length - 1]);
-
-    return undefined;
+  if (!child) {
+    return `view: cannot open '${file}': No such file or directory\n`;
   }
 
   if (child.type === "folder") {
