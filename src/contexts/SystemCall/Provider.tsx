@@ -1,12 +1,14 @@
 import * as React from "react";
 
+import useFileTree from "@contexts/FileTree/useFileTree";
 import { SystemCallProviderProps as Props } from "./type";
 import SystemCallContext from "./Context";
+import _readDir from "./calls/_readDir";
 
 const SystemCallProvider: React.FC<Props> = ({ children }) => {
-  const readDir = React.useCallback(() => {
-    console.log("readDir");
-  }, []);
+  const { getRootFolder } = useFileTree();
+
+  const readDir = React.useCallback(_readDir, [getRootFolder]);
 
   const contextValue = React.useMemo(() => {
     return {
