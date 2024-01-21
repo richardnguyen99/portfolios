@@ -1,6 +1,13 @@
-import { IDirectoryMetadata, IFile, IFileMetadata, NodeType } from "./type";
+import PFile from "./File";
+import {
+  IDirectory,
+  IDirectoryMetadata,
+  INode,
+  INodeMetadata,
+  NodeType,
+} from "./type";
 
-class File implements IFile {
+class Directory implements IDirectory {
   private id: string;
   private name: string;
   private parent: IDirectoryMetadata | null;
@@ -16,9 +23,9 @@ class File implements IFile {
   private lastChanged: Date;
   private birth: Date;
 
-  private content: string;
+  private children: INode[];
 
-  constructor(metadata: Partial<IFileMetadata>, data?: string) {
+  constructor(metadata: Partial<IDirectoryMetadata>) {
     this.id = metadata.id ?? crypto.randomUUID();
     this.name = metadata.name ?? "untitled";
     this.parent = metadata.parent ?? null;
@@ -33,8 +40,8 @@ class File implements IFile {
     this.lastChanged = new Date();
     this.birth = new Date();
 
-    this.content = data ?? "";
-    this.size = data ? data.length : 0;
+    this.children = [];
+    this.size = 0;
   }
 
   public getId(): string {
@@ -50,7 +57,7 @@ class File implements IFile {
   }
 
   public getType(): NodeType {
-    return NodeType.File;
+    return NodeType.Directory;
   }
 
   public getSize(): number {
@@ -89,21 +96,24 @@ class File implements IFile {
     return this.birth;
   }
 
-  public read(): string {
+  public read(): INode[] {
     this.lastAccessed = new Date();
 
-    return this.content;
+    return this.children;
   }
 
-  public write(data: string): void {
+  public write(data: INodeMetadata): void {
     this.lastAccessed = new Date();
     this.lastModified = new Date();
 
-    this.content = data;
-    this.size = data.length;
+    if (data.type === NodeType.File) {
+      this.children.push(new PFile(data));
+    } else if (data.type === NodeType.Directory) {
+      this.children.push(new Directory(data));
+    }
   }
 
-  public modify(metadata: Partial<IFileMetadata>): void {
+  public modify(metadata: Partial<IDirectoryMetadata>): void {
     if (metadata.name) {
       this.name = metadata.name;
     }
@@ -117,4 +127,4 @@ class File implements IFile {
   }
 }
 
-export default File;
+export default Directory;

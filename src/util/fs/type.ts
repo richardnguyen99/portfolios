@@ -7,7 +7,6 @@ export enum NodeType {
 export interface INodeMetadata {
   id: string;
   name: string;
-  parent: INode | null;
   type: NodeType;
   size: number;
   owner: string;
@@ -22,10 +21,20 @@ export interface INodeMetadata {
   birth: Date;
 }
 
+export interface IDirectoryMetadata extends INodeMetadata {
+  parent: IDirectoryMetadata | null;
+  children: INode[];
+}
+
+export interface IFileMetadata extends INodeMetadata {
+  parent: IDirectoryMetadata;
+  content: string;
+}
+
 export interface INode {
   getId: () => string;
   getName: () => string;
-  getParent: () => INode | null;
+  getParent: () => IDirectoryMetadata | null;
   getType: () => NodeType;
   getSize: () => number;
   getOwner: () => string;
@@ -41,5 +50,17 @@ export interface INode {
 
   read: () => unknown;
   write: (data: never) => void;
-  modify: (data: never) => void;
+  modify: (metadata: never) => void;
+}
+
+export interface IFile extends INode {
+  read: () => string;
+  write: (data: string) => void;
+  modify: (metadata: Partial<INodeMetadata>) => void;
+}
+
+export interface IDirectory extends INode {
+  read: () => INode[];
+  write: (data: IFileMetadata | IDirectoryMetadata) => void;
+  modify: (metadata: Partial<IDirectoryMetadata>) => void;
 }
