@@ -1,13 +1,13 @@
 import * as React from "react";
 
-import type { FileTreeNode, FileTreeContextType } from "./type";
+import type { FileTreeContextType } from "./type";
 import FileTreeContext from "./Context";
-
-import content from "../../assets/README.md?raw";
 import useLocalStorage from "@hooks/useLocalStorage";
-import type { INode, IFile, IDirectory } from "@util/fs/type";
+import type { IFile, IDirectory } from "@util/fs/type";
 import { FileType } from "@util/fs/type";
 import { generateDirectoryId, generateFileId } from "@util/fs/id";
+
+import content from "../../assets/README.md?raw";
 
 const date = new Date("2024-01-01T00:00:00.000Z");
 
@@ -144,165 +144,19 @@ guess.children.push(documents, publics);
 root.children.push(home);
 
 const FileTreeProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const [homeFolder, setHomeFolder] = useLocalStorage<FileTreeNode>(
+  const [homeFolder, setHomeFolder] = useLocalStorage<IDirectory>(
     "home",
     guess,
   );
 
-  // const [fileTree] = React.useState<FileTreeNode>(root);
-
-  const addFile = React.useCallback(
-    (parentNode: FileTreeNode, filename: string) => {
-      const newFile: FileTreeNode = {
-        id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
-        name: filename,
-        type: "file",
-        readPermission: true,
-        writePermission: true,
-        executePermission: false,
-        children: [],
-        parent: parentNode,
-        content: "",
-        accessedAt: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-
-      parentNode.children.push(newFile);
-      console.log(Object.is(parentNode, homeFolder));
-
-      const newHomeFolder = { ...homeFolder, parent: null };
-      setHomeFolder(newHomeFolder);
-    },
+  const contextValue = React.useMemo<FileTreeContextType>(
+    () => ({
+      root,
+      home: homeFolder,
+      setHomeFolder,
+    }),
     [homeFolder, setHomeFolder],
   );
-
-  const removeFile = React.useCallback(
-    (parentNode: FileTreeNode, filename: string) => {
-      console.log(parentNode, filename);
-    },
-    [],
-  );
-
-  const addFolder = React.useCallback(
-    (parentNode: FileTreeNode, foldername: string) => {
-      console.log(parentNode, foldername);
-    },
-    [],
-  );
-
-  const removeFolder = React.useCallback(
-    (parentNode: FileTreeNode, foldername: string) => {
-      console.log(parentNode, foldername);
-    },
-    [],
-  );
-
-  const renameFile = React.useCallback(
-    (parentNode: FileTreeNode, filename: string, newFilename: string) => {
-      console.log(parentNode, filename, newFilename);
-    },
-    [],
-  );
-
-  const renameFolder = React.useCallback(
-    (parentNode: FileTreeNode, foldername: string, newFoldername: string) => {
-      console.log(parentNode, foldername, newFoldername);
-    },
-    [],
-  );
-
-  const moveFile = React.useCallback(
-    (
-      parentNode: FileTreeNode,
-      filename: string,
-      newParentNode: FileTreeNode,
-    ) => {
-      console.log(parentNode, filename, newParentNode);
-    },
-    [],
-  );
-  const moveFolder = React.useCallback(
-    (
-      parentNode: FileTreeNode,
-      foldername: string,
-      newParentNode: FileTreeNode,
-    ) => {
-      console.log(parentNode, foldername, newParentNode);
-    },
-    [],
-  );
-
-  const copyFile = React.useCallback(
-    (
-      parentNode: FileTreeNode,
-      filename: string,
-      newParentNode: FileTreeNode,
-    ) => {
-      console.log(parentNode, filename, newParentNode);
-    },
-    [],
-  );
-
-  const copyFolder = React.useCallback(
-    (
-      parentNode: FileTreeNode,
-      foldername: string,
-      newParentNode: FileTreeNode,
-    ) => {
-      console.log(parentNode, foldername, newParentNode);
-    },
-    [],
-  );
-
-  const getHomeFolder = React.useCallback(() => {
-    return homeFolder;
-  }, [homeFolder]);
-
-  const getRootFolder = React.useCallback(() => {
-    return root;
-  }, []);
-
-  const contextValue: FileTreeContextType = React.useMemo(() => {
-    return {
-      addFile,
-      removeFile,
-      addFolder,
-      removeFolder,
-      renameFile,
-      renameFolder,
-      moveFile,
-      moveFolder,
-      copyFile,
-      copyFolder,
-      getHomeFolder,
-      getRootFolder,
-    };
-  }, [
-    addFile,
-    addFolder,
-    moveFile,
-    moveFolder,
-    removeFile,
-    removeFolder,
-    renameFile,
-    renameFolder,
-    copyFile,
-    copyFolder,
-    getHomeFolder,
-    getRootFolder,
-  ]);
-
-  React.useEffect(() => {
-    const index = home.children.findIndex((child) => child.name === "guess");
-
-    if (index !== -1) {
-      home.children.splice(index, 1);
-    }
-
-    home.children.push(homeFolder);
-    homeFolder.parent = home;
-  }, [homeFolder]);
 
   return (
     <FileTreeContext.Provider value={contextValue}>
