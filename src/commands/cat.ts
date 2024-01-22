@@ -1,7 +1,7 @@
 import minimist, { ParsedArgs } from "minimist";
 
 import type { SystemCommand } from "@components/Terminal/type";
-import type { FileTreeNode } from "@contexts/FileTree/type";
+import { type IFile, type IDirectory, FileType } from "@util/fs/type";
 
 const VERSION = "0.0.1";
 const AUTHOR = "Richard H. Nguyen";
@@ -33,7 +33,7 @@ Written by ${AUTHOR}.\n`;
 const concat = (
   args: string[],
   _sysCall: SystemCommand,
-  _currentDir: FileTreeNode,
+  _currentDir: IDirectory,
 ) => {
   let ans = "";
 
@@ -95,7 +95,7 @@ Try 'cat--help' for more information.\n`;
 
         if (path === "..") {
           if (currentNode.parent) {
-            currentNode = currentNode.parent;
+            currentNode = currentNode.parent as unknown as IDirectory;
           }
         } else if (path === ".") {
           continue;
@@ -104,9 +104,9 @@ Try 'cat--help' for more information.\n`;
             (child) => child.name === path,
           );
 
-          if (childNode && childNode.type === "folder") {
-            currentNode = childNode;
-          } else if (childNode && childNode.type === "file") {
+          if (childNode && childNode.type === FileType.Directory) {
+            currentNode = childNode as unknown as IDirectory;
+          } else if (childNode && childNode.type === FileType.File) {
             ans += `cat: ${argv._[i]}: Not a directory\n`;
             breakEarly = true;
             break;
@@ -127,8 +127,8 @@ Try 'cat--help' for more information.\n`;
         (child) => child.name === filename,
       );
 
-      if (fileNode && fileNode.type === "file") {
-        ans += fileNode.content;
+      if (fileNode && fileNode.type === FileType.File) {
+        ans += (fileNode as unknown as IFile).content;
       } else {
         ans += `cat: ${argv._[i]}: No such file or directory\n`;
       }

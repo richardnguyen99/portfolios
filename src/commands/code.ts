@@ -1,7 +1,7 @@
 import minimist, { ParsedArgs } from "minimist";
 
 import type { SystemCommand } from "@components/Terminal/type";
-import type { FileTreeNode } from "@contexts/FileTree/type";
+import { FileType, type IDirectory } from "@util/fs/type";
 
 const VERSION = "0.0.1";
 const AUTHOR = "Richard H. Nguyen";
@@ -33,7 +33,7 @@ Written by ${AUTHOR}.\n`;
 const monacoEditor = (
   args: string[],
   _sysCall: SystemCommand,
-  _currentDir: FileTreeNode,
+  _currentDir: IDirectory,
 ): string | undefined => {
   let ans = "";
 
@@ -113,7 +113,7 @@ Try 'code --help' for more information.\n";
 
     if (path === "..") {
       if (currentDir.parent) {
-        currentDir = currentDir.parent;
+        currentDir = currentDir.parent as unknown as IDirectory;
       }
       continue;
     }
@@ -124,12 +124,12 @@ Try 'code --help' for more information.\n";
     );
 
     if (child) {
-      if (child.type === "file") {
+      if (child.type === FileType.File) {
         ans = `code: cannot open '${path}': Not a directory\n`;
         return ans;
       }
 
-      currentDir = child;
+      currentDir = child as unknown as IDirectory;
     } else {
       ans = `touch: cannot open '${path}': No such file or directory\n`;
       return ans;
@@ -159,7 +159,7 @@ Try 'code --help' for more information.\n";
     return undefined;
   }
 
-  if (child.type === "folder") {
+  if (child.type === FileType.Directory) {
     return `code: cannot open '${file}': Is a directory\n`;
   }
 

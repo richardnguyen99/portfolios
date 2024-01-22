@@ -1,7 +1,8 @@
 import minimist, { ParsedArgs } from "minimist";
 
 import type { SystemCommand } from "@components/Terminal/type";
-import type { FileTreeNode } from "@contexts/FileTree/type";
+import { FileType, type IDirectory } from "@util/fs/type";
+import { generateDirectoryId } from "@util/fs/id";
 
 const VERSION = "0.0.2";
 const AUTHOR = "Richard H. Nguyen";
@@ -35,19 +36,28 @@ A copy of this command can found at:\n\
 Written by ${AUTHOR}.\n`;
 };
 
-const _mkdir = (path: string, currentDir: FileTreeNode): FileTreeNode => {
-  const newDir: FileTreeNode = {
+const _mkdir = async (
+  path: string,
+  currentDir: IDirectory,
+): Promise<IDirectory> => {
+  const createdDate = new Date();
+
+  const newDir: IDirectory = {
+    id: await generateDirectoryId(path, currentDir),
     name: path,
-    type: "folder",
+    type: FileType.Directory,
     children: [],
     parent: currentDir,
+    owner: currentDir.owner,
+
     executePermission: true,
     readPermission: true,
     writePermission: true,
-    id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
-    accessedAt: new Date(),
-    updatedAt: new Date(),
-    createdAt: new Date(),
+
+    lastAccessed: createdDate,
+    lastModified: createdDate,
+    lastChanged: createdDate,
+    lastCreated: createdDate,
   };
 
   currentDir.children.push(newDir);
@@ -58,7 +68,7 @@ const _mkdir = (path: string, currentDir: FileTreeNode): FileTreeNode => {
 const mkdir = (
   args: string[],
   _sysCall: SystemCommand,
-  currentDir: FileTreeNode,
+  currentDir: IDirectory,
 ): string | undefined => {
   let ans = "";
 
@@ -137,7 +147,7 @@ Try 'mkdir --help' for more information.\n";
 
     if (path === "..") {
       if (currentDirectory.parent) {
-        currentDirectory = currentDirectory.parent;
+        currentDirectory = currentDirectory.parent as unknown as IDirectory;
       }
 
       continue;
@@ -149,22 +159,22 @@ Try 'mkdir --help' for more information.\n";
     );
 
     if (child) {
-      if (child.type === "file") {
+      if (child.type === FileType.File) {
         return `mkdir: cannot create directory '${path}': Not a directory\n`;
       }
 
-      if (i === pathList.length - 1 && child.type === "folder") {
+      if (i === pathList.length - 1 && child.type === FileType.Directory) {
         return `mkdir: cannot create directory '${path}': File exists\n`;
       }
 
-      currentDirectory = child;
+      currentDirectory = child as unknown as IDirectory;
     } else if (i < pathList.length - 1) {
       if (!createParents) {
         return `mkdir: cannot create directory '${path}': No such file or directory\n`;
       }
 
       const newDir = _mkdir(path, currentDirectory);
-      currentDirectory = newDir;
+      currentDirectory = newDir as unknown as IDirectory;
 
       if (verbose) {
         ans += `mkdir: created directory '${path}'\n`;
@@ -175,7 +185,7 @@ Try 'mkdir --help' for more information.\n";
       }
 
       const newDir = _mkdir(path, currentDirectory);
-      currentDirectory = newDir;
+      currentDirectory = newDir as unknown as IDirectory;
 
       if (verbose) {
         ans += `mkdir: created directory '${path}'\n`;

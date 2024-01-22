@@ -1,7 +1,7 @@
 import minimist, { ParsedArgs } from "minimist";
 
 import type { SystemCommand } from "@components/Terminal/type";
-import type { FileTreeNode } from "@contexts/FileTree/type";
+import { FileType, type IDirectory } from "@util/fs/type";
 
 const VERSION = "0.0.1";
 const AUTHOR = "Richard H. Nguyen";
@@ -43,7 +43,7 @@ Written by ${AUTHOR}.\n`;
 const rm = (
   args: string[],
   _sysCall: SystemCommand,
-  currentDir: FileTreeNode,
+  currentDir: IDirectory,
 ): string | undefined => {
   let ans = "";
 
@@ -122,7 +122,7 @@ Try 'rm --help' for more information.\n";
 
     if (path === "..") {
       if (currentDirectory.parent) {
-        currentDirectory = currentDirectory.parent;
+        currentDirectory = currentDirectory.parent as unknown as IDirectory;
       }
     } else if (path === ".") {
       continue;
@@ -131,8 +131,8 @@ Try 'rm --help' for more information.\n";
         (child) => child.name === path,
       );
 
-      if (child && child.type === "folder") {
-        currentDirectory = child;
+      if (child && child.type === FileType.Directory) {
+        currentDirectory = child as unknown as IDirectory;
       } else {
         return `rm: cannot remove '${path}': No such file or directory\n`;
       }
@@ -143,7 +143,7 @@ Try 'rm --help' for more information.\n";
   const child = currentDirectory.children.find((child) => child.name === path);
 
   if (child) {
-    if (child.type === "file") {
+    if (child.type === FileType.File) {
       if (child.writePermission === false) {
         return `rm: cannot remove '${path}': Permission denied\n`;
       }

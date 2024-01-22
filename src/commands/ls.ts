@@ -1,7 +1,8 @@
 import minimist, { ParsedArgs } from "minimist";
 
 import type { SystemCommand } from "@components/Terminal/type";
-import type { FileTreeNode } from "@contexts/FileTree/type";
+import type { IDirectory, INode } from "@util/fs/type";
+import { FileType } from "@util/fs/type";
 
 const VERSION = "0.0.3";
 const AUTHOR = "Richard H. Nguyen";
@@ -39,13 +40,13 @@ Written by ${AUTHOR}.\n`;
 // to work correctly, which breaks down one row into individual letters when
 // overflowing instead of breaking down one row into individual words.
 const formatStyleFileNode = (
-  node: FileTreeNode,
+  node: INode,
   maxLength: number,
   isLastInRow: boolean,
 ): string => {
   const { name, type } = node;
 
-  if (type === "folder") {
+  if (type === FileType.Directory) {
     return `${name
       .split("")
       .map(
@@ -133,15 +134,18 @@ const bestDimensions = (numItems: number, numColumns: number) => {
 
 const getFinalDestion = (
   pathList: string[],
-  currentDir: FileTreeNode,
-): FileTreeNode => {
+  currentDir: IDirectory,
+): IDirectory => {
   let finalDir = currentDir;
 
   for (const path of pathList) {
     if (path === "." || path === "") continue;
 
     if (path === "..") {
-      finalDir = finalDir && finalDir.parent ? finalDir.parent : finalDir;
+      finalDir =
+        finalDir && finalDir.parent
+          ? (finalDir.parent as unknown as IDirectory)
+          : finalDir;
     } else {
       const child = finalDir.children.find((child) => child.name === path);
 
@@ -149,11 +153,11 @@ const getFinalDestion = (
         throw new Error(`portfoli-os: ls: ${path}: No such file or directory`);
       }
 
-      if (child.type !== "folder") {
+      if (child.type !== FileType.Directory) {
         throw new Error(`portfoli-os: ls: ${path}: Not a directory`);
       }
 
-      finalDir = child;
+      finalDir = child as unknown as IDirectory;
     }
   }
 
@@ -163,7 +167,7 @@ const getFinalDestion = (
 const listDir = (
   args: string[],
   sysCall: SystemCommand,
-  currentDir?: FileTreeNode,
+  currentDir?: IDirectory,
 ) => {
   let ans = "";
 
@@ -247,41 +251,46 @@ Try 'ls --help' for more information.\n`;
     .sort((a, b) => a.name.localeCompare(b.name));
 
   if (showAll) {
-    children.unshift(
-      {
-        id: "current",
-        name: ".",
-        type: "folder",
-        children: [],
-        parent: null,
-        accessedAt: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        executePermission: true,
-        readPermission: true,
-        writePermission: true,
-      },
-      {
-        id: "up",
-        name: "..",
-        type: "folder",
-        children: [],
-        parent: null,
-        accessedAt: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        executePermission: true,
-        readPermission: true,
-        writePermission: true,
-      },
-    );
+    const curr: IDirectory = {
+      id: "current",
+      name: ".",
+      type: FileType.Directory,
+      children: [],
+      parent: null,
+      owner: finalDir.owner,
+      executePermission: true,
+      readPermission: true,
+      writePermission: true,
+      lastAccessed: new Date(),
+      lastChanged: new Date(),
+      lastModified: new Date(),
+      lastCreated: new Date(),
+    };
+
+    const parent: IDirectory = {
+      id: "parent",
+      name: "..",
+      type: FileType.Directory,
+      children: [],
+      parent: finalDir.parent,
+      owner: finalDir.parent ? finalDir.parent.owner : "richard",
+      executePermission: true,
+      readPermission: true,
+      writePermission: true,
+      lastAccessed: new Date(),
+      lastChanged: new Date(),
+      lastModified: new Date(),
+      lastCreated: new Date(),
+    };
+
+    children.unshift(curr, parent);
   }
 
   const maxLength =
     children.length > 0
       ? Math.max(
           ...children.map((child) => {
-            if (child.type === "folder") {
+            if (child.type === FileType.Directory) {
               return child.name.length + 1;
             }
 

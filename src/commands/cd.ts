@@ -1,7 +1,8 @@
 import minimist, { ParsedArgs } from "minimist";
 
 import type { SystemCommand } from "@components/Terminal/type";
-import type { FileTreeNode } from "@contexts/FileTree/type";
+import type { IDirectory } from "@util/fs/type";
+import { FileType } from "@util/fs/type";
 
 const VERSION = "0.0.1";
 const AUTHOR = "Richard H. Nguyen";
@@ -41,17 +42,17 @@ A copy of this command can found at:\n\
 Written by ${AUTHOR}.\n`;
 };
 
-const _changeDir = (
-  pathList: string[],
-  currentDir: FileTreeNode,
-): FileTreeNode => {
+const _changeDir = (pathList: string[], currentDir: IDirectory): IDirectory => {
   let finalDir = currentDir;
 
   for (const path of pathList) {
     if (path === "." || path === "") continue;
 
     if (path === "..") {
-      finalDir = finalDir && finalDir.parent ? finalDir.parent : finalDir;
+      finalDir =
+        finalDir && finalDir.parent
+          ? (finalDir.parent as unknown as IDirectory)
+          : finalDir;
     } else {
       const child = finalDir.children.find((child) => child.name === path);
 
@@ -59,11 +60,11 @@ const _changeDir = (
         throw new Error(`portfoli-os: cd: ${path}: No such file or directory`);
       }
 
-      if (child.type !== "folder") {
+      if (child.type !== FileType.Directory) {
         throw new Error(`portfoli-os: cd: ${path}: Not a directory`);
       }
 
-      finalDir = child;
+      finalDir = child as unknown as IDirectory;
     }
   }
 
@@ -73,7 +74,7 @@ const _changeDir = (
 const changeDir = (
   args: string[],
   sysCall: SystemCommand,
-  currentDir: FileTreeNode,
+  currentDir: IDirectory,
 ): string | undefined => {
   let ans = "";
 

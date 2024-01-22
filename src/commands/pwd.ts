@@ -1,7 +1,7 @@
 import minimist, { ParsedArgs } from "minimist";
 
 import type { SystemCommand } from "@components/Terminal/type";
-import type { FileTreeNode } from "@contexts/FileTree/type";
+import type { IDirectory } from "@util/fs/type";
 
 const VERSION = "0.0.1";
 const AUTHOR = "Richard H. Nguyen";
@@ -33,7 +33,7 @@ Written by ${AUTHOR}.\n`;
 const pwd = (
   args: string[],
   _sysCall: SystemCommand,
-  currentDir: FileTreeNode,
+  currentDir: IDirectory,
 ): string | undefined => {
   let ans = "";
 
@@ -84,7 +84,7 @@ Try 'pwd --help' for more information.\n`;
 
   while (currentDir.parent) {
     pathList.push(currentDir.name);
-    currentDir = currentDir.parent;
+    currentDir = currentDir.parent as unknown as IDirectory;
   }
 
   return `/${pathList.reverse().join("/")}`;

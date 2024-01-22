@@ -9,10 +9,10 @@ import ls from "./ls";
 import cd from "./cd";
 import clear from "./clear";
 import exit from "./exit";
+import monacoEditor from "./code";
 
 import type { SystemCommand } from "@components/Terminal/type";
-import type { FileTreeNode } from "@contexts/FileTree/type";
-import monacoEditor from "./code";
+import type { IDirectory } from "@util/fs/type";
 
 const VERSION = "0.0.1";
 const AUTHOR = "Richard H. Nguyen";
@@ -42,11 +42,11 @@ A copy of this command can found at:\n\
 Written by ${AUTHOR}.\n`;
 };
 
-const help = (
+const help = async (
   args: string[],
   sysCall: SystemCommand,
-  currentDir: FileTreeNode,
-): string | undefined => {
+  currentDir: IDirectory,
+): Promise<string | undefined> => {
   let ans = "";
 
   let showError = false;
@@ -108,7 +108,7 @@ Try 'help --help' for more information.\n`;
   }
 
   if (command === "touch") {
-    return touch(["--help"], sysCall, currentDir);
+    return await touch(["--help"], sysCall, currentDir);
   }
 
   if (command === "mkdir") {
