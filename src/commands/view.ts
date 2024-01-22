@@ -1,7 +1,7 @@
 import minimist, { ParsedArgs } from "minimist";
 
 import type { SystemCommand } from "@components/Terminal/type";
-import { FileType, type IDirectory } from "@util/fs/type";
+import { FileType, type IDirectory, type IFile } from "@util/fs/type";
 
 const VERSION = "0.0.1";
 const AUTHOR = "Richard H. Nguyen";
@@ -158,7 +158,7 @@ Try 'view --help' for more information.\n";
     return `view: cannot open '${file}': Is a directory\n`;
   }
 
-  _sysCall.open(child);
+  _sysCall.open(child as unknown as IFile);
 
   return undefined;
 };

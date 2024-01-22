@@ -1,8 +1,8 @@
-import { FileTreeNode } from "@contexts/FileTree/type";
+import { type INode, type IDirectory } from "@util/fs/type";
 import * as React from "react";
 
 export type SystemCallContextType = {
-  readDir: (fileTree: FileTreeNode) => FileTreeNode[];
+  readDir: (fileTree: IDirectory) => INode[];
 };
 
 export type SystemCallProviderProps = {

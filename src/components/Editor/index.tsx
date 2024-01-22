@@ -45,7 +45,7 @@ const Editor: React.FC<Props> = ({
 
   React.useEffect(() => {
     if (file) {
-      file.accessedAt = new Date();
+      file.lastAccessed = new Date();
     }
   }, [file]);
 
@@ -175,7 +175,7 @@ const Editor: React.FC<Props> = ({
             // Save the file
             if (file) {
               file.content = model?.getValue() ?? "";
-              file.updatedAt = new Date();
+              file.lastChanged = new Date();
 
               setText(model?.getValue() ?? "");
             }

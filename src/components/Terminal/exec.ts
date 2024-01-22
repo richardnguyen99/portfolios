@@ -1,10 +1,10 @@
-import { FileTreeNode } from "@contexts/FileTree/type";
+import type { IDirectory } from "@util/fs/type";
+import type { SystemCommand } from "./type";
+
 import clear from "@commands/clear";
 import exit from "@commands/exit";
 import listDir from "@commands/ls";
 import changeDir from "@commands/cd";
-
-import { SystemCommand } from "./type";
 import pwd from "@commands/pwd";
 import mkdir from "@commands/mkdir";
 import touch from "@commands/touch";
@@ -32,7 +32,7 @@ const COMMANDS = {
 const exec = (
   cmdStr: string,
   sysCall: SystemCommand,
-  currentDir: FileTreeNode,
+  currentDir: IDirectory,
 ) => {
   if (!cmdStr) {
     return "";

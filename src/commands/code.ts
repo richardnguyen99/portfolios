@@ -1,7 +1,7 @@
 import minimist, { ParsedArgs } from "minimist";
 
 import type { SystemCommand } from "@components/Terminal/type";
-import { FileType, type IDirectory } from "@util/fs/type";
+import { FileType, type IDirectory, type IFile } from "@util/fs/type";
 
 const VERSION = "0.0.1";
 const AUTHOR = "Richard H. Nguyen";
@@ -154,7 +154,9 @@ Try 'code --help' for more information.\n";
 
     _sysCall.createNewFile(currentDir, file);
 
-    _sysCall.openEditor(currentDir.children[currentDir.children.length - 1]);
+    _sysCall.openEditor(
+      currentDir.children[currentDir.children.length - 1] as unknown as IFile,
+    );
 
     return undefined;
   }
@@ -163,7 +165,7 @@ Try 'code --help' for more information.\n";
     return `code: cannot open '${file}': Is a directory\n`;
   }
 
-  _sysCall.openEditor(child);
+  _sysCall.openEditor(child as unknown as IFile);
 
   return undefined;
 };

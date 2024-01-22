@@ -261,11 +261,11 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
   );
 
   const execute = React.useCallback(
-    (command: string) => {
+    async (command: string) => {
       const bufferedCommand = `> ${command}`;
 
       addBuffer(bufferedCommand);
-      const result = exec(command, systemCalls, currentFolder.current);
+      const result = await exec(command, systemCalls, currentFolder.current);
 
       addBuffer(result || "");
     },
