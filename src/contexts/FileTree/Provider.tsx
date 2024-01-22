@@ -5,106 +5,137 @@ import FileTreeContext from "./Context";
 
 import content from "../../assets/README.md?raw";
 import useLocalStorage from "@hooks/useLocalStorage";
+import type { INode, IFile, IDirectory } from "@util/fs/type";
+import { FileType } from "@util/fs/type";
+import { generateDirectoryId, generateFileId } from "@util/fs/id";
 
 const date = new Date("2024-01-01T00:00:00.000Z");
 
-const root: FileTreeNode = {
+const root: IDirectory = {
+  id: await generateDirectoryId("root"),
   name: "root",
-  type: "folder",
-  readPermission: true,
-  writePermission: false,
-  executePermission: false,
-  id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
+  type: FileType.Directory,
   children: [],
   parent: null,
-  accessedAt: date,
-  createdAt: date,
-  updatedAt: date,
-};
+  owner: "richard",
 
-const home: FileTreeNode = {
-  name: "home",
-  type: "folder",
-  readPermission: true,
   writePermission: false,
   executePermission: false,
-  id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
+  readPermission: true,
+
+  lastAccessed: date,
+  lastChanged: date,
+  lastCreated: date,
+  lastModified: date,
+};
+
+const home: IDirectory = {
+  id: await generateDirectoryId("home", root),
+  name: "home",
+  type: FileType.Directory,
   children: [],
   parent: root,
-  accessedAt: date,
-  createdAt: date,
-  updatedAt: date,
+  owner: "richard",
+
+  readPermission: true,
+  writePermission: false,
+  executePermission: false,
+
+  lastAccessed: date,
+  lastChanged: date,
+  lastCreated: date,
+  lastModified: date,
 };
 
-const guess: FileTreeNode = {
+const guess: IDirectory = {
+  id: await generateDirectoryId("guess", home),
   name: "guess",
-  type: "folder",
-  readPermission: true,
-  writePermission: true,
-  executePermission: true,
-  id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
+  type: FileType.Directory,
   children: [],
   parent: null,
-  accessedAt: date,
-  createdAt: date,
-  updatedAt: date,
+  owner: "guess",
+
+  readPermission: true,
+  writePermission: true,
+  executePermission: true,
+
+  lastAccessed: date,
+  lastChanged: date,
+  lastCreated: date,
+  lastModified: date,
 };
 
-const documents: FileTreeNode = {
+const documents: IDirectory = {
+  id: await generateDirectoryId("documents", guess),
   name: "documents",
-  type: "folder",
+  type: FileType.Directory,
+  children: [],
+  parent: guess,
+  owner: "guess",
+
   readPermission: true,
   writePermission: true,
   executePermission: true,
-  id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
-  children: [],
-  parent: guess,
-  accessedAt: date,
-  createdAt: date,
-  updatedAt: date,
+
+  lastAccessed: date,
+  lastChanged: date,
+  lastCreated: date,
+  lastModified: date,
 };
 
-const publics: FileTreeNode = {
+const publics: IDirectory = {
+  id: await generateDirectoryId("public", guess),
   name: "public",
-  type: "folder",
+  type: FileType.Directory,
+  children: [],
+  parent: guess,
+  owner: "guess",
+
   readPermission: true,
   writePermission: true,
   executePermission: true,
-  id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
-  children: [],
-  parent: guess,
-  accessedAt: date,
-  createdAt: date,
-  updatedAt: date,
+
+  lastAccessed: date,
+  lastChanged: date,
+  lastCreated: date,
+  lastModified: date,
 };
 
-const author: FileTreeNode = {
+const author: IDirectory = {
+  id: await generateDirectoryId("richard", home),
   name: "richard",
-  type: "folder",
-  readPermission: true,
-  writePermission: false,
-  executePermission: false,
-  id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
+  type: FileType.Directory,
   children: [],
   parent: home,
-  accessedAt: date,
-  createdAt: date,
-  updatedAt: date,
-};
+  owner: "richard",
 
-const readmd: FileTreeNode = {
-  name: "readme.md",
-  type: "file",
   readPermission: true,
   writePermission: false,
   executePermission: false,
-  id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
-  children: [],
-  parent: author,
+
+  lastAccessed: date,
+  lastChanged: date,
+  lastCreated: date,
+  lastModified: date,
+};
+
+const readmd: IFile = {
+  id: await generateFileId(content, "readme.md", author),
+  name: "readme.md",
+  type: FileType.File,
   content: content,
-  accessedAt: date,
-  createdAt: date,
-  updatedAt: date,
+  size: content.length,
+  parent: author,
+  owner: "richard",
+
+  readPermission: true,
+  writePermission: false,
+  executePermission: false,
+
+  lastAccessed: date,
+  lastChanged: date,
+  lastCreated: date,
+  lastModified: date,
 };
 
 home.children.push(author);

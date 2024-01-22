@@ -1,66 +1,32 @@
-export enum NodeType {
+export enum FileType {
   File,
   Directory,
-  Symlink,
 }
 
-export interface INodeMetadata {
+export interface INode {
   id: string;
   name: string;
-  type: NodeType;
-  size: number;
+  type: FileType;
+  parent: INode | null;
+
   owner: string;
+  lastAccessed: Date;
+  lastModified: Date;
+  lastChanged: Date;
+  lastCreated: Date;
 
   readPermission: boolean;
   writePermission: boolean;
   executePermission: boolean;
-
-  lastAccessed: Date;
-  lastModified: Date;
-  lastChanged: Date;
-  birth: Date;
-}
-
-export interface IDirectoryMetadata extends INodeMetadata {
-  parent: IDirectoryMetadata | null;
-  children: INode[];
-}
-
-export interface IFileMetadata extends INodeMetadata {
-  parent: IDirectoryMetadata;
-  content: string;
-}
-
-export interface INode {
-  getId: () => string;
-  getName: () => string;
-  getParent: () => IDirectoryMetadata | null;
-  getType: () => NodeType;
-  getSize: () => number;
-  getOwner: () => string;
-
-  isReadable: () => boolean;
-  isWritable: () => boolean;
-  isExecutable: () => boolean;
-
-  getLastAccessed: () => Date;
-  getLastModified: () => Date;
-  getLastChanged: () => Date;
-  getBirth: () => Date;
-
-  read: () => unknown;
-  write: (data: never) => void;
-  modify: (metadata: never) => void;
 }
 
 export interface IFile extends INode {
-  read: () => string;
-  write: (data: string) => void;
-  modify: (metadata: Partial<INodeMetadata>) => void;
+  type: FileType.File;
+  content: string;
+  size: number;
 }
 
 export interface IDirectory extends INode {
-  read: () => INode[];
-  write: (data: IFileMetadata | IDirectoryMetadata) => void;
-  modify: (metadata: Partial<IDirectoryMetadata>) => void;
+  type: FileType.Directory;
+  children: INode[];
 }
