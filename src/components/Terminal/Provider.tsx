@@ -5,7 +5,7 @@ import { TerminalProviderProps, SystemCommand } from "./type";
 import exec from "./exec";
 import useModal from "@contexts/Modal/useModal";
 import useFileTree from "@contexts/FileTree/useFileTree";
-import type { FileTreeNode } from "@contexts/FileTree/type";
+import { IFile, IDirectory, FileType } from "@util/fs/type";
 import { ModalProps } from "@contexts/Modal/type";
 import useWindow from "@components/Window/useWindow";
 import { Editor, Remark } from "@components";
@@ -13,11 +13,11 @@ import { Editor, Remark } from "@components";
 const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
   const { getId, getSize } = useWindow();
   const { closeModal, addModal } = useModal();
-  const { getHomeFolder, getRootFolder, addFile } = useFileTree();
+  const { root, home } = useFileTree();
 
   const [currentFolder, setCurrentFolder] = React.useState({
-    previous: getHomeFolder(),
-    current: getHomeFolder(),
+    previous: home,
+    current: home,
   });
   const [prompt, setPrompt] = React.useState("[richard@portlios ~]$ ");
   const [buffer, setBuffer] = React.useState<string[]>([
@@ -29,12 +29,12 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
   const id = React.useMemo(() => getId(), [getId]);
 
   const getFileTreeRoot = React.useCallback(() => {
-    return getRootFolder();
-  }, [getRootFolder]);
+    return root;
+  }, [root]);
 
   const getFileTreeHome = React.useCallback(() => {
-    return getHomeFolder();
-  }, [getHomeFolder]);
+    return home;
+  }, [home]);
 
   const addBuffer = React.useCallback((newBuffer: string) => {
     setBuffer((prevBuffer) => [...prevBuffer, newBuffer]);
@@ -49,31 +49,31 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
   }, [closeModal, id]);
 
   const changeDirectory = React.useCallback(
-    (newDir?: FileTreeNode | string) => {
-      if (typeof newDir === "undefined" || newDir === getHomeFolder()) {
+    (newDir?: IDirectory | string) => {
+      if (typeof newDir === "undefined" || newDir === home) {
         setPrompt("[richard@portlios ~]$ ");
         setCurrentFolder((prev) => ({
           previous: prev.current,
-          current: getHomeFolder(),
+          current: home,
         }));
         return;
-      } else if (newDir === getRootFolder()) {
+      } else if (newDir === root) {
         setPrompt("[richard@portlios /]$ ");
         setCurrentFolder((prev) => ({
           previous: prev.current,
-          current: getRootFolder(),
+          current: root,
         }));
         return;
       } else if (typeof newDir === "string") {
         let newDirString = "";
-        let newDirNode = getHomeFolder();
+        let newDirNode = home;
 
         if (newDir === "-") {
           // TODO: Clean this up?
           newDirString =
-            currentFolder.previous === getHomeFolder()
+            currentFolder.previous === home
               ? "~"
-              : currentFolder.previous === getRootFolder()
+              : currentFolder.previous === root
                 ? "/"
                 : currentFolder.previous.name;
           newDirNode = currentFolder.previous;
@@ -81,7 +81,7 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
           newDirString = "~";
         } else if (newDir === "/") {
           newDirString = "/";
-          newDirNode = getRootFolder();
+          newDirNode = root;
         }
 
         setPrompt(`[richard@portlios ${newDirString}]$ `);
@@ -97,11 +97,11 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
         }));
       }
     },
-    [currentFolder.previous, getHomeFolder, getRootFolder],
+    [currentFolder.previous, home, root],
   );
 
   const open = React.useCallback(
-    (path: FileTreeNode) => {
+    (path: IFile) => {
       const modal: ModalProps = {
         id: path.id,
         title: path.name,
@@ -126,7 +126,7 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
         },
       };
 
-      if (path.type === "file") {
+      if (path.type === FileType.File) {
         if (path.name.endsWith(".md")) {
           modal.type = "reader";
           modal.component = Remark as React.FC;
@@ -150,7 +150,7 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
   );
 
   const openEditor = React.useCallback(
-    (path: FileTreeNode) => {
+    (path: IFile) => {
       const editorModal: ModalProps = {
         id: path.id,
         title: path.name,
@@ -182,10 +182,12 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
   );
 
   const createNewFile = React.useCallback(
-    (parentNode: FileTreeNode, filename: string) => {
-      addFile(parentNode, filename);
+    (parentNode: IDirectory, filename: string) => {
+      //addFile(parentNode, filename);
+
+      console.log("createNewFile", parentNode, filename);
     },
-    [addFile],
+    [],
   );
 
   const getWindowSize = React.useCallback(() => {
