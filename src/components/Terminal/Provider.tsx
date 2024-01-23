@@ -10,11 +10,14 @@ import { ModalProps } from "@contexts/Modal/type";
 import useWindow from "@components/Window/useWindow";
 import { Editor, Remark } from "@components";
 import { compareDirectories } from "@util/fs/compare";
+import useSystemCall from "@contexts/SystemCall/useSystemCall";
+import { generateFileId } from "@util/fs/id";
 
 const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
   const { getId, getSize } = useWindow();
   const { closeModal, addModal } = useModal();
   const { getHomeFolder, getRootFolder } = useFileTree();
+  const { addINode } = useSystemCall();
 
   const [currentFolder, setCurrentFolder] = React.useState({
     previous: getHomeFolder(),
@@ -194,12 +197,32 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
   );
 
   const createNewFile = React.useCallback(
-    (parentNode: IDirectory, filename: string) => {
-      //addFile(parentNode, filename);
+    async (parentNode: IDirectory, filename: string) => {
+      const createdDate = new Date();
+      const newFile: IFile = {
+        id: await generateFileId("", filename, parentNode),
+        name: filename,
+        type: FileType.File,
+        content: "",
+        size: 0,
+        parent: parentNode,
+        owner: parentNode.owner,
+
+        readPermission: true,
+        writePermission: true,
+        executePermission: true,
+
+        lastAccessed: createdDate,
+        lastChanged: createdDate,
+        lastCreated: createdDate,
+        lastModified: createdDate,
+      };
+
+      addINode(parentNode, newFile);
 
       console.log("createNewFile", parentNode, filename);
     },
-    [],
+    [addINode],
   );
 
   const getWindowSize = React.useCallback(() => {

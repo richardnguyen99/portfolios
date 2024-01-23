@@ -30,11 +30,11 @@ A copy of this command can found at:\n\
 Written by ${AUTHOR}.\n`;
 };
 
-const monacoEditor = (
+const monacoEditor = async (
   args: string[],
   _sysCall: SystemCommand,
   _currentDir: IDirectory,
-): string | undefined => {
+): Promise<string | undefined> => {
   let ans = "";
 
   let showError = false;
@@ -152,7 +152,7 @@ Try 'code --help' for more information.\n";
       return `code: cannot open '${file}': Permission denied\n`;
     }
 
-    _sysCall.createNewFile(currentDir, file);
+    await _sysCall.createNewFile(currentDir, file);
 
     _sysCall.openEditor(
       currentDir.children[currentDir.children.length - 1] as unknown as IFile,
