@@ -9,15 +9,16 @@ import { IFile, IDirectory, FileType } from "@util/fs/type";
 import { ModalProps } from "@contexts/Modal/type";
 import useWindow from "@components/Window/useWindow";
 import { Editor, Remark } from "@components";
+import { compareDirectories } from "@util/fs/compare";
 
 const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
   const { getId, getSize } = useWindow();
   const { closeModal, addModal } = useModal();
-  const { root, home } = useFileTree();
+  const { getHomeFolder, getRootFolder } = useFileTree();
 
   const [currentFolder, setCurrentFolder] = React.useState({
-    previous: home,
-    current: home,
+    previous: getHomeFolder(),
+    current: getHomeFolder(),
   });
   const [prompt, setPrompt] = React.useState("[richard@portlios ~]$ ");
   const [buffer, setBuffer] = React.useState<string[]>([
@@ -29,12 +30,12 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
   const id = React.useMemo(() => getId(), [getId]);
 
   const getFileTreeRoot = React.useCallback(() => {
-    return root;
-  }, [root]);
+    return getRootFolder();
+  }, [getRootFolder]);
 
   const getFileTreeHome = React.useCallback(() => {
-    return home;
-  }, [home]);
+    return getHomeFolder();
+  }, [getHomeFolder]);
 
   const addBuffer = React.useCallback((newBuffer: string) => {
     setBuffer((prevBuffer) => [...prevBuffer, newBuffer]);
@@ -50,30 +51,23 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
 
   const changeDirectory = React.useCallback(
     (newDir?: IDirectory | string) => {
-      if (typeof newDir === "undefined" || newDir === home) {
+      if (typeof newDir === "undefined") {
         setPrompt("[richard@portlios ~]$ ");
         setCurrentFolder((prev) => ({
           previous: prev.current,
-          current: home,
-        }));
-        return;
-      } else if (newDir === root) {
-        setPrompt("[richard@portlios /]$ ");
-        setCurrentFolder((prev) => ({
-          previous: prev.current,
-          current: root,
+          current: getHomeFolder(),
         }));
         return;
       } else if (typeof newDir === "string") {
         let newDirString = "";
-        let newDirNode = home;
+        let newDirNode = getHomeFolder();
 
         if (newDir === "-") {
           // TODO: Clean this up?
           newDirString =
-            currentFolder.previous === home
+            currentFolder.previous === getHomeFolder()
               ? "~"
-              : currentFolder.previous === root
+              : currentFolder.previous === getRootFolder()
                 ? "/"
                 : currentFolder.previous.name;
           newDirNode = currentFolder.previous;
@@ -81,7 +75,7 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
           newDirString = "~";
         } else if (newDir === "/") {
           newDirString = "/";
-          newDirNode = root;
+          newDirNode = getRootFolder();
         }
 
         setPrompt(`[richard@portlios ${newDirString}]$ `);
@@ -90,6 +84,24 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
           current: newDirNode,
         }));
       } else {
+        if (compareDirectories(newDir, getHomeFolder())) {
+          setPrompt("[richard@portlios ~]$ ");
+          setCurrentFolder((prev) => ({
+            previous: prev.current,
+            current: getHomeFolder(),
+          }));
+          return;
+        }
+
+        if (compareDirectories(newDir, getRootFolder())) {
+          setPrompt("[richard@portlios /]$ ");
+          setCurrentFolder((prev) => ({
+            previous: prev.current,
+            current: getRootFolder(),
+          }));
+          return;
+        }
+
         setPrompt(`[richard@portlios ${newDir.name}]$ `);
         setCurrentFolder((prev) => ({
           previous: prev.current,
@@ -97,7 +109,7 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
         }));
       }
     },
-    [currentFolder.previous, home, root],
+    [currentFolder.previous, getHomeFolder, getRootFolder],
   );
 
   const open = React.useCallback(

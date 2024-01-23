@@ -138,9 +138,9 @@ const readmd: IFile = {
   lastModified: date,
 };
 
-home.children.push(author);
 author.children.push(readmd);
 guess.children.push(documents, publics);
+home.children.push(author, guess);
 root.children.push(home);
 
 const FileTreeProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
@@ -149,14 +149,36 @@ const FileTreeProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     guess,
   );
 
+  const getRootFolder = React.useCallback(() => {
+    return root;
+  }, []);
+
+  const getHomeFolder = React.useCallback(() => {
+    return homeFolder;
+  }, [homeFolder]);
+
   const contextValue = React.useMemo<FileTreeContextType>(
     () => ({
-      root,
-      home: homeFolder,
+      getRootFolder,
+      getHomeFolder,
       setHomeFolder,
     }),
-    [homeFolder, setHomeFolder],
+    [getHomeFolder, getRootFolder, setHomeFolder],
   );
+
+  // Side effect to update the home folder when the home folder is changed
+  React.useEffect(() => {
+    const index = home.children.findIndex((child) => child.name === "guess");
+
+    // Remove the old guess folder
+    if (index !== -1) {
+      home.children.splice(index, 1);
+    }
+
+    // Mount the new guess folder
+    home.children.push(homeFolder);
+    homeFolder.parent = home;
+  }, [homeFolder]);
 
   return (
     <FileTreeContext.Provider value={contextValue}>
