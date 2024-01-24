@@ -17,7 +17,7 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
   const { getId, getSize } = useWindow();
   const { closeModal, addModal } = useModal();
   const { getHomeFolder, getRootFolder } = useFileTree();
-  const { addINode } = useSystemCall();
+  const { addINode, addFile, addDirectory } = useSystemCall();
 
   const [currentFolder, setCurrentFolder] = React.useState({
     previous: getHomeFolder(),
@@ -219,8 +219,6 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
       };
 
       addINode(parentNode, newFile);
-
-      console.log("createNewFile", parentNode, filename);
     },
     [addINode],
   );
@@ -268,6 +266,9 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
 
   const systemCalls = React.useMemo<SystemCommand>(
     () => ({
+      addFile,
+      addDirectory,
+
       getFileTreeRoot,
       getFileTreeHome,
       changeDirectory,
@@ -281,6 +282,8 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
       getCharacterSize,
     }),
     [
+      addFile,
+      addDirectory,
       getFileTreeRoot,
       getFileTreeHome,
       changeDirectory,

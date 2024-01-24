@@ -86,7 +86,8 @@ Try 'code --help' for more information.\n`;
 
   if (argv._.length === 0) {
     ans =
-      "code: missing file operand\n\
+      "\
+code: missing file operand\n\
 Try 'code --help' for more information.\n";
 
     return ans;
@@ -152,7 +153,7 @@ Try 'code --help' for more information.\n";
       return `code: cannot open '${file}': Permission denied\n`;
     }
 
-    await _sysCall.createNewFile(currentDir, file);
+    await _sysCall.addFile(currentDir, file);
 
     _sysCall.openEditor(
       currentDir.children[currentDir.children.length - 1] as unknown as IFile,

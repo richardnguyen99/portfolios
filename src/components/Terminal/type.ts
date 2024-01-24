@@ -3,6 +3,9 @@ import * as React from "react";
 import type { IDirectory, IFile } from "@util/fs/type";
 
 export type SystemCommand = {
+  addFile: (path: IDirectory, name: string) => Promise<void>;
+  addDirectory: (path: IDirectory, name: string) => Promise<void>;
+
   clearBuffer: () => void;
   exitTerminal: () => void;
   getFileTreeRoot: () => IDirectory;
