@@ -1,9 +1,9 @@
 import minimist, { ParsedArgs } from "minimist";
 
 import type { SystemCommand } from "@components/Terminal/type";
-import { type IFile, type IDirectory, FileType } from "@util/fs/type";
+import { type IDirectory, FileType } from "@util/fs/type";
 
-const VERSION = "0.0.1";
+const VERSION = "0.0.2";
 const AUTHOR = "Richard H. Nguyen";
 const SOURCE =
   "https://github.com/richardnguyen99/portfolios/tree/main/src/commands/cat.ts";
@@ -48,7 +48,7 @@ const concat = (
       if (arg.startsWith("-")) {
         ans += `\
 cat: invalid option -- '${arg.slice(1)}'\n\
-Try 'cat--help' for more information.\n`;
+Try 'cat --help' for more information.\n`;
         showError = true;
         return false;
       }
@@ -128,7 +128,25 @@ Try 'cat--help' for more information.\n`;
       );
 
       if (fileNode && fileNode.type === FileType.File) {
-        ans += (fileNode as unknown as IFile).content;
+        const content = window.localStorage.getItem(`file-${fileNode.id}`);
+
+        console.log(content);
+
+        if (content) {
+          ans += content
+            .toString()
+            .slice(1, -1)
+            .replace(/\\\\n/g, "&#92;n")
+            .replace(/\\\\r/g, "&#92;r")
+            .replace(/\\\\t/g, "&#92;t")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/\\"/g, '"')
+            .replace(/\\'/g, "'")
+            .replace(/\\n/g, "\n");
+        } else {
+          ans += `cat: ${argv._[i]}: No data available\n`;
+        }
       } else {
         ans += `cat: ${argv._[i]}: No such file or directory\n`;
       }
