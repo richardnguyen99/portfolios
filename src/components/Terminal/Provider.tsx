@@ -17,7 +17,8 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
   const { getId, getSize } = useWindow();
   const { closeModal, addModal } = useModal();
   const { getHomeFolder, getRootFolder } = useFileTree();
-  const { addINode, addFile, addDirectory } = useSystemCall();
+  const { addINode, addFile, addDirectory, walkNode, removeINode } =
+    useSystemCall();
 
   const [currentFolder, setCurrentFolder] = React.useState({
     previous: getHomeFolder(),
@@ -268,6 +269,8 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
     () => ({
       addFile,
       addDirectory,
+      removeINode,
+      walkNode,
 
       getFileTreeRoot,
       getFileTreeHome,
@@ -284,6 +287,9 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
     [
       addFile,
       addDirectory,
+      removeINode,
+      walkNode,
+
       getFileTreeRoot,
       getFileTreeHome,
       changeDirectory,

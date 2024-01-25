@@ -1,6 +1,7 @@
 import type { IDirectory } from "@util/fs/type";
 
 export type FileTreeContextType = {
+  home: IDirectory;
   getRootFolder: () => IDirectory;
   getHomeFolder: () => IDirectory;
   setHomeFolder: (

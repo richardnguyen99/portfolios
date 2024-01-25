@@ -1,39 +1,45 @@
 import * as React from "react";
 
+import useFileTree from "@contexts/FileTree/useFileTree";
+import { FileType, IFile, type IDirectory, type INode } from "@util/fs/type";
+import { generateDirectoryId, generateFileId } from "@util/fs/id";
+import useLocalStorage from "@hooks/useLocalStorage";
+
 import { SystemCallProviderProps as Props } from "./type";
 import SystemCallContext from "./Context";
 import _readDir from "./calls/_readDir";
-import useFileTree from "@contexts/FileTree/useFileTree";
-import { FileType, IFile, type IDirectory, type INode } from "@util/fs/type";
 import _addNode from "./calls/_addNode";
 import _removeNode from "./calls/_removeNode";
 import _walkNode from "./calls/_walkNode";
-import { generateDirectoryId, generateFileId } from "@util/fs/id";
 
 const SystemCallProvider: React.FC<Props> = ({ children }) => {
   const { getHomeFolder, setHomeFolder } = useFileTree();
 
   const updateFs = React.useCallback(
     (callback?: () => unknown) => {
-      const home = getHomeFolder();
-
       if (callback) {
         callback();
       }
 
-      const newHomeFolder: IDirectory = { ...home, parent: null };
-      setHomeFolder(newHomeFolder);
+      setHomeFolder((prev) => prev);
     },
-    [getHomeFolder, setHomeFolder],
+    [setHomeFolder],
   );
 
   const addINode = React.useCallback(
     (parentNode: IDirectory, newNode: INode) => {
-      updateFs(() => {
-        _addNode(parentNode, newNode);
-      });
+      _addNode(parentNode, newNode);
+
+      const home = getHomeFolder();
+      let homeFolder = parentNode;
+
+      while (homeFolder.parent !== null && homeFolder.parent !== home.parent) {
+        homeFolder = homeFolder.parent as IDirectory;
+      }
+
+      setHomeFolder({ ...homeFolder, parent: null });
     },
-    [updateFs],
+    [getHomeFolder, setHomeFolder],
   );
 
   const addFile = React.useCallback(
@@ -93,6 +99,21 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
     (parentNode: IDirectory, node: INode) => {
       updateFs(() => {
         _removeNode(parentNode, node);
+
+        // Only files with content are stored in localStorage
+        if (node.type === FileType.Directory) {
+          return;
+        }
+
+        const fileId = node.id;
+
+        window.localStorage.removeItem(`file-${fileId}`);
+        window.dispatchEvent(
+          new StorageEvent("storage", {
+            key: fileId,
+            newValue: null,
+          }),
+        );
       });
     },
     [updateFs],

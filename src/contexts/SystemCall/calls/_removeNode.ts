@@ -11,7 +11,9 @@ const _removeNode = (parentNode: IDirectory, node: INode): void => {
     throw new Error("Permission denied");
   }
 
-  parentNode.children.splice(index, 1);
+  parentNode.children = parentNode.children
+    .slice(0, index)
+    .concat(parentNode.children.slice(index + 1));
 };
 
 export default _removeNode;

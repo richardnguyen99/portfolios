@@ -29,7 +29,7 @@ const COMMANDS = {
   view: view,
 };
 
-const exec = (
+const exec = async (
   cmdStr: string,
   sysCall: SystemCommand,
   currentDir: IDirectory,
@@ -43,7 +43,7 @@ const exec = (
   const args = cmd.slice(1);
 
   if (command in COMMANDS) {
-    return COMMANDS[command as keyof typeof COMMANDS](
+    return await COMMANDS[command as keyof typeof COMMANDS](
       args,
       sysCall,
       currentDir,

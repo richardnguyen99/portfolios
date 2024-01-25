@@ -9,7 +9,6 @@ const checkIfFileTreeNode = (value: unknown): value is INode => {
     "id" in value &&
     "name" in value &&
     "type" in value &&
-    "children" in value &&
     "parent" in value
   );
 };
