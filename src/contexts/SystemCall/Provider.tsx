@@ -96,26 +96,34 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
 
   const removeINode = React.useCallback(
     (parentNode: IDirectory, node: INode) => {
-      updateFs(() => {
-        _removeNode(parentNode, node);
+      _removeNode(parentNode, node);
 
-        // Only files with content are stored in localStorage
-        if (node.type === FileType.Directory) {
-          return;
-        }
+      // Only files with content are stored in localStorage
+      if (node.type === FileType.Directory) {
+        return;
+      }
 
-        const fileId = node.id;
+      const fileId = node.id;
+      const home = getHomeFolder();
+      let homeFolder = parentNode;
 
-        window.localStorage.removeItem(`file-${fileId}`);
-        window.dispatchEvent(
-          new StorageEvent("storage", {
-            key: fileId,
-            newValue: null,
-          }),
-        );
-      });
+      // Find the home folder and remount
+      while (homeFolder.parent !== null && homeFolder.parent !== home.parent) {
+        homeFolder = homeFolder.parent as IDirectory;
+      }
+
+      setHomeFolder({ ...homeFolder, parent: null });
+
+      // Remove file content from local storage
+      window.localStorage.removeItem(`file-${fileId}`);
+      window.dispatchEvent(
+        new StorageEvent("storage", {
+          key: fileId,
+          newValue: null,
+        }),
+      );
     },
-    [updateFs],
+    [getHomeFolder, setHomeFolder],
   );
 
   const walkNode = React.useCallback(
