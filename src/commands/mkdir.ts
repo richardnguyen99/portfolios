@@ -122,7 +122,9 @@ Try 'mkdir --help' for more information.\n";
 
     if (path === "..") {
       if (currentDirectory.parent) {
-        currentDirectory = currentDirectory.parent as unknown as IDirectory;
+        currentDirectory = (currentDirectory.parent !== null
+          ? currentDirectory.parent
+          : currentDirectory) as unknown as IDirectory;
       }
 
       continue;
@@ -172,6 +174,7 @@ Try 'mkdir --help' for more information.\n";
       try {
         await _sysCall.addDirectory(currentDirectory, path);
       } catch (err) {
+        console.log(currentDirectory);
         return `mkdir: cannot create directory ${(err as Error).message}\n`;
       }
 
