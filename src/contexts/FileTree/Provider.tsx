@@ -140,7 +140,7 @@ const readmd: IFile = {
 
 author.children.push(readmd);
 guess.children.push(documents, publics);
-home.children.push(author, guess);
+home.children.push(author);
 root.children.push(home);
 
 const FileTreeProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
@@ -170,7 +170,10 @@ const FileTreeProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   // Side effect to update the home folder when the home folder is changed
   React.useEffect(() => {
     if (homeFolder.parent === null) {
+      console.log("Updating home folder");
+
       homeFolder.parent = home;
+      home.children.push(homeFolder);
     }
   }, [homeFolder]);
 

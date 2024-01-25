@@ -106,7 +106,9 @@ Try 'mkdir --help' for more information.\n";
 Try 'mkdir --help' for more information.\n";
   }
 
-  let currentDirectory = currentDir;
+  let currentDirectory = argv._[0].startsWith("/")
+    ? _sysCall.getFileTreeRoot()
+    : currentDir;
 
   // Walk through all the paths one by one in the path list.
   // The reason is that it needs to support creating missing parent directories.
@@ -151,7 +153,11 @@ Try 'mkdir --help' for more information.\n";
         return `mkdir: cannot create directory '${path}': No such file or directory\n`;
       }
 
-      await _sysCall.addDirectory(currentDirectory, path);
+      try {
+        await _sysCall.addDirectory(currentDirectory, path);
+      } catch (err) {
+        return `mkdir: cannot create directory ${(err as Error).message}\n`;
+      }
 
       // Move to the newly created directory.
       currentDirectory = currentDirectory.children[
@@ -163,15 +169,11 @@ Try 'mkdir --help' for more information.\n";
       }
     } else {
       // The final path, which is the one to be created.
-      if (currentDirectory.writePermission === false) {
-        return `mkdir: cannot create directory '${path}': Permission denied\n`;
+      try {
+        await _sysCall.addDirectory(currentDirectory, path);
+      } catch (err) {
+        return `mkdir: cannot create directory ${(err as Error).message}\n`;
       }
-
-      if (path.length > 255) {
-        return `mkdir: cannot create directory '${path}': File name too long\n`;
-      }
-
-      await _sysCall.addDirectory(currentDirectory, path);
 
       if (verbose) {
         ans += `mkdir: created directory '${path}'\n`;
