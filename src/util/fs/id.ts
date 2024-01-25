@@ -2,7 +2,7 @@ import { INode } from "./type";
 
 export const generateDirectoryId = (
   name: string,
-  parent?: INode,
+  _parent?: INode,
 ): Promise<string> => {
   const DIR_MAGIC_NUM: number = 0xfffffff;
 
@@ -25,8 +25,8 @@ export const generateDirectoryId = (
 
 export const generateFileId = (
   content: string,
-  fileName: string,
-  parentNode: INode,
+  _fileName: string,
+  _parentNode: INode,
 ): Promise<string> => {
   const FILE_MAGIC_NUM: number = 0x7fffffff;
 

@@ -3,7 +3,6 @@ import * as React from "react";
 import useFileTree from "@contexts/FileTree/useFileTree";
 import { FileType, IFile, type IDirectory, type INode } from "@util/fs/type";
 import { generateDirectoryId, generateFileId } from "@util/fs/id";
-import useLocalStorage from "@hooks/useLocalStorage";
 
 import { SystemCallProviderProps as Props } from "./type";
 import SystemCallContext from "./Context";
