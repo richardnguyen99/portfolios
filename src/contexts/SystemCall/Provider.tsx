@@ -14,17 +14,6 @@ import _walkNode from "./calls/_walkNode";
 const SystemCallProvider: React.FC<Props> = ({ children }) => {
   const { getHomeFolder, setHomeFolder } = useFileTree();
 
-  const updateFs = React.useCallback(
-    (callback?: () => unknown) => {
-      if (callback) {
-        callback();
-      }
-
-      setHomeFolder((prev) => prev);
-    },
-    [setHomeFolder],
-  );
-
   const addINode = React.useCallback(
     (parentNode: IDirectory, newNode: INode) => {
       _addNode(parentNode, newNode);
