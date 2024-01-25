@@ -71,6 +71,7 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
 
   const addDirectory = React.useCallback(
     async (parentNode: IDirectory, name: string) => {
+      const createdDate = new Date();
       const newDirectory: IDirectory = {
         id: await generateDirectoryId(name, parentNode),
         name,
@@ -83,10 +84,10 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
         writePermission: true,
         executePermission: true,
 
-        lastAccessed: new Date(),
-        lastChanged: new Date(),
-        lastCreated: new Date(),
-        lastModified: new Date(),
+        lastAccessed: createdDate,
+        lastChanged: createdDate,
+        lastCreated: createdDate,
+        lastModified: createdDate,
       };
 
       addINode(parentNode, newDirectory as INode);
@@ -97,11 +98,6 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
   const removeINode = React.useCallback(
     (parentNode: IDirectory, node: INode) => {
       _removeNode(parentNode, node);
-
-      // Only files with content are stored in localStorage
-      if (node.type === FileType.Directory) {
-        return;
-      }
 
       const fileId = node.id;
       const home = getHomeFolder();
@@ -114,7 +110,11 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
 
       setHomeFolder({ ...homeFolder, parent: null });
 
-      // Remove file content from local storage
+      // Only files with content are stored in localStorage
+      if (node.type === FileType.Directory) {
+        return;
+      }
+
       window.localStorage.removeItem(`file-${fileId}`);
       window.dispatchEvent(
         new StorageEvent("storage", {

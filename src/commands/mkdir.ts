@@ -2,7 +2,6 @@ import minimist, { ParsedArgs } from "minimist";
 
 import type { SystemCommand } from "@components/Terminal/type";
 import { FileType, type IDirectory } from "@util/fs/type";
-import { generateDirectoryId } from "@util/fs/id";
 
 const VERSION = "0.0.2";
 const AUTHOR = "Richard H. Nguyen";
@@ -36,40 +35,11 @@ A copy of this command can found at:\n\
 Written by ${AUTHOR}.\n`;
 };
 
-const _mkdir = async (
-  path: string,
-  currentDir: IDirectory,
-): Promise<IDirectory> => {
-  const createdDate = new Date();
-
-  const newDir: IDirectory = {
-    id: await generateDirectoryId(path, currentDir),
-    name: path,
-    type: FileType.Directory,
-    children: [],
-    parent: currentDir,
-    owner: currentDir.owner,
-
-    executePermission: true,
-    readPermission: true,
-    writePermission: true,
-
-    lastAccessed: createdDate,
-    lastModified: createdDate,
-    lastChanged: createdDate,
-    lastCreated: createdDate,
-  };
-
-  currentDir.children.push(newDir);
-
-  return newDir;
-};
-
-const mkdir = (
+const mkdir = async (
   args: string[],
   _sysCall: SystemCommand,
   currentDir: IDirectory,
-): string | undefined => {
+): Promise<string | undefined> => {
   let ans = "";
 
   let showError = false;
@@ -138,6 +108,9 @@ Try 'mkdir --help' for more information.\n";
 
   let currentDirectory = currentDir;
 
+  // Walk through all the paths one by one in the path list.
+  // The reason is that it needs to support creating missing parent directories.
+  // with option `createParents` set to true.
   for (let i = 0; i < pathList.length; i++) {
     const path = pathList[i];
 
@@ -153,39 +126,52 @@ Try 'mkdir --help' for more information.\n";
       continue;
     }
 
+    // Check if the path exists in the current directory before moving on.
     const child = currentDirectory.children.find(
-      (child) =>
-        child.name === path && child.name !== "." && child.name !== "..",
+      (child) => child.name === path,
     );
 
     if (child) {
+      // Path walking only supports directories in the path list.
       if (child.type === FileType.File) {
         return `mkdir: cannot create directory '${path}': Not a directory\n`;
       }
 
+      // The path to be created already exists and is a directory.
       if (i === pathList.length - 1 && child.type === FileType.Directory) {
         return `mkdir: cannot create directory '${path}': File exists\n`;
       }
 
+      // Continue to walk through the path list.
       currentDirectory = child as unknown as IDirectory;
     } else if (i < pathList.length - 1) {
+      // The path does not exist in the current directory. If the option
+      // `createParents` is not set, stop here and return an error
       if (!createParents) {
         return `mkdir: cannot create directory '${path}': No such file or directory\n`;
       }
 
-      const newDir = _mkdir(path, currentDirectory);
-      currentDirectory = newDir as unknown as IDirectory;
+      await _sysCall.addDirectory(currentDirectory, path);
+
+      // Move to the newly created directory.
+      currentDirectory = currentDirectory.children[
+        currentDirectory.children.length - 1
+      ] as unknown as IDirectory;
 
       if (verbose) {
         ans += `mkdir: created directory '${path}'\n`;
       }
     } else {
+      // The final path, which is the one to be created.
       if (currentDirectory.writePermission === false) {
         return `mkdir: cannot create directory '${path}': Permission denied\n`;
       }
 
-      const newDir = _mkdir(path, currentDirectory);
-      currentDirectory = newDir as unknown as IDirectory;
+      if (path.length > 255) {
+        return `mkdir: cannot create directory '${path}': File name too long\n`;
+      }
+
+      await _sysCall.addDirectory(currentDirectory, path);
 
       if (verbose) {
         ans += `mkdir: created directory '${path}'\n`;

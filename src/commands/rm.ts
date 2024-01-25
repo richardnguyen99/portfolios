@@ -120,7 +120,6 @@ Try 'rm --help' for more information.\n";
 
   try {
     const walkPathList = pathList.slice(0, -1);
-    console.log(walkPathList);
 
     finalDir = _sysCall.walkNode(startDir, walkPathList);
     child = finalDir.children.find((child) => child.name === path);
