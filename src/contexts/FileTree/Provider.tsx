@@ -170,8 +170,6 @@ const FileTreeProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   // Side effect to update the home folder when the home folder is changed
   React.useEffect(() => {
     if (homeFolder.parent === null) {
-      console.log("Updating home folder");
-
       homeFolder.parent = home;
       home.children.push(homeFolder);
     }
