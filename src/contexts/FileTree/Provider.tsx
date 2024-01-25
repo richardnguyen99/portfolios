@@ -1,276 +1,177 @@
 import * as React from "react";
 
-import type { FileTreeNode, FileTreeContextType } from "./type";
+import type { FileTreeContextType } from "./type";
 import FileTreeContext from "./Context";
+import useLocalStorage from "@hooks/useLocalStorage";
+import type { IFile, IDirectory } from "@util/fs/type";
+import { FileType } from "@util/fs/type";
+import { generateDirectoryId, generateFileId } from "@util/fs/id";
 
 import content from "../../assets/README.md?raw";
-import useLocalStorage from "@hooks/useLocalStorage";
 
 const date = new Date("2024-01-01T00:00:00.000Z");
 
-const root: FileTreeNode = {
+const root: IDirectory = {
+  id: await generateDirectoryId("root"),
   name: "root",
-  type: "folder",
-  readPermission: true,
-  writePermission: false,
-  executePermission: false,
-  id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
+  type: FileType.Directory,
   children: [],
   parent: null,
-  accessedAt: date,
-  createdAt: date,
-  updatedAt: date,
-};
+  owner: "richard",
 
-const home: FileTreeNode = {
-  name: "home",
-  type: "folder",
-  readPermission: true,
   writePermission: false,
   executePermission: false,
-  id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
+  readPermission: true,
+
+  lastAccessed: date,
+  lastChanged: date,
+  lastCreated: date,
+  lastModified: date,
+};
+
+const home: IDirectory = {
+  id: await generateDirectoryId("home", root),
+  name: "home",
+  type: FileType.Directory,
   children: [],
   parent: root,
-  accessedAt: date,
-  createdAt: date,
-  updatedAt: date,
+  owner: "richard",
+
+  readPermission: true,
+  writePermission: false,
+  executePermission: false,
+
+  lastAccessed: date,
+  lastChanged: date,
+  lastCreated: date,
+  lastModified: date,
 };
 
-const guess: FileTreeNode = {
+const guess: IDirectory = {
+  id: await generateDirectoryId("guess", home),
   name: "guess",
-  type: "folder",
-  readPermission: true,
-  writePermission: true,
-  executePermission: true,
-  id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
+  type: FileType.Directory,
   children: [],
   parent: null,
-  accessedAt: date,
-  createdAt: date,
-  updatedAt: date,
+  owner: "guess",
+
+  readPermission: true,
+  writePermission: true,
+  executePermission: true,
+
+  lastAccessed: date,
+  lastChanged: date,
+  lastCreated: date,
+  lastModified: date,
 };
 
-const documents: FileTreeNode = {
+const documents: IDirectory = {
+  id: await generateDirectoryId("documents", guess),
   name: "documents",
-  type: "folder",
+  type: FileType.Directory,
+  children: [],
+  parent: guess,
+  owner: "guess",
+
   readPermission: true,
   writePermission: true,
   executePermission: true,
-  id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
-  children: [],
-  parent: guess,
-  accessedAt: date,
-  createdAt: date,
-  updatedAt: date,
+
+  lastAccessed: date,
+  lastChanged: date,
+  lastCreated: date,
+  lastModified: date,
 };
 
-const publics: FileTreeNode = {
+const publics: IDirectory = {
+  id: await generateDirectoryId("public", guess),
   name: "public",
-  type: "folder",
+  type: FileType.Directory,
+  children: [],
+  parent: guess,
+  owner: "guess",
+
   readPermission: true,
   writePermission: true,
   executePermission: true,
-  id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
-  children: [],
-  parent: guess,
-  accessedAt: date,
-  createdAt: date,
-  updatedAt: date,
+
+  lastAccessed: date,
+  lastChanged: date,
+  lastCreated: date,
+  lastModified: date,
 };
 
-const author: FileTreeNode = {
+const author: IDirectory = {
+  id: await generateDirectoryId("richard", home),
   name: "richard",
-  type: "folder",
-  readPermission: true,
-  writePermission: false,
-  executePermission: false,
-  id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
+  type: FileType.Directory,
   children: [],
   parent: home,
-  accessedAt: date,
-  createdAt: date,
-  updatedAt: date,
-};
+  owner: "richard",
 
-const readmd: FileTreeNode = {
-  name: "readme.md",
-  type: "file",
   readPermission: true,
   writePermission: false,
   executePermission: false,
-  id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
-  children: [],
-  parent: author,
-  content: content,
-  accessedAt: date,
-  createdAt: date,
-  updatedAt: date,
+
+  lastAccessed: date,
+  lastChanged: date,
+  lastCreated: date,
+  lastModified: date,
 };
 
-home.children.push(author);
+const readmd: IFile = {
+  id: await generateFileId(content, "readme.md", author),
+  name: "readme.md",
+  type: FileType.File,
+  content: content,
+  size: content.length,
+  parent: author,
+  owner: "richard",
+
+  readPermission: true,
+  writePermission: false,
+  executePermission: false,
+
+  lastAccessed: date,
+  lastChanged: date,
+  lastCreated: date,
+  lastModified: date,
+};
+
 author.children.push(readmd);
 guess.children.push(documents, publics);
+home.children.push(author, guess);
 root.children.push(home);
 
 const FileTreeProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const [homeFolder, setHomeFolder] = useLocalStorage<FileTreeNode>(
+  const [homeFolder, setHomeFolder] = useLocalStorage<IDirectory>(
     "home",
     guess,
   );
-
-  // const [fileTree] = React.useState<FileTreeNode>(root);
-
-  const addFile = React.useCallback(
-    (parentNode: FileTreeNode, filename: string) => {
-      const newFile: FileTreeNode = {
-        id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
-        name: filename,
-        type: "file",
-        readPermission: true,
-        writePermission: true,
-        executePermission: false,
-        children: [],
-        parent: parentNode,
-        content: "",
-        accessedAt: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-
-      parentNode.children.push(newFile);
-      console.log(Object.is(parentNode, homeFolder));
-
-      const newHomeFolder = { ...homeFolder, parent: null };
-      setHomeFolder(newHomeFolder);
-    },
-    [homeFolder, setHomeFolder],
-  );
-
-  const removeFile = React.useCallback(
-    (parentNode: FileTreeNode, filename: string) => {
-      console.log(parentNode, filename);
-    },
-    [],
-  );
-
-  const addFolder = React.useCallback(
-    (parentNode: FileTreeNode, foldername: string) => {
-      console.log(parentNode, foldername);
-    },
-    [],
-  );
-
-  const removeFolder = React.useCallback(
-    (parentNode: FileTreeNode, foldername: string) => {
-      console.log(parentNode, foldername);
-    },
-    [],
-  );
-
-  const renameFile = React.useCallback(
-    (parentNode: FileTreeNode, filename: string, newFilename: string) => {
-      console.log(parentNode, filename, newFilename);
-    },
-    [],
-  );
-
-  const renameFolder = React.useCallback(
-    (parentNode: FileTreeNode, foldername: string, newFoldername: string) => {
-      console.log(parentNode, foldername, newFoldername);
-    },
-    [],
-  );
-
-  const moveFile = React.useCallback(
-    (
-      parentNode: FileTreeNode,
-      filename: string,
-      newParentNode: FileTreeNode,
-    ) => {
-      console.log(parentNode, filename, newParentNode);
-    },
-    [],
-  );
-  const moveFolder = React.useCallback(
-    (
-      parentNode: FileTreeNode,
-      foldername: string,
-      newParentNode: FileTreeNode,
-    ) => {
-      console.log(parentNode, foldername, newParentNode);
-    },
-    [],
-  );
-
-  const copyFile = React.useCallback(
-    (
-      parentNode: FileTreeNode,
-      filename: string,
-      newParentNode: FileTreeNode,
-    ) => {
-      console.log(parentNode, filename, newParentNode);
-    },
-    [],
-  );
-
-  const copyFolder = React.useCallback(
-    (
-      parentNode: FileTreeNode,
-      foldername: string,
-      newParentNode: FileTreeNode,
-    ) => {
-      console.log(parentNode, foldername, newParentNode);
-    },
-    [],
-  );
-
-  const getHomeFolder = React.useCallback(() => {
-    return homeFolder;
-  }, [homeFolder]);
 
   const getRootFolder = React.useCallback(() => {
     return root;
   }, []);
 
-  const contextValue: FileTreeContextType = React.useMemo(() => {
-    return {
-      addFile,
-      removeFile,
-      addFolder,
-      removeFolder,
-      renameFile,
-      renameFolder,
-      moveFile,
-      moveFolder,
-      copyFile,
-      copyFolder,
-      getHomeFolder,
+  const getHomeFolder = React.useCallback(() => {
+    return homeFolder;
+  }, [homeFolder]);
+
+  const contextValue = React.useMemo<FileTreeContextType>(
+    () => ({
+      home: homeFolder,
       getRootFolder,
-    };
-  }, [
-    addFile,
-    addFolder,
-    moveFile,
-    moveFolder,
-    removeFile,
-    removeFolder,
-    renameFile,
-    renameFolder,
-    copyFile,
-    copyFolder,
-    getHomeFolder,
-    getRootFolder,
-  ]);
+      getHomeFolder,
+      setHomeFolder,
+    }),
+    [getHomeFolder, getRootFolder, homeFolder, setHomeFolder],
+  );
 
+  // Side effect to update the home folder when the home folder is changed
   React.useEffect(() => {
-    const index = home.children.findIndex((child) => child.name === "guess");
-
-    if (index !== -1) {
-      home.children.splice(index, 1);
+    if (homeFolder.parent === null) {
+      homeFolder.parent = home;
     }
-
-    home.children.push(homeFolder);
-    homeFolder.parent = home;
   }, [homeFolder]);
 
   return (

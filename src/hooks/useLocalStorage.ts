@@ -1,18 +1,17 @@
 import * as React from "react";
 
-import { FileTreeNode } from "@contexts/FileTree/type";
+import { type INode } from "@util/fs/type";
 
-const checkIfFileTreeNode = (value: unknown): value is FileTreeNode => {
+const checkIfFileTreeNode = (value: unknown): value is INode => {
   return (
     typeof value === "object" &&
     value !== null &&
     "id" in value &&
     "name" in value &&
     "type" in value &&
-    "children" in value &&
     "parent" in value
   );
-}
+};
 
 const fileTreeReplacer = () => {
   return function (key: string, value: unknown) {
@@ -20,20 +19,19 @@ const fileTreeReplacer = () => {
     // circular reference. Only store the string `nodeId` to avoid this, and let
     // the reviver function handle the rest.
     if (key === "parent" && value !== null) {
-      return (value as FileTreeNode).id;
+      return (value as INode).id;
     }
 
     return value;
-  }
-}
+  };
+};
 
 const fileTreeReviver = () => {
   const map = new Map();
 
-  return function (this: FileTreeNode, key: string, value: unknown) {
-
+  return function (this: INode, key: string, value: unknown) {
     if (key === "id" && value !== null) {
-      map.set((value as string), this as FileTreeNode);
+      map.set(value as string, this as INode);
 
       return value;
     }
@@ -50,7 +48,7 @@ const fileTreeReviver = () => {
 
     return value;
   };
-}
+};
 
 const dispatchStorageEvent = (key: string, value: string) => {
   window.dispatchEvent(
@@ -64,7 +62,6 @@ const dispatchStorageEvent = (key: string, value: string) => {
 const setLocalStorageItem = <T>(key: string, value: T) => {
   const replacer = checkIfFileTreeNode(value) ? fileTreeReplacer() : undefined;
 
-
   const stringifiedValue = JSON.stringify(value, replacer);
   window.localStorage.setItem(key, stringifiedValue);
   dispatchStorageEvent(key, stringifiedValue);
@@ -77,7 +74,6 @@ const getLocalStorageItem = (key: string): string | null => {
 };
 
 const removeLocalStorageItem = (key: string) => {
-
   window.localStorage.removeItem(key);
   dispatchStorageEvent(key, "");
 };
@@ -109,7 +105,9 @@ const useLocalStorage = <T>(
   const setValue = React.useCallback(
     (value: T | ((prev: T) => T)) => {
       try {
-        const reviver = checkIfFileTreeNode(initialValue) ? fileTreeReviver() : undefined;
+        const reviver = checkIfFileTreeNode(initialValue)
+          ? fileTreeReviver()
+          : undefined;
 
         const nextState =
           typeof value === "function"
@@ -143,13 +141,14 @@ const useLocalStorage = <T>(
   }, [key, initialValue]);
 
   const parsedStore = React.useMemo(() => {
-
     if (store === null) {
       return initialValue;
     }
 
     try {
-      const reviver = checkIfFileTreeNode(initialValue) ? fileTreeReviver() : undefined;
+      const reviver = checkIfFileTreeNode(initialValue)
+        ? fileTreeReviver()
+        : undefined;
 
       const value = JSON.parse(store, reviver);
 
@@ -159,7 +158,6 @@ const useLocalStorage = <T>(
 
       return initialValue;
     }
-
   }, [initialValue, store]);
 
   return [parsedStore, setValue, removeValue];

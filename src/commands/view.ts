@@ -1,7 +1,7 @@
 import minimist, { ParsedArgs } from "minimist";
 
 import type { SystemCommand } from "@components/Terminal/type";
-import type { FileTreeNode } from "@contexts/FileTree/type";
+import { FileType, type IDirectory, type IFile } from "@util/fs/type";
 
 const VERSION = "0.0.1";
 const AUTHOR = "Richard H. Nguyen";
@@ -32,15 +32,18 @@ Written by ${AUTHOR}.\n`;
 
 const getFinalDestion = (
   pathList: string[],
-  currentDir: FileTreeNode,
-): FileTreeNode => {
+  currentDir: IDirectory,
+): IDirectory => {
   let finalDir = currentDir;
 
   for (const path of pathList) {
     if (path === "." || path === "") continue;
 
     if (path === "..") {
-      finalDir = finalDir && finalDir.parent ? finalDir.parent : finalDir;
+      finalDir =
+        finalDir && finalDir.parent
+          ? (finalDir.parent as unknown as IDirectory)
+          : finalDir;
     } else {
       const child = finalDir.children.find((child) => child.name === path);
 
@@ -50,11 +53,11 @@ const getFinalDestion = (
         );
       }
 
-      if (child.type !== "folder") {
+      if (child.type !== FileType.Directory) {
         throw new Error(`portfoli-os: view: ${path}: Not a directory`);
       }
 
-      finalDir = child;
+      finalDir = child as unknown as IDirectory;
     }
   }
 
@@ -64,7 +67,7 @@ const getFinalDestion = (
 const view = (
   args: string[],
   _sysCall: SystemCommand,
-  _currentDir: FileTreeNode,
+  _currentDir: IDirectory,
 ): string | undefined => {
   let ans = "";
 
@@ -151,11 +154,11 @@ Try 'view --help' for more information.\n";
     return `view: cannot open '${file}': No such file or directory\n`;
   }
 
-  if (child.type === "folder") {
+  if (child.type === FileType.Directory) {
     return `view: cannot open '${file}': Is a directory\n`;
   }
 
-  _sysCall.open(child);
+  _sysCall.open(child as unknown as IFile);
 
   return undefined;
 };

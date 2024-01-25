@@ -1,5 +1,5 @@
 import { WindowPosition, WindowSize } from "@components/Window/type";
-import { FileTreeNode } from "@contexts/FileTree/type";
+import { IFile } from "@util/fs/type";
 
 type ModalType = "explorer" | "terminal" | "editor" | "settings" | "reader";
 
@@ -17,7 +17,7 @@ export type ModalProps = {
   /**
    * File Object referenced
    */
-  file?: FileTreeNode;
+  file?: IFile;
 
   componentProps?: object;
 

@@ -1,8 +1,8 @@
-import { FileTreeNode } from "@contexts/FileTree/type";
+import type { IFile } from "@util/fs/type";
 
 export type EditorProps = {
   readOnly?: boolean;
   initialText?: string;
-  file?: FileTreeNode;
+  file?: IFile;
   onSave?: (text: string) => void;
 };

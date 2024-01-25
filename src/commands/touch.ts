@@ -1,7 +1,8 @@
 import minimist, { ParsedArgs } from "minimist";
 
 import type { SystemCommand } from "@components/Terminal/type";
-import type { FileTreeNode } from "@contexts/FileTree/type";
+import { FileType, IFile, type IDirectory } from "@util/fs/type";
+import { generateFileId } from "@util/fs/id";
 
 const VERSION = "0.0.1";
 const AUTHOR = "Richard H. Nguyen";
@@ -32,11 +33,11 @@ A copy of this command can found at:\n\
 Written by ${AUTHOR}.\n`;
 };
 
-const touch = (
+const touch = async (
   args: string[],
   _sysCall: SystemCommand,
-  _currentDir: FileTreeNode,
-): string | undefined => {
+  _currentDir: IDirectory,
+): Promise<string | undefined> => {
   let ans = "";
 
   let showError = false;
@@ -116,7 +117,7 @@ Try 'touch --help' for more information.\n";
 
     if (path === "..") {
       if (currentDir.parent) {
-        currentDir = currentDir.parent;
+        currentDir = currentDir.parent as unknown as IDirectory;
       }
       continue;
     }
@@ -127,12 +128,12 @@ Try 'touch --help' for more information.\n";
     );
 
     if (child) {
-      if (child.type === "file") {
+      if (child.type === FileType.File) {
         ans = `touch: cannot touch '${path}': Not a directory\n`;
         return ans;
       }
 
-      currentDir = child;
+      currentDir = child as unknown as IDirectory;
     } else {
       ans = `touch: cannot touch '${path}': No such file or directory\n`;
       return ans;
@@ -143,7 +144,7 @@ Try 'touch --help' for more information.\n";
   const child = currentDir.children.find((child) => child.name === file);
 
   if (child) {
-    child.accessedAt = new Date();
+    child.lastAccessed = new Date();
   } else {
     if (noCreate) {
       return ans;
@@ -154,18 +155,25 @@ Try 'touch --help' for more information.\n";
       return ans;
     }
 
-    const newFile: FileTreeNode = {
+    const date = new Date();
+
+    const newFile: IFile = {
+      id: await generateFileId("", file, currentDir),
       name: file,
-      type: "file",
+      type: FileType.File,
       parent: currentDir,
+      content: "",
+      size: 0,
+      owner: currentDir.owner,
+
       executePermission: false,
       readPermission: true,
       writePermission: true,
-      id: crypto.getRandomValues(new Uint32Array(2))[0].toFixed(0),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      accessedAt: new Date(),
-      children: [],
+
+      lastAccessed: date,
+      lastModified: date,
+      lastChanged: date,
+      lastCreated: date,
     };
 
     currentDir.children.push(newFile);

@@ -1,7 +1,7 @@
 import minimist from "minimist";
 
 import type { SystemCommand } from "@components/Terminal/type";
-import type { FileTreeNode } from "@contexts/FileTree/type";
+import type { IDirectory } from "@util/fs/type";
 
 const VERSION = "0.0.1";
 const AUTHOR = "Richard H. Nguyen";
@@ -13,7 +13,7 @@ const SUPPORTED_ALIASES = {};
 const clear = (
   args: string[],
   sysCall: SystemCommand,
-  _currentDir?: FileTreeNode,
+  _currentDir?: IDirectory,
 ): string | undefined => {
   const { clearBuffer } = sysCall;
 

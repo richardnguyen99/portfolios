@@ -72,7 +72,6 @@ const ThemeItemComponent = (
       {children}
     </button>
   );
-  1;
 };
 
 const ForwardedThemeItem = React.forwardRef(ThemeItemComponent);

@@ -1,9 +1,9 @@
 import minimist, { ParsedArgs } from "minimist";
 
 import type { SystemCommand } from "@components/Terminal/type";
-import type { FileTreeNode } from "@contexts/FileTree/type";
+import { FileType, type IDirectory } from "@util/fs/type";
 
-const VERSION = "0.0.1";
+const VERSION = "0.0.2";
 const AUTHOR = "Richard H. Nguyen";
 const SOURCE =
   "https://github.com/richardnguyen99/portfolios/tree/main/src/commands/rm.ts";
@@ -43,7 +43,7 @@ Written by ${AUTHOR}.\n`;
 const rm = (
   args: string[],
   _sysCall: SystemCommand,
-  currentDir: FileTreeNode,
+  currentDir: IDirectory,
 ): string | undefined => {
   let ans = "";
 
@@ -110,68 +110,51 @@ Try 'rm --help' for more information.\n";
 
   const pathList = argv._[0].split("/").filter((path) => path !== "");
 
-  if (pathList.length === 0) {
-    return "rm: missing operand\n\
-Try 'rm --help' for more information.\n";
-  }
-
-  let currentDirectory = currentDir;
-
-  for (let i = 0; i < pathList.length - 1; i++) {
-    const path = pathList[i];
-
-    if (path === "..") {
-      if (currentDirectory.parent) {
-        currentDirectory = currentDirectory.parent;
-      }
-    } else if (path === ".") {
-      continue;
-    } else {
-      const child = currentDirectory.children.find(
-        (child) => child.name === path,
-      );
-
-      if (child && child.type === "folder") {
-        currentDirectory = child;
-      } else {
-        return `rm: cannot remove '${path}': No such file or directory\n`;
-      }
-    }
-  }
+  const startDir = argv._[0].startsWith("/")
+    ? _sysCall.getFileTreeRoot() // Absolute path
+    : currentDir; // Relative path according to the current directory
 
   const path = pathList[pathList.length - 1];
-  const child = currentDirectory.children.find((child) => child.name === path);
+  let finalDir = startDir;
+  let child = undefined;
+
+  try {
+    const walkPathList = pathList.slice(0, -1);
+    console.log(walkPathList);
+
+    finalDir = _sysCall.walkNode(startDir, walkPathList);
+    child = finalDir.children.find((child) => child.name === path);
+  } catch (err) {
+    return `rm: cannot remove ${(err as Error).message}`;
+  }
 
   if (child) {
-    if (child.type === "file") {
-      if (child.writePermission === false) {
-        return `rm: cannot remove '${path}': Permission denied\n`;
-      }
-
-      currentDirectory.children = currentDirectory.children.filter(
-        (child) => child.name !== path,
-      );
-
-      if (verbal) {
-        return "rm: removed file '" + path + "'\n";
-      }
-
-      return "";
-    } else {
-      if (recursive) {
-        if (child.writePermission === false) {
-          return `rm: cannot remove '${path}': Permission denied\n`;
-        }
-
-        currentDirectory.children = currentDirectory.children.filter(
-          (child) => child.name !== path,
-        );
+    if (child.type === FileType.File) {
+      try {
+        _sysCall.removeINode(finalDir, child);
 
         if (verbal) {
-          return "rm: removed directory '" + path + "'\n";
+          return "rm: removed file '" + path + "'\n";
         }
 
         return "";
+      } catch (err) {
+        return `rm: cannot remove ${(err as Error).message}`;
+      }
+    } else {
+      // Deleting a directory requires the recursive flag (-r) to be turned on
+      if (recursive) {
+        try {
+          _sysCall.removeINode(finalDir, child);
+
+          if (verbal) {
+            return "rm: removed directory '" + path + "'\n";
+          }
+
+          return "";
+        } catch (err) {
+          return `rm: cannot remove ${(err as Error).message}`;
+        }
       }
 
       return `rm: cannot remove '${path}': Is a directory\n`;

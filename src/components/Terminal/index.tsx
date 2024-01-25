@@ -38,7 +38,7 @@ const InternalTerminal: React.FC = () => {
   };
 
   const handleKeyPress = React.useCallback(
-    (e: KeyboardEvent): void => {
+    async (e: KeyboardEvent): Promise<void> => {
       if (!active) return;
 
       if (e.key === "Enter") {
@@ -47,7 +47,7 @@ const InternalTerminal: React.FC = () => {
 
         const cmd = text.trim();
 
-        execute(cmd);
+        await execute(cmd);
 
         setText((_prev) => "");
       }
@@ -69,7 +69,6 @@ const InternalTerminal: React.FC = () => {
 
       if (evt.ctrlKey && evt.altKey && evt.key === "t") {
         const id = crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0);
-        console.log("New Terminal", id);
 
         addModal({
           id,

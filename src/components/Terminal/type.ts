@@ -1,16 +1,21 @@
 import * as React from "react";
 
-import { FileTreeNode } from "@contexts/FileTree/type";
+import type { IDirectory, IFile, INode } from "@util/fs/type";
 
 export type SystemCommand = {
+  addFile: (path: IDirectory, name: string) => Promise<void>;
+  addDirectory: (path: IDirectory, name: string) => Promise<void>;
+  removeINode: (path: IDirectory, name: INode) => void;
+  walkNode: (currentDir: IDirectory, pathList: string[]) => IDirectory;
+
   clearBuffer: () => void;
   exitTerminal: () => void;
-  getFileTreeRoot: () => FileTreeNode;
-  getFileTreeHome: () => FileTreeNode;
-  changeDirectory: (path?: FileTreeNode | string) => void;
-  openEditor: (path: FileTreeNode) => void;
-  open: (path: FileTreeNode) => void;
-  createNewFile: (path: FileTreeNode, name: string) => void;
+  getFileTreeRoot: () => IDirectory;
+  getFileTreeHome: () => IDirectory;
+  changeDirectory: (path?: IDirectory | string) => void;
+  openEditor: (path: IFile) => void;
+  open: (path: IFile) => void;
+  createNewFile: (path: IDirectory, name: string) => Promise<void>;
   getWindowSize: () => { width: number; height: number };
   getTerminalSize: () => { width: number; height: number };
   getCharacterSize: () => { width: number; height: number };

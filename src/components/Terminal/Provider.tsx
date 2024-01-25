@@ -5,15 +5,20 @@ import { TerminalProviderProps, SystemCommand } from "./type";
 import exec from "./exec";
 import useModal from "@contexts/Modal/useModal";
 import useFileTree from "@contexts/FileTree/useFileTree";
-import type { FileTreeNode } from "@contexts/FileTree/type";
+import { IFile, IDirectory, FileType } from "@util/fs/type";
 import { ModalProps } from "@contexts/Modal/type";
 import useWindow from "@components/Window/useWindow";
 import { Editor, Remark } from "@components";
+import { compareDirectories } from "@util/fs/compare";
+import useSystemCall from "@contexts/SystemCall/useSystemCall";
+import { generateFileId } from "@util/fs/id";
 
 const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
   const { getId, getSize } = useWindow();
   const { closeModal, addModal } = useModal();
-  const { getHomeFolder, getRootFolder, addFile } = useFileTree();
+  const { getHomeFolder, getRootFolder } = useFileTree();
+  const { addINode, addFile, addDirectory, walkNode, removeINode } =
+    useSystemCall();
 
   const [currentFolder, setCurrentFolder] = React.useState({
     previous: getHomeFolder(),
@@ -49,19 +54,12 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
   }, [closeModal, id]);
 
   const changeDirectory = React.useCallback(
-    (newDir?: FileTreeNode | string) => {
-      if (typeof newDir === "undefined" || newDir === getHomeFolder()) {
+    (newDir?: IDirectory | string) => {
+      if (typeof newDir === "undefined") {
         setPrompt("[richard@portlios ~]$ ");
         setCurrentFolder((prev) => ({
           previous: prev.current,
           current: getHomeFolder(),
-        }));
-        return;
-      } else if (newDir === getRootFolder()) {
-        setPrompt("[richard@portlios /]$ ");
-        setCurrentFolder((prev) => ({
-          previous: prev.current,
-          current: getRootFolder(),
         }));
         return;
       } else if (typeof newDir === "string") {
@@ -90,6 +88,24 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
           current: newDirNode,
         }));
       } else {
+        if (compareDirectories(newDir, getHomeFolder())) {
+          setPrompt("[richard@portlios ~]$ ");
+          setCurrentFolder((prev) => ({
+            previous: prev.current,
+            current: getHomeFolder(),
+          }));
+          return;
+        }
+
+        if (compareDirectories(newDir, getRootFolder())) {
+          setPrompt("[richard@portlios /]$ ");
+          setCurrentFolder((prev) => ({
+            previous: prev.current,
+            current: getRootFolder(),
+          }));
+          return;
+        }
+
         setPrompt(`[richard@portlios ${newDir.name}]$ `);
         setCurrentFolder((prev) => ({
           previous: prev.current,
@@ -101,7 +117,7 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
   );
 
   const open = React.useCallback(
-    (path: FileTreeNode) => {
+    (path: IFile) => {
       const modal: ModalProps = {
         id: path.id,
         title: path.name,
@@ -126,7 +142,7 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
         },
       };
 
-      if (path.type === "file") {
+      if (path.type === FileType.File) {
         if (path.name.endsWith(".md")) {
           modal.type = "reader";
           modal.component = Remark as React.FC;
@@ -150,7 +166,7 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
   );
 
   const openEditor = React.useCallback(
-    (path: FileTreeNode) => {
+    (path: IFile) => {
       const editorModal: ModalProps = {
         id: path.id,
         title: path.name,
@@ -182,10 +198,30 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
   );
 
   const createNewFile = React.useCallback(
-    (parentNode: FileTreeNode, filename: string) => {
-      addFile(parentNode, filename);
+    async (parentNode: IDirectory, filename: string) => {
+      const createdDate = new Date();
+      const newFile: IFile = {
+        id: await generateFileId("", filename, parentNode),
+        name: filename,
+        type: FileType.File,
+        content: "",
+        size: 0,
+        parent: parentNode,
+        owner: parentNode.owner,
+
+        readPermission: true,
+        writePermission: true,
+        executePermission: true,
+
+        lastAccessed: createdDate,
+        lastChanged: createdDate,
+        lastCreated: createdDate,
+        lastModified: createdDate,
+      };
+
+      addINode(parentNode, newFile);
     },
-    [addFile],
+    [addINode],
   );
 
   const getWindowSize = React.useCallback(() => {
@@ -231,6 +267,11 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
 
   const systemCalls = React.useMemo<SystemCommand>(
     () => ({
+      addFile,
+      addDirectory,
+      removeINode,
+      walkNode,
+
       getFileTreeRoot,
       getFileTreeHome,
       changeDirectory,
@@ -244,6 +285,11 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
       getCharacterSize,
     }),
     [
+      addFile,
+      addDirectory,
+      removeINode,
+      walkNode,
+
       getFileTreeRoot,
       getFileTreeHome,
       changeDirectory,
@@ -259,11 +305,11 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
   );
 
   const execute = React.useCallback(
-    (command: string) => {
+    async (command: string) => {
       const bufferedCommand = `> ${command}`;
 
       addBuffer(bufferedCommand);
-      const result = exec(command, systemCalls, currentFolder.current);
+      const result = await exec(command, systemCalls, currentFolder.current);
 
       addBuffer(result || "");
     },
