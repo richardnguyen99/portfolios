@@ -130,8 +130,6 @@ Try 'cat --help' for more information.\n`;
       if (fileNode && fileNode.type === FileType.File) {
         const content = window.localStorage.getItem(`file-${fileNode.id}`);
 
-        console.log(content);
-
         if (content) {
           ans += content
             .toString()

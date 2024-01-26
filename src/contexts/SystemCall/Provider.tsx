@@ -32,6 +32,10 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
 
   const addFile = React.useCallback(
     async (parentNode: IDirectory, name: string, initialContent?: string) => {
+      if (name === "." || name === "..") {
+        return;
+      }
+
       const content = initialContent ?? "";
 
       const newFile: IFile = {
@@ -60,6 +64,10 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
 
   const addDirectory = React.useCallback(
     async (parentNode: IDirectory, name: string) => {
+      if (name === "." || name === "..") {
+        return;
+      }
+
       const createdDate = new Date();
       const newDirectory: IDirectory = {
         id: await generateDirectoryId(name, parentNode),
@@ -82,6 +90,24 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
       addINode(parentNode, newDirectory as INode);
     },
     [addINode],
+  );
+
+  const updateFile = React.useCallback(
+    (fileNode: IFile, fileMeta: Partial<IFile>) => {
+      const updateMeta = Object.keys(fileMeta).filter(Boolean);
+
+      updateMeta.forEach((key) => {
+        const fileKey = key as keyof IFile;
+        const value = fileMeta[fileKey];
+
+        fileNode[fileKey] = value as never;
+      });
+
+      fileNode.lastModified = new Date();
+
+      setHomeFolder({ ...getHomeFolder(), parent: null });
+    },
+    [getHomeFolder, setHomeFolder],
   );
 
   const removeINode = React.useCallback(
@@ -131,11 +157,20 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
       addINode,
       addFile,
       addDirectory,
+      updateFile,
       removeINode,
       walkNode,
       readDir,
     };
-  }, [addDirectory, addFile, addINode, readDir, removeINode, walkNode]);
+  }, [
+    addDirectory,
+    addFile,
+    addINode,
+    readDir,
+    removeINode,
+    updateFile,
+    walkNode,
+  ]);
 
   return (
     <SystemCallContext.Provider value={contextValue}>

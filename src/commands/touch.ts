@@ -100,83 +100,40 @@ Try 'touch --help' for more information.\n";
 
   if (pathList.length === 0) {
     ans =
-      "touch: missing file operand\n\
+      "\
+touch: missing file operand\n\
 Try 'touch --help' for more information.\n";
 
     return ans;
   }
 
-  let currentDir = _currentDir;
+  let currentDir = argv._[0].startsWith("/")
+    ? _sysCall.getFileTreeRoot()
+    : _currentDir;
 
-  for (let i = 0; i < pathList.length - 1; i++) {
-    const path = pathList[i];
+  // Get to the destination directory for insertion
+  currentDir = _sysCall.walkNode(currentDir, pathList.slice(0, -1));
 
-    if (path === ".") {
-      continue;
-    }
-
-    if (path === "..") {
-      if (currentDir.parent) {
-        currentDir = currentDir.parent as unknown as IDirectory;
-      }
-      continue;
-    }
-
-    const child = currentDir.children.find(
-      (child) =>
-        child.name === path && child.name !== "." && child.name !== "..",
-    );
-
-    if (child) {
-      if (child.type === FileType.File) {
-        ans = `touch: cannot touch '${path}': Not a directory\n`;
-        return ans;
-      }
-
-      currentDir = child as unknown as IDirectory;
-    } else {
-      ans = `touch: cannot touch '${path}': No such file or directory\n`;
-      return ans;
-    }
-  }
-
+  // Find the file to open
   const file = pathList[pathList.length - 1];
   const child = currentDir.children.find((child) => child.name === file);
 
   if (child) {
-    child.lastAccessed = new Date();
+    if (child.type === FileType.Directory) {
+      return `touch: cannot open '${file}': Is a directory\n`;
+    }
+
+    // Update the file
+    _sysCall.updateFile(child as IFile, {
+      lastAccessed: new Date(),
+    });
   } else {
-    if (noCreate) {
-      return ans;
+    // Create the file if it doesn't exist
+    try {
+      await _sysCall.addFile(currentDir, file);
+    } catch (err) {
+      return `touch: cannot open '${file}': ${(err as Error).message}\n`;
     }
-
-    if (!currentDir.writePermission) {
-      ans = `touch: cannot touch '${file}': Permission denied\n`;
-      return ans;
-    }
-
-    const date = new Date();
-
-    const newFile: IFile = {
-      id: await generateFileId("", file, currentDir),
-      name: file,
-      type: FileType.File,
-      parent: currentDir,
-      content: "",
-      size: 0,
-      owner: currentDir.owner,
-
-      executePermission: false,
-      readPermission: true,
-      writePermission: true,
-
-      lastAccessed: date,
-      lastModified: date,
-      lastChanged: date,
-      lastCreated: date,
-    };
-
-    currentDir.children.push(newFile);
   }
 
   return ans;
