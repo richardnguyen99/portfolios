@@ -158,7 +158,7 @@ const Logo: React.FC = () => {
                     onClick={handleNewExplorerClick}
                   >
                     <span>File Explorer</span>
-                    <HotKey.NewTerminal />
+                    <HotKey.NewFileExplorer />
                   </ForwardedLogoItem>
                 )}
               </Menu.Item>
