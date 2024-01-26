@@ -2,7 +2,6 @@ import minimist, { ParsedArgs } from "minimist";
 
 import type { SystemCommand } from "@components/Terminal/type";
 import { FileType, IFile, type IDirectory } from "@util/fs/type";
-import { generateFileId } from "@util/fs/id";
 
 const VERSION = "0.0.1";
 const AUTHOR = "Richard H. Nguyen";
@@ -109,7 +108,9 @@ Try 'touch --help' for more information.\n";
 
   let currentDir = argv._[0].startsWith("/")
     ? _sysCall.getFileTreeRoot()
-    : _currentDir;
+    : argv._[0].startsWith("~")
+      ? _sysCall.getFileTreeHome()
+      : _currentDir;
 
   // Get to the destination directory for insertion
   currentDir = _sysCall.walkNode(currentDir, pathList.slice(0, -1));
@@ -128,6 +129,10 @@ Try 'touch --help' for more information.\n";
       lastAccessed: new Date(),
     });
   } else {
+    if (noCreate) {
+      return `touch: cannot touch '${file}': No such file or directory\n`;
+    }
+
     // Create the file if it doesn't exist
     try {
       await _sysCall.addFile(currentDir, file);

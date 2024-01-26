@@ -106,7 +106,9 @@ Try 'code --help' for more information.\n";
 
   let currentDir = argv._[0].startsWith("/")
     ? _sysCall.getFileTreeRoot()
-    : _currentDir;
+    : argv._[0].startsWith("~")
+      ? _sysCall.getFileTreeHome()
+      : _currentDir;
 
   // Get to the destination directory for insertion
   currentDir = _sysCall.walkNode(currentDir, pathList.slice(0, -1));

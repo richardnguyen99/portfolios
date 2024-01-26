@@ -111,8 +111,10 @@ Try 'rm --help' for more information.\n";
   const pathList = argv._[0].split("/").filter((path) => path !== "");
 
   const startDir = argv._[0].startsWith("/")
-    ? _sysCall.getFileTreeRoot() // Absolute path
-    : currentDir; // Relative path according to the current directory
+    ? _sysCall.getFileTreeRoot()
+    : argv._[0].startsWith("~")
+      ? _sysCall.getFileTreeHome()
+      : currentDir;
 
   const path = pathList[pathList.length - 1];
   let finalDir = startDir;

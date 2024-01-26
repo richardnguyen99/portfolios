@@ -108,7 +108,9 @@ Try 'mkdir --help' for more information.\n";
 
   let currentDirectory = argv._[0].startsWith("/")
     ? _sysCall.getFileTreeRoot()
-    : currentDir;
+    : argv._[0].startsWith("~")
+      ? _sysCall.getFileTreeHome()
+      : currentDir;
 
   // Walk through all the paths one by one in the path list.
   // The reason is that it needs to support creating missing parent directories.
@@ -127,6 +129,11 @@ Try 'mkdir --help' for more information.\n";
           : currentDirectory) as unknown as IDirectory;
       }
 
+      continue;
+    }
+
+    if (path === "~") {
+      currentDirectory = _sysCall.getFileTreeHome();
       continue;
     }
 

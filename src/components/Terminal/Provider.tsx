@@ -289,8 +289,8 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
       addFile,
       addDirectory,
       removeINode,
+      updateFile,
       walkNode,
-
       getFileTreeRoot,
       getFileTreeHome,
       changeDirectory,
