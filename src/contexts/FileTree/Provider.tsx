@@ -140,7 +140,7 @@ const readmd: IFile = {
 
 author.children.push(readmd);
 guess.children.push(documents, publics);
-home.children.push(author, guess);
+home.children.push(author);
 root.children.push(home);
 
 const FileTreeProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
@@ -171,6 +171,7 @@ const FileTreeProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   React.useEffect(() => {
     if (homeFolder.parent === null) {
       homeFolder.parent = home;
+      home.children.push(homeFolder);
     }
   }, [homeFolder]);
 

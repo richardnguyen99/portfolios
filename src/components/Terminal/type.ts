@@ -5,6 +5,7 @@ import type { IDirectory, IFile, INode } from "@util/fs/type";
 export type SystemCommand = {
   addFile: (path: IDirectory, name: string) => Promise<void>;
   addDirectory: (path: IDirectory, name: string) => Promise<void>;
+  updateFile: (path: IFile, file: Partial<IFile>) => void;
   removeINode: (path: IDirectory, name: INode) => void;
   walkNode: (currentDir: IDirectory, pathList: string[]) => IDirectory;
 

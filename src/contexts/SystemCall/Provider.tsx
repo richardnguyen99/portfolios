@@ -14,17 +14,6 @@ import _walkNode from "./calls/_walkNode";
 const SystemCallProvider: React.FC<Props> = ({ children }) => {
   const { getHomeFolder, setHomeFolder } = useFileTree();
 
-  const updateFs = React.useCallback(
-    (callback?: () => unknown) => {
-      if (callback) {
-        callback();
-      }
-
-      setHomeFolder((prev) => prev);
-    },
-    [setHomeFolder],
-  );
-
   const addINode = React.useCallback(
     (parentNode: IDirectory, newNode: INode) => {
       _addNode(parentNode, newNode);
@@ -43,6 +32,10 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
 
   const addFile = React.useCallback(
     async (parentNode: IDirectory, name: string, initialContent?: string) => {
+      if (name === "." || name === "..") {
+        return;
+      }
+
       const content = initialContent ?? "";
 
       const newFile: IFile = {
@@ -71,6 +64,11 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
 
   const addDirectory = React.useCallback(
     async (parentNode: IDirectory, name: string) => {
+      if (name === "." || name === "..") {
+        return;
+      }
+
+      const createdDate = new Date();
       const newDirectory: IDirectory = {
         id: await generateDirectoryId(name, parentNode),
         name,
@@ -83,10 +81,10 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
         writePermission: true,
         executePermission: true,
 
-        lastAccessed: new Date(),
-        lastChanged: new Date(),
-        lastCreated: new Date(),
-        lastModified: new Date(),
+        lastAccessed: createdDate,
+        lastChanged: createdDate,
+        lastCreated: createdDate,
+        lastModified: createdDate,
       };
 
       addINode(parentNode, newDirectory as INode);
@@ -94,28 +92,53 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
     [addINode],
   );
 
+  const updateFile = React.useCallback(
+    (fileNode: IFile, fileMeta: Partial<IFile>) => {
+      const updateMeta = Object.keys(fileMeta).filter(Boolean);
+
+      updateMeta.forEach((key) => {
+        const fileKey = key as keyof IFile;
+        const value = fileMeta[fileKey];
+
+        fileNode[fileKey] = value as never;
+      });
+
+      fileNode.lastModified = new Date();
+
+      setHomeFolder({ ...getHomeFolder(), parent: null });
+    },
+    [getHomeFolder, setHomeFolder],
+  );
+
   const removeINode = React.useCallback(
     (parentNode: IDirectory, node: INode) => {
-      updateFs(() => {
-        _removeNode(parentNode, node);
+      _removeNode(parentNode, node);
 
-        // Only files with content are stored in localStorage
-        if (node.type === FileType.Directory) {
-          return;
-        }
+      const fileId = node.id;
+      const home = getHomeFolder();
+      let homeFolder = parentNode;
 
-        const fileId = node.id;
+      // Find the home folder and remount
+      while (homeFolder.parent !== null && homeFolder.parent !== home.parent) {
+        homeFolder = homeFolder.parent as IDirectory;
+      }
 
-        window.localStorage.removeItem(`file-${fileId}`);
-        window.dispatchEvent(
-          new StorageEvent("storage", {
-            key: fileId,
-            newValue: null,
-          }),
-        );
-      });
+      setHomeFolder({ ...homeFolder, parent: null });
+
+      // Only files with content are stored in localStorage
+      if (node.type === FileType.Directory) {
+        return;
+      }
+
+      window.localStorage.removeItem(`file-${fileId}`);
+      window.dispatchEvent(
+        new StorageEvent("storage", {
+          key: fileId,
+          newValue: null,
+        }),
+      );
     },
-    [updateFs],
+    [getHomeFolder, setHomeFolder],
   );
 
   const walkNode = React.useCallback(
@@ -134,11 +157,20 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
       addINode,
       addFile,
       addDirectory,
+      updateFile,
       removeINode,
       walkNode,
       readDir,
     };
-  }, [addDirectory, addFile, addINode, readDir, removeINode, walkNode]);
+  }, [
+    addDirectory,
+    addFile,
+    addINode,
+    readDir,
+    removeINode,
+    updateFile,
+    walkNode,
+  ]);
 
   return (
     <SystemCallContext.Provider value={contextValue}>
