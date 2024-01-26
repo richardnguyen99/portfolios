@@ -3,7 +3,7 @@ import clsx from "classnames";
 import { Menu, Transition } from "@headlessui/react";
 
 import IconHolder from "./IconHolder";
-import { HotKey, Terminal } from "@components";
+import { HotKey, Terminal, FileExplorer } from "@components";
 import useModal from "@contexts/Modal/useModal";
 
 const LogoIcon: React.FC = () => {
@@ -66,8 +66,6 @@ const Logo: React.FC = () => {
   const handleNewTerminalClick = React.useCallback(() => {
     const id = crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0);
 
-    console.log(Terminal);
-
     addModal({
       id,
       title: "Terminal",
@@ -77,6 +75,32 @@ const Logo: React.FC = () => {
       isFullScreen: false,
       isFullScreenAllowed: true,
       component: Terminal,
+      componentProps: {},
+    });
+  }, [addModal]);
+
+  const handleNewExplorerClick = React.useCallback(() => {
+    const id = crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0);
+
+    addModal({
+      id,
+      title: "File Explorer",
+      type: "explorer",
+      active: true,
+
+      initialSize: {
+        width: 800,
+        height: 680,
+      },
+
+      initialPosition: {
+        x: 64,
+        y: 64,
+      },
+
+      isFullScreen: false,
+      isFullScreenAllowed: true,
+      component: FileExplorer,
       componentProps: {},
     });
   }, [addModal]);
@@ -122,6 +146,18 @@ const Logo: React.FC = () => {
                     onClick={handleNewTerminalClick}
                   >
                     <span>New Terminal</span>
+                    <HotKey.NewTerminal />
+                  </ForwardedLogoItem>
+                )}
+              </Menu.Item>
+
+              <Menu.Item>
+                {({ active }) => (
+                  <ForwardedLogoItem
+                    active={active}
+                    onClick={handleNewExplorerClick}
+                  >
+                    <span>File Explorer</span>
                     <HotKey.NewTerminal />
                   </ForwardedLogoItem>
                 )}

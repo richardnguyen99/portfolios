@@ -6,7 +6,7 @@ import {
   type FileExplorerProviderProps,
 } from "./type";
 
-const FileExploreProvider: React.FC<FileExplorerProviderProps> = ({
+const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
   children,
 }) => {
   const hello = () => {
@@ -26,4 +26,4 @@ const FileExploreProvider: React.FC<FileExplorerProviderProps> = ({
   );
 };
 
-export default FileExploreProvider;
+export default FileExplorerProvider;

@@ -5,5 +5,15 @@ import Terminal from "./Terminal";
 import HotKey from "./HotKey";
 import Editor from "./Editor";
 import Remark from "./Remark";
+import FileExplorer from "./FileExplorer";
 
-export { Screen, Window, MenuBar, Terminal, HotKey, Editor, Remark };
+export {
+  Screen,
+  Window,
+  MenuBar,
+  Terminal,
+  HotKey,
+  Editor,
+  Remark,
+  FileExplorer,
+};
