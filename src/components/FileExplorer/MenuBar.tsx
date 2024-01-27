@@ -1,15 +1,13 @@
 import * as React from "react";
 import clsx from "classnames";
-
-import FlexBtn from "./FlexBtn";
 import {
-  FileAddedIcon,
   FileDirectorySymlinkIcon,
   SortDescIcon,
   TableIcon,
-  ThreeBarsIcon,
 } from "@primer/octicons-react";
-import IconBtn from "./IconBtn";
+
+import FlexBtn from "./FlexBtn";
+import MoreMenuBtn from "./MoreMenuBtn";
 
 const MenuBar: React.FC = () => {
   return (
@@ -49,16 +47,13 @@ const MenuBar: React.FC = () => {
         </FlexBtn>
       </div>
       <div className="flex-[0_0_auto] bg-gray relative z-[2]">
-        <IconBtn>
-          <ThreeBarsIcon />
-        </IconBtn>
+        <MoreMenuBtn />
       </div>
       <div
         className={clsx(
           "absolute right-0 z-[1]",
           "w-20 h-full",
           "bg-gradient-to-r to-40%",
-          "from-gray-300 to-gray-400",
           "from-gray-200/0 to-gray-200/100",
           "dark:from-gray-800/0 dark:to-gray-800/100",
         )}
