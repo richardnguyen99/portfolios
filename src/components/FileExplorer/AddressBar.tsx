@@ -11,6 +11,7 @@ const AddressBar: React.FC = () => {
       className={clsx(
         "flex items-center w-full p-2 gap-3",
         "border-b border-gray-300 dark:border-gray-700",
+        "select-none",
       )}
     >
       <div id="fe-history" className="flex flex-[0_0_auto] gap-3 items-center">
