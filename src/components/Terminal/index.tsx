@@ -104,7 +104,6 @@ const InternalTerminal: React.FC = () => {
     if (!active) return;
 
     if (inputRef.current) {
-      console.log("scrolling");
       inputRef.current.scrollIntoView();
     }
   }, [active, renderedBuffer]);
