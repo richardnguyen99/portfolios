@@ -6,7 +6,7 @@ import FSContent from "./FSContent";
 
 const InternalFileExplorer: React.FC = () => {
   return (
-    <div id="file-explorer">
+    <div id="file-explorer" className="font-sans">
       <AddressBar />
       <MenuBar />
       <FSContent />

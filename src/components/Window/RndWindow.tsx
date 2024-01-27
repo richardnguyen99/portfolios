@@ -119,13 +119,8 @@ const RnDWindow: React.FC<Props> = ({ id = "", children }) => {
       <div
         id="window-content"
         className={clsx(
-          "window-scrollbar",
           "font-mono text-sm",
-          "relative w-full h-full",
-          {
-            "select-text": active,
-            "select-none": !active,
-          },
+          "relative w-full h-[calc(100%-12px)]",
         )}
       >
         {children}
