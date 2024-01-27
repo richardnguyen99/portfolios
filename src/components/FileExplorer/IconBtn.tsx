@@ -16,15 +16,10 @@ const IconBtn: React.FC<Props> = ({ children, ...rest }) => {
         "rounded-md",
         "text-slate-900 dark:text-gray-400",
         "hover:text-slate-800 dark:hover:text-gray-200",
-        "bg-gray-300/45 dark:bg-gray-700/45",
-        "hover:bg-gray-300/100 dark:hover:bg-gray-700/100",
+        "bg-[rgba(219,223,229,1)] dark:bg-[rgba(45,55,71,1)]",
+        "hover:bg-gray-300 dark:hover:bg-gray-700",
         "focus:outline-none",
-        "focus:ring-2",
-        "focus:ring-offset-2",
-        "focus:ring-gray-500",
-        "transition-colors",
-        "duration-200",
-        "ease-in-out",
+        "active:bg-gray-300/80 dark:active:bg-gray-700/80",
       )}
     >
       {children}
