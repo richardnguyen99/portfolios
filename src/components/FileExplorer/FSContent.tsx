@@ -1,6 +1,87 @@
 import * as React from "react";
 import clsx from "classnames";
 
+import { INode } from "@util/fs/type";
+import GridView from "./GridView";
+
+const MockFS: INode[] = [
+  {
+    id: "1",
+    name: "Documents",
+    type: 1,
+    executePermission: true,
+    readPermission: true,
+    writePermission: true,
+    parent: null,
+
+    lastAccessed: new Date(),
+    lastModified: new Date(),
+    lastChanged: new Date(),
+    lastCreated: new Date(),
+    owner: "richard",
+  },
+  {
+    id: "2",
+    name: "Videos",
+    type: 1,
+    executePermission: true,
+    readPermission: true,
+    writePermission: true,
+    parent: null,
+
+    lastAccessed: new Date(),
+    lastModified: new Date(),
+    lastChanged: new Date(),
+    lastCreated: new Date(),
+    owner: "richard",
+  },
+  {
+    id: "3",
+    name: "Pictures",
+    type: 1,
+    executePermission: true,
+    readPermission: true,
+    writePermission: true,
+    parent: null,
+
+    lastAccessed: new Date(),
+    lastModified: new Date(),
+    lastChanged: new Date(),
+    lastCreated: new Date(),
+    owner: "richard",
+  },
+  {
+    id: "4",
+    name: "Desktop",
+    type: 1,
+    executePermission: true,
+    readPermission: true,
+    writePermission: true,
+    parent: null,
+
+    lastAccessed: new Date(),
+    lastModified: new Date(),
+    lastChanged: new Date(),
+    lastCreated: new Date(),
+    owner: "richard",
+  },
+  {
+    id: "5",
+    name: "Downloads",
+    type: 1,
+    executePermission: true,
+    readPermission: true,
+    writePermission: true,
+    parent: null,
+
+    lastAccessed: new Date(),
+    lastModified: new Date(),
+    lastChanged: new Date(),
+    lastCreated: new Date(),
+    owner: "richard",
+  },
+];
+
 const FSContent: React.FC = () => {
   return (
     <div id="fe-fs-content" className={clsx("flex h-full")}>
@@ -10,6 +91,7 @@ const FSContent: React.FC = () => {
           "w-64 h-full p-3",
           "flex flex-col",
           "bg-gray-200 dark:bg-gray-700/60",
+          "select-none",
         )}
       >
         <h1 className="text-lg font-extrabold">Quick Access</h1>
@@ -28,7 +110,9 @@ const FSContent: React.FC = () => {
           </div>
         </div>
       </div>
-      <div id="fe-fs"></div>
+      <div id="fe-fs" className="w-full">
+        <GridView nodes={MockFS} />
+      </div>
     </div>
   );
 };
