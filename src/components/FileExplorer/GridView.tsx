@@ -46,31 +46,60 @@ type GridViewProps = {
 };
 
 const GridView: React.FC<GridViewProps> = ({ nodes }) => {
+  const handleContextMenu = React.useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      e.preventDefault();
+
+      console.log(e);
+    },
+    [],
+  );
+
   return (
     <div
-      className={clsx(
-        "grid grid-cols-[repeat(auto-fit,_minmax(96px,_1fr))]",
-        "[grid-gap:_1.5rem]",
-        "w-full p-4",
-      )}
+      id="fe-fs"
+      className="w-full flex flex-col justify-between"
+      contextMenu="file-explorer"
+      onContextMenu={handleContextMenu}
     >
-      {nodes.map((node) => {
-        return (
-          <div
-            key={node.name}
-            className={clsx(
-              "flex flex-col items-center",
-              "rounded-md p-2",
-              "hover:bg-gray-600/40",
-            )}
-          >
-            <Folder />
-            <span className="line-clamp-2 text-center [overflow-wrap:_anywhere] text-overflow">
-              {node.name}
-            </span>
-          </div>
-        );
-      })}
+      <div
+        className={clsx(
+          "grid grid-cols-[repeat(auto-fill,_minmax(96px,_0fr))]",
+          "[grid-gap:_1.5rem]",
+          "w-full p-4",
+        )}
+      >
+        {nodes.map((node) => {
+          return (
+            <div
+              key={node.name}
+              className={clsx(
+                "flex flex-col items-center",
+                "rounded-md p-2",
+                "hover:bg-gray-600/40",
+              )}
+            >
+              <Folder />
+              <span className="line-clamp-2 text-center [overflow-wrap:_anywhere] text-overflow">
+                {node.name}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+      <div className="flex relative">
+        <div
+          className={clsx(
+            "relative ml-auto",
+            "p-1 rounded-tl-lg text-xs",
+            "border-t border-l",
+            "border-gray-400/45 dark:border-gray-600",
+            "bg-gray-300/45 dark:bg-gray-700",
+          )}
+        >
+          Hello, World
+        </div>
+      </div>
     </div>
   );
 };

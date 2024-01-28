@@ -84,11 +84,11 @@ const MockFS: INode[] = [
 
 const FSContent: React.FC = () => {
   return (
-    <div id="fe-fs-content" className={clsx("flex h-full")}>
+    <div id="fe-fs-content" className={clsx("flex flex-grow")}>
       <div
         id="fe-fs-quick-access"
         className={clsx(
-          "w-64 h-full p-3",
+          "flex-grow-0 flex-shrink-0 basis-48 p-3",
           "flex flex-col",
           "bg-gray-200 dark:bg-gray-700/60",
           "select-none",
@@ -110,9 +110,7 @@ const FSContent: React.FC = () => {
           </div>
         </div>
       </div>
-      <div id="fe-fs" className="w-full">
-        <GridView nodes={MockFS} />
-      </div>
+      <GridView nodes={MockFS} />
     </div>
   );
 };
