@@ -100,7 +100,6 @@ const RnDWindow: React.FC<Props> = ({ id = "", children }) => {
       className={clsx(
         "absolute flex flex-col",
         "rounded-lg",
-        "overflow-clip",
         "border",
         "border-gray-300 dark:border-gray-700",
         {
@@ -120,7 +119,7 @@ const RnDWindow: React.FC<Props> = ({ id = "", children }) => {
         id="window-content"
         className={clsx(
           "font-mono text-sm",
-          "relative w-full h-[calc(100%-12px)]",
+          "relative w-full h-[calc(100%-33px)]",
         )}
       >
         {children}
