@@ -59,7 +59,7 @@ const GridViewItems: React.FC<GridViewProps> = ({ nodes }) => {
   const [pos, setPos] = React.useState({ x: 0, y: 0 });
   const containerRef = React.useRef<HTMLDivElement>(null);
 
-  const [itemCount, setItemCount] = React.useState(0);
+  const [, setItemCount] = React.useState(0);
 
   // This useEffect is used to update the dimension and position of the
   // selector area. DragSelect uses an actual DOM element, which is done
@@ -157,7 +157,7 @@ const GridViewItems: React.FC<GridViewProps> = ({ nodes }) => {
   return (
     <div
       ref={containerRef}
-      className="flex-grow flex-shrink-0 flex flex-col justify-between m-0"
+      className="flex flex-col justify-between m-0 h-full"
     >
       <div
         className={clsx(
@@ -185,19 +185,6 @@ const GridViewItems: React.FC<GridViewProps> = ({ nodes }) => {
           );
         })}
       </div>
-      <div className="flex relative">
-        <div
-          className={clsx(
-            "relative ml-auto",
-            "p-1 rounded-tl-lg text-xs",
-            "border-t border-l",
-            "border-gray-400/45 dark:border-gray-600",
-            "bg-gray-300/45 dark:bg-gray-700",
-          )}
-        >
-          Hello, World
-        </div>
-      </div>
     </div>
   );
 };
@@ -205,9 +192,22 @@ const GridViewItems: React.FC<GridViewProps> = ({ nodes }) => {
 const GridView: React.FC<GridViewProps> = ({ nodes }) => {
   return (
     <ContextMenuPrimitive.Root>
-      <ContextMenuPrimitive.Trigger className="flex flex-col w-full justify-between select-none">
+      <ContextMenuPrimitive.Trigger className="relative flex flex-col w-full justify-between select-none">
         <DragSelect.Provider settings={{ selectedClass: "selector" }}>
           <GridViewItems nodes={nodes} />
+          <div className="flex fixed bottom-0 right-0">
+            <div
+              className={clsx(
+                "relative ml-auto",
+                "p-1 rounded-tl-lg text-xs",
+                "border-t border-l",
+                "border-gray-400/45 dark:border-gray-600",
+                "bg-gray-300/45 dark:bg-gray-700",
+              )}
+            >
+              Hello, World
+            </div>
+          </div>
         </DragSelect.Provider>
       </ContextMenuPrimitive.Trigger>
       <ContextMenuPrimitive.Content

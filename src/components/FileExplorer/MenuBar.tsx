@@ -15,7 +15,7 @@ const MenuBar: React.FC = () => {
       id="fe-menu-bar"
       className={clsx(
         "relative flex items-center",
-        "p-2 z-0",
+        "p-2 z-[999]",
         "border-b border-gray-300 dark:border-gray-700",
       )}
     >
