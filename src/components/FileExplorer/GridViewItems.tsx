@@ -40,12 +40,12 @@ const GridViewItems: React.FC<GridViewProps> = ({ nodes }) => {
     const resizeObserver = new ResizeObserver((entries) => {
       if (!entries[0]) return;
 
-      const fsContentRect = entries[0].contentRect;
+      const fsContentRect = entries[0].target.getBoundingClientRect();
 
       selectorArea.style.width = `${fsContentRect.width}px`;
       selectorArea.style.height = `${fsContentRect.height}px`;
-      selectorArea.style.top = `${fsContentRect.y}px`;
-      selectorArea.style.left = `${fsContentRect.x}px`;
+      selectorArea.style.top = `${fsContentRect.top}px`;
+      selectorArea.style.left = `${fsContentRect.left}px`;
     });
 
     const mutationObserver = new MutationObserver((entries) => {
