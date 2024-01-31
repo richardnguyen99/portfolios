@@ -3,6 +3,7 @@ import clsx from "classnames";
 
 import { INode } from "@util/fs/type";
 import useDragSelect from "./DragSelect/hook";
+import PlainText from "@components/Icon/PlainText";
 
 type Props = {
   node: INode;
@@ -76,7 +77,7 @@ const GridViewItem: React.FC<Props> = ({ node }) => {
         "[&.selected]:hover:bg-sky-300/60 dark:[&.selected]:hover:bg-sky-400/60",
       )}
     >
-      <Folder />
+      {node.type === 1 ? <Folder /> : <PlainText />}
       <span className="line-clamp-2 text-center [overflow-wrap:_anywhere] text-overflow">
         {node.name}
       </span>

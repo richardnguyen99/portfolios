@@ -80,6 +80,21 @@ const MockFS: INode[] = [
     lastCreated: new Date(),
     owner: "richard",
   },
+  {
+    id: "6",
+    name: "test.txt",
+    type: 0,
+    executePermission: true,
+    readPermission: true,
+    writePermission: true,
+    parent: null,
+
+    lastAccessed: new Date(),
+    lastModified: new Date(),
+    lastChanged: new Date(),
+    lastCreated: new Date(),
+    owner: "richard",
+  },
 ];
 
 const FSContent: React.FC = () => {
