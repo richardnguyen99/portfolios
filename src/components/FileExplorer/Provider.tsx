@@ -2,6 +2,8 @@ import * as React from "react";
 
 import FileExplorerContext from "./Context";
 import {
+  FEViewSize,
+  FEViewType,
   FileExplorerContextType,
   type FileExplorerProviderProps,
 } from "./type";
@@ -9,15 +11,18 @@ import {
 const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
   children,
 }) => {
-  const hello = () => {
-    console.log("hello");
-  };
+  const [size, setSize] = React.useState<FEViewSize>(FEViewSize.Normal);
+  const [view, setView] = React.useState<FEViewType>(FEViewType.List);
 
   const contextValue = React.useMemo<FileExplorerContextType>(() => {
     return {
-      hello,
+      viewType: view,
+      viewSize: size,
+
+      setViewSize: setSize,
+      setViewType: setView,
     };
-  }, []);
+  }, [size, view]);
 
   return (
     <FileExplorerContext.Provider value={contextValue}>

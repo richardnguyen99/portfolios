@@ -1,13 +1,10 @@
 import * as React from "react";
 import clsx from "classnames";
-import {
-  FileDirectorySymlinkIcon,
-  SortDescIcon,
-  TableIcon,
-} from "@primer/octicons-react";
+import { FileDirectorySymlinkIcon, SortDescIcon } from "@primer/octicons-react";
 
 import FlexBtn from "./FlexBtn";
 import MoreMenuBtn from "./MoreMenuBtn";
+import ViewBtn from "./ViewBtn";
 
 const MenuBar: React.FC = () => {
   return (
@@ -39,12 +36,7 @@ const MenuBar: React.FC = () => {
             Sort Files
           </>
         </FlexBtn>
-        <FlexBtn>
-          <>
-            <TableIcon />
-            View Grid
-          </>
-        </FlexBtn>
+        <ViewBtn />
       </div>
       <div className="flex-[0_0_auto] bg-gray relative z-[2]">
         <MoreMenuBtn />
