@@ -71,7 +71,9 @@ const GridViewItem: React.FC<Props> = ({ node }) => {
         "selectable",
         "flex flex-col items-center",
         "rounded-md p-2",
-        "hover:bg-gray-600/40",
+        "hover:bg-gray-300/60 dark:hover:bg-gray-600/40",
+        "[&.selected]:bg-sky-300/40 dark:[&.selected]:bg-sky-400/40",
+        "[&.selected]:hover:bg-sky-300/60 dark:[&.selected]:hover:bg-sky-400/60",
       )}
     >
       <Folder />

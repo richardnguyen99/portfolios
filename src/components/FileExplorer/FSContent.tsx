@@ -93,7 +93,7 @@ const FSContent: React.FC = () => {
         className={clsx(
           "flex-grow-0 flex-shrink-0 basis-48 p-3",
           "flex flex-col",
-          "bg-gray-200 dark:bg-gray-700/60",
+          "bg-gray-100/40 dark:bg-gray-700/60",
           "h-full overflow-y-scroll",
           "select-none",
         )}

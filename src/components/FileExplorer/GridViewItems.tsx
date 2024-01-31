@@ -87,6 +87,7 @@ const GridViewItems: React.FC<GridViewProps> = ({ nodes }) => {
 
     ds.setSettings({
       area: containerRef.current!,
+      draggability: false,
       selectableClass: "selectable",
       selectorClass: "selector",
       selectedClass: "selected",

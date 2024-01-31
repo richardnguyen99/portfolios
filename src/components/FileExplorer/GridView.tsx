@@ -35,6 +35,7 @@ const GridView: React.FC<GridViewProps> = ({ nodes }) => {
       <ContextMenuPrimitive.Content
         className={clsx(
           "flex flex-col gap-1",
+          "!z-[999]",
           "min-w-[18rem]",
           "p-2 rounded-md",
           "font-extrabold",
