@@ -15,7 +15,7 @@ const GridView: React.FC<GridViewProps> = ({ nodes }) => {
   return (
     <ContextMenuPrimitive.Root>
       <ContextMenuPrimitive.Trigger className="relative flex flex-col w-full justify-between select-none">
-        <DragSelect.Provider settings={{ selectedClass: "selector" }}>
+        <DragSelect.Provider initialSettings={{ selectedClass: "selector" }}>
           <GridViewItems nodes={nodes} />
           <div className="flex fixed bottom-0 right-0">
             <div

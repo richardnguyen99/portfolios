@@ -6,9 +6,10 @@ import DragSelectContext from "./Context";
 
 const DragSelectProvider: React.FC<DragSelectProviderProps> = ({
   children,
-  settings = {},
+  initialSettings = {},
 }) => {
   const [ds, setDS] = React.useState<DragSelect<DSInputElement>>();
+  const [settings, setSettings] = React.useState({ id: 0, ...initialSettings });
 
   React.useEffect(() => {
     setDS((prev) => {
@@ -25,14 +26,22 @@ const DragSelectProvider: React.FC<DragSelectProviderProps> = ({
     };
   }, [ds]);
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     if (!ds) return;
 
     ds.setSettings(settings);
   }, [ds, settings]);
 
+  const contextValue = React.useMemo(
+    () => ({
+      ds,
+      setSettings,
+    }),
+    [ds],
+  );
+
   return (
-    <DragSelectContext.Provider value={ds}>
+    <DragSelectContext.Provider value={contextValue}>
       {children}
     </DragSelectContext.Provider>
   );

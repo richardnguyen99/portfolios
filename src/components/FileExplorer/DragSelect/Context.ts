@@ -1,9 +1,9 @@
 import * as React from "react";
-import DragSelect, { type DSInputElement } from "dragselect";
+import { DragSelectContextType } from "./type";
 
-const DragSelectContext = React.createContext<
-  DragSelect<DSInputElement> | undefined
->(undefined);
+const DragSelectContext = React.createContext<DragSelectContextType>(
+  {} as DragSelectContextType,
+);
 DragSelectContext.displayName = "DragSelectContext";
 
 export default DragSelectContext;

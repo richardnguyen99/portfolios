@@ -13,10 +13,8 @@ type GridViewProps = {
 
 const GridViewItems: React.FC<GridViewProps> = ({ nodes }) => {
   const { getId } = useWindow();
-  const ds = useDragSelect();
+  const { ds } = useDragSelect();
 
-  const [area, setArea] = React.useState(0);
-  const [pos, setPos] = React.useState({ x: 0, y: 0 });
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   const [, setItemCount] = React.useState(0);
@@ -31,32 +29,40 @@ const GridViewItems: React.FC<GridViewProps> = ({ nodes }) => {
       `[x-data-window-id="${getId()}"]`,
     );
 
+    // This selector area is the actual DOM element that DragSelect creates and
+    // uses to render the selector component.
+    const selectorArea = document.querySelector(
+      ".ds-selector-area",
+    ) as HTMLElement;
+
+    if (!containerRefCurrent || !windowContainer || !selectorArea) return;
+
     const resizeObserver = new ResizeObserver((entries) => {
       if (!entries[0]) return;
 
-      console.log(entries[0].contentRect);
+      const fsContentRect = entries[0].contentRect;
 
-      setArea(entries[0].contentRect.width * entries[0].contentRect.height);
-      setPos({
-        x: entries[0].contentRect.width,
-        y: entries[0].contentRect.height,
-      });
+      selectorArea.style.width = `${fsContentRect.width}px`;
+      selectorArea.style.height = `${fsContentRect.height}px`;
+      selectorArea.style.top = `${fsContentRect.y}px`;
+      selectorArea.style.left = `${fsContentRect.x}px`;
     });
 
     const mutationObserver = new MutationObserver((entries) => {
       if (!entries[0]) return;
 
-      const fsContent = windowContainer?.querySelector("#fe-fs-content > span");
+      const fsContent = windowContainer?.querySelector(
+        "#fe-fs-content > span > div:first-child",
+      );
 
       if (!fsContent) return;
 
       const fsContentRect = fsContent.getBoundingClientRect();
 
-      setArea(fsContentRect.width * fsContentRect.height);
-      setPos({
-        x: fsContentRect.x,
-        y: fsContentRect.y,
-      });
+      selectorArea.style.width = `${fsContentRect.width}px`;
+      selectorArea.style.height = `${fsContentRect.height}px`;
+      selectorArea.style.top = `${fsContentRect.y}px`;
+      selectorArea.style.left = `${fsContentRect.x}px`;
     });
 
     if (containerRefCurrent) {
@@ -80,11 +86,13 @@ const GridViewItems: React.FC<GridViewProps> = ({ nodes }) => {
     if (!containerRef.current || !ds) return;
 
     ds.setSettings({
-      area: containerRef.current,
-      selectedClass: "selected",
+      area: containerRef.current!,
       selectableClass: "selectable",
-      dropZoneReadyClass: "drop-zone-ready",
+      selectorClass: "selector",
+      selectedClass: "selected",
     });
+
+    console.log(ds);
 
     const dsCallback = ({
       items,
@@ -112,7 +120,7 @@ const GridViewItems: React.FC<GridViewProps> = ({ nodes }) => {
       // @ts-ignore
       ds.unsubscribe("__add", add);
     };
-  }, [ds, containerRef, area, pos]);
+  }, [containerRef, ds]);
 
   return (
     <div

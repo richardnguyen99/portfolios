@@ -1,7 +1,13 @@
 import * as React from "react";
-import DragSelect from "dragselect";
+import DragSelect, { DSInputElement, Settings } from "dragselect";
+
+export type DSSettings = Settings<DSInputElement>;
+
+export type DragSelectContextType = {
+  ds: DragSelect<DSInputElement> | undefined;
+};
 
 export type DragSelectProviderProps = {
   children: React.ReactNode;
-  settings?: ConstructorParameters<typeof DragSelect>[0];
+  initialSettings?: DSSettings;
 };
