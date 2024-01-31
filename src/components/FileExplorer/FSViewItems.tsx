@@ -1,18 +1,21 @@
 import * as React from "react";
-import clsx from "classnames";
 import { type DSCallbackObject, type DSInputElement } from "dragselect";
 
 import useWindow from "@components/Window/useWindow";
 import { type INode } from "@util/fs/type";
 import useDragSelect from "./DragSelect/hook";
-import GridViewItem from "./GridViewItem";
+import GridView from "./GridView";
+import useFileExplorer from "./hook";
+import { FEViewType } from "./type";
+import ListView from "./ListView";
 
-type GridViewProps = {
+type FSViewProps = {
   nodes: INode[];
 };
 
-const GridViewItems: React.FC<GridViewProps> = ({ nodes }) => {
+const FSViewItems: React.FC<FSViewProps> = ({ nodes }) => {
   const { getId } = useWindow();
+  const { viewType } = useFileExplorer();
   const { ds } = useDragSelect();
 
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -128,20 +131,13 @@ const GridViewItems: React.FC<GridViewProps> = ({ nodes }) => {
       ref={containerRef}
       className="flex flex-col justify-between m-0 h-full"
     >
-      <div
-        className={clsx(
-          "grid grid-cols-[repeat(auto-fill,_minmax(96px,_0fr))]",
-          "[grid-gap:_1.5rem]",
-          "window-scrollbar",
-          "w-full p-4",
-        )}
-      >
-        {nodes.map((node) => {
-          return <GridViewItem key={node.id} node={node} />;
-        })}
-      </div>
+      {viewType === FEViewType.Grid ? (
+        <GridView nodes={nodes} />
+      ) : (
+        <ListView nodes={nodes} />
+      )}
     </div>
   );
 };
 
-export default GridViewItems;
+export default FSViewItems;

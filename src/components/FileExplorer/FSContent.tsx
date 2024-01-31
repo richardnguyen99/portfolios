@@ -2,7 +2,7 @@ import * as React from "react";
 import clsx from "classnames";
 
 import { INode } from "@util/fs/type";
-import GridView from "./GridView";
+import GridView from "./FSView";
 
 const MockFS: INode[] = [
   {
@@ -82,7 +82,7 @@ const MockFS: INode[] = [
   },
   {
     id: "6",
-    name: "test.txt",
+    name: "test asdasdfasdfasdfasdfasdfasdfsadfasdfasdfasdfasdfasdfasdfasdfasdasdasdasdasdasdasdasdasdasd.txt",
     type: 0,
     executePermission: true,
     readPermission: true,
@@ -109,7 +109,7 @@ const FSContent: React.FC = () => {
           "flex-grow-0 flex-shrink-0 basis-48 p-3",
           "flex flex-col",
           "bg-gray-100/40 dark:bg-gray-700/60",
-          "h-full overflow-y-scroll",
+          "h-full overflow-y-scroll overflow-x-hidden",
           "select-none",
         )}
       >

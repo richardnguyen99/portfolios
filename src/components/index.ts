@@ -6,6 +6,7 @@ import HotKey from "./HotKey";
 import Editor from "./Editor";
 import Remark from "./Remark";
 import FileExplorer from "./FileExplorer";
+import Icon from "./Icon";
 
 export {
   Screen,
@@ -16,4 +17,5 @@ export {
   Editor,
   Remark,
   FileExplorer,
+  Icon,
 };
