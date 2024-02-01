@@ -1,17 +1,24 @@
 import * as React from "react";
 import clsx from "classnames";
 
-import { INode } from "@util/fs/type";
+import { FileType, INode } from "@util/fs/type";
 import useDragSelect from "./DragSelect/hook";
 import { Icon } from "@components";
+import { StarFillIcon, StarIcon } from "@primer/octicons-react";
 
 type Props = {
   node: INode;
 };
 
 const ListViewItem: React.FC<Props> = ({ node }) => {
-  const itemRef = React.useRef<HTMLDivElement>(null);
   const { ds } = useDragSelect();
+
+  const itemRef = React.useRef<HTMLDivElement>(null);
+  const [starred, setStarred] = React.useState(false);
+
+  const handleStarClick = React.useCallback(() => {
+    setStarred((prev) => !prev);
+  }, []);
 
   React.useEffect(() => {
     if (!itemRef.current || !ds) return;
@@ -32,21 +39,58 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
       key={node.name}
       className={clsx(
         "selectable",
-        "flex items-center gap-2",
-        "rounded-md px-2 py-1 w-full",
+        "flex items-center",
+        "rounded-md",
         "hover:bg-gray-300/60 dark:hover:bg-gray-600/40",
         "[&.selected]:bg-sky-300/40 dark:[&.selected]:bg-sky-400/40",
         "[&.selected]:hover:bg-sky-300/60 dark:[&.selected]:hover:bg-sky-400/60",
       )}
     >
-      {node.type === 1 ? (
-        <Icon.Folder className="w-8 h-8 flex-grow-0 flex-shrink-0" />
-      ) : (
-        <Icon.PlainText className="w-8 h-8 flex-grow-0 flex-shrink-0" />
-      )}
-      <span className="flex-grow-0 flex-shrink-1 text-ellipsis overflow-hidden whitespace-nowrap">
-        {node.name}
-      </span>
+      <div
+        className={clsx(
+          "flex-grow flex-shrink basis-20 min-w-32",
+          "flex items-center gap-2",
+          "overflow-hidden",
+          "px-2 py-1",
+        )}
+      >
+        {node.type === 1 ? (
+          <Icon.Folder className="w-8 h-8 flex-grow-0 flex-shrink-0" />
+        ) : (
+          <Icon.PlainText className="w-8 h-8 flex-grow-0 flex-shrink-0" />
+        )}
+        <span className="flex-grow flex-shrink basis-auto text-ellipsis overflow-hidden whitespace-nowrap">
+          {node.name}
+        </span>
+      </div>
+      <div className="flex-grow-0 flex-shrink-0 basis-20 px-2 py-1">
+        {node.type === FileType.File ? "0 bytes" : "0 items"}
+      </div>
+      <div className="flex-grow-0 flex-shrink-0 basis-44 px-2 py-1">
+        {new Date(node.lastModified).toLocaleString()}
+      </div>
+      <div
+        className={clsx(
+          "flex-grow-0 flex-shrink-0 basis-20",
+          "flex flex-col items-center",
+          "px-2 py-1",
+        )}
+      >
+        <div
+          onClick={handleStarClick}
+          className={clsx(
+            "p-1 rounded-md",
+            "hover:bg-gray-400/25 dark:hover:bg-gray-500/45",
+            "[.selected_&]:hover:bg-sky-300/40 dark:[.selected_&]:hover:bg-sky-400/40",
+          )}
+        >
+          {starred ? (
+            <StarFillIcon className="fill-amber-500 dark:fill-yellow-500" />
+          ) : (
+            <StarIcon />
+          )}
+        </div>
+      </div>
     </div>
   );
 };

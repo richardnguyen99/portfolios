@@ -8,19 +8,47 @@ type Props = {
   nodes: INode[];
 };
 
+const ListViewSortAction: React.FC<React.PropsWithChildren> = ({
+  children,
+}) => {
+  return (
+    <div
+      className={clsx(
+        "first:flex-grow first:flex-shrink first:min-w-32",
+        "basis-20 [&:nth-child(3)]:basis-44",
+        "[&:not(:first-child)]:flex-grow-0 [&:not(:first-child)]:flex-shrink-0",
+        "hover:bg-gray-300/60 dark:hover:bg-gray-600/40",
+        "px-2 py-1",
+        "[&:last-child]:text-center",
+      )}
+    >
+      {children}
+    </div>
+  );
+};
+
 const ListView: React.FC<Props> = ({ nodes }) => {
   return (
     <div>
       <div
         className={clsx(
-          "flex flex-col gap-2",
+          "flex flex-col",
           "window-scrollbar",
-          "w-full p-4",
+          "w-full px-4 pb-4",
         )}
       >
-        {nodes.map((node) => {
-          return <ListViewItem key={node.id} node={node} />;
-        })}
+        <div id="fe-listView-sort-panel" className={clsx("flex items-center")}>
+          <ListViewSortAction>Name</ListViewSortAction>
+          <ListViewSortAction>Size</ListViewSortAction>
+          <ListViewSortAction>Modifed</ListViewSortAction>
+          <ListViewSortAction>Starred</ListViewSortAction>
+        </div>
+        <div className="h-[1px] -ml-4 -mr-1 bg-gray-300 dark:bg-gray-700" />
+        <div className="flex flex-col gap-1">
+          {nodes.map((node) => {
+            return <ListViewItem key={node.id} node={node} />;
+          })}
+        </div>
       </div>
     </div>
   );
