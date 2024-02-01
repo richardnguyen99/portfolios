@@ -22,6 +22,39 @@ const FSViewItems: React.FC<FSViewProps> = ({ nodes }) => {
 
   const [, setItemCount] = React.useState(0);
 
+  const updateSelectorArea = React.useCallback(
+    (
+      rect: DOMRect,
+      selectorArea: HTMLElement,
+      windowContainer: HTMLElement,
+    ) => {
+      selectorArea.style.width = `${rect.width}px`;
+      selectorArea.style.left = `${rect.left}px`;
+
+      if (viewType === FEViewType.Grid) {
+        selectorArea.style.height = `${rect.height}px`;
+        selectorArea.style.top = `${rect.y}px`;
+      } else {
+        const fsListViewSortPanel = windowContainer.querySelector(
+          "#fe-listView-sort-panel",
+        );
+
+        if (!fsListViewSortPanel) {
+          selectorArea.style.height = `${rect.height}px`;
+          selectorArea.style.top = `${rect.y}px`;
+
+          return;
+        }
+
+        const panelRect = fsListViewSortPanel.getBoundingClientRect();
+
+        selectorArea.style.height = `${rect.height - panelRect.height}px`;
+        selectorArea.style.top = `${rect.y + panelRect.height}px`;
+      }
+    },
+    [],
+  );
+
   // This useEffect is used to update the dimension and position of the
   // selector area. DragSelect uses an actual DOM element, which is done
   // through `containerRef.current`. to calculate the position of the selector
@@ -30,7 +63,7 @@ const FSViewItems: React.FC<FSViewProps> = ({ nodes }) => {
     const containerRefCurrent = containerRef.current;
     const windowContainer = document.querySelector(
       `[x-data-window-id="${getId()}"]`,
-    );
+    ) as HTMLElement;
 
     // This selector area is the actual DOM element that DragSelect creates and
     // uses to render the selector component.
@@ -45,16 +78,13 @@ const FSViewItems: React.FC<FSViewProps> = ({ nodes }) => {
 
       const fsContentRect = entries[0].target.getBoundingClientRect();
 
-      selectorArea.style.width = `${fsContentRect.width}px`;
-      selectorArea.style.height = `${fsContentRect.height}px`;
-      selectorArea.style.top = `${fsContentRect.top}px`;
-      selectorArea.style.left = `${fsContentRect.left}px`;
+      updateSelectorArea(fsContentRect, selectorArea, windowContainer);
     });
 
     const mutationObserver = new MutationObserver((entries) => {
       if (!entries[0]) return;
 
-      const fsContent = windowContainer?.querySelector(
+      const fsContent = windowContainer.querySelector(
         "#fe-fs-content > span > div:first-child",
       );
 
@@ -62,10 +92,7 @@ const FSViewItems: React.FC<FSViewProps> = ({ nodes }) => {
 
       const fsContentRect = fsContent.getBoundingClientRect();
 
-      selectorArea.style.width = `${fsContentRect.width}px`;
-      selectorArea.style.height = `${fsContentRect.height}px`;
-      selectorArea.style.top = `${fsContentRect.y}px`;
-      selectorArea.style.left = `${fsContentRect.x}px`;
+      updateSelectorArea(fsContentRect, selectorArea, windowContainer);
     });
 
     if (containerRefCurrent) {

@@ -3,6 +3,7 @@ import clsx from "classnames";
 
 import { type INode } from "@util/fs/type";
 import ListViewItem from "./ListViewItem";
+import useFileExplorer from "./hook";
 
 type Props = {
   nodes: INode[];
@@ -11,6 +12,8 @@ type Props = {
 const ListViewSortAction: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
+  const { dragging } = useFileExplorer();
+
   return (
     <button
       type="button"
@@ -18,9 +21,12 @@ const ListViewSortAction: React.FC<React.PropsWithChildren> = ({
         "first:flex-grow first:flex-shrink first:min-w-32",
         "basis-20 [&:nth-child(3)]:basis-44",
         "[&:not(:first-child)]:flex-grow-0 [&:not(:first-child)]:flex-shrink-0",
-        "hover:bg-gray-300/60 dark:hover:bg-gray-600/40",
         "px-2 py-1",
         "text-left last:text-center",
+        {
+          "cursor-default": dragging,
+          "hover:bg-gray-300/60 dark:hover:bg-gray-600/40": !dragging,
+        },
       )}
     >
       {children}
