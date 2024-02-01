@@ -3,8 +3,11 @@ import clsx from "classnames";
 import { ChevronLeftIcon, ChevronRightIcon } from "@primer/octicons-react";
 
 import IconBtn from "./IconBtn";
+import useFileExplorer from "./hook";
 
 const AddressBar: React.FC = () => {
+  const { dragging } = useFileExplorer();
+
   return (
     <div
       id="fe-address-bar"
@@ -30,7 +33,9 @@ const AddressBar: React.FC = () => {
           "rounded-md",
           "h-8 p-2 text-sm",
           "bg-[rgba(219,223,229,1)] dark:bg-[rgba(45,55,71,1)]",
-          "hover:bg-gray-300 dark:hover:bg-gray-700",
+          {
+            "hover:bg-gray-300 dark:hover:bg-gray-700": !dragging,
+          },
         )}
       >
         <h1>Home</h1>
@@ -65,12 +70,16 @@ const AddressBar: React.FC = () => {
               "p-2",
               "text-sm",
               "bg-[rgba(219,223,229,1)] dark:bg-[rgba(45,55,71,1)]",
-              "hover:bg-gray-300 dark:hover:bg-gray-700",
               "border border-transparent",
-              "hover:border-gray-400/50 dark:hover:border-gray-600",
               "focus:outline-none focus:ring-2",
               "dark:focus:ring-gray-500",
               "placeholder-gray-500 dark:placeholder-gray-400",
+              {
+                "cursor-default": dragging,
+                "hover:bg-gray-300 dark:hover:bg-gray-700": !dragging,
+                "hover:border-gray-400/50 dark:hover:border-gray-600":
+                  !dragging,
+              },
             )}
           />
         </div>

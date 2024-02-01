@@ -12,18 +12,19 @@ const ListViewSortAction: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
   return (
-    <div
+    <button
+      type="button"
       className={clsx(
         "first:flex-grow first:flex-shrink first:min-w-32",
         "basis-20 [&:nth-child(3)]:basis-44",
         "[&:not(:first-child)]:flex-grow-0 [&:not(:first-child)]:flex-shrink-0",
         "hover:bg-gray-300/60 dark:hover:bg-gray-600/40",
         "px-2 py-1",
-        "[&:last-child]:text-center",
+        "text-left last:text-center",
       )}
     >
       {children}
-    </div>
+    </button>
   );
 };
 
@@ -37,7 +38,7 @@ const ListView: React.FC<Props> = ({ nodes }) => {
           "w-full px-4 pb-4",
         )}
       >
-        <div id="fe-listView-sort-panel" className={clsx("flex items-center")}>
+        <div id="fe-listView-sort-panel" className={clsx("flex")}>
           <ListViewSortAction>Name</ListViewSortAction>
           <ListViewSortAction>Size</ListViewSortAction>
           <ListViewSortAction>Modifed</ListViewSortAction>

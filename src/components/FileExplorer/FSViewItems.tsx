@@ -15,7 +15,7 @@ type FSViewProps = {
 
 const FSViewItems: React.FC<FSViewProps> = ({ nodes }) => {
   const { getId } = useWindow();
-  const { viewType } = useFileExplorer();
+  const { viewType, setDragging } = useFileExplorer();
   const { ds } = useDragSelect();
 
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -103,8 +103,11 @@ const FSViewItems: React.FC<FSViewProps> = ({ nodes }) => {
       isDragging,
       dropTarget,
     }: DSCallbackObject<DSInputElement>) => {
+      setDragging(false);
       if (!isDragging || !dropTarget || !items) return;
     };
+
+    ds.subscribe("DS:start", () => setDragging(true));
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -124,7 +127,7 @@ const FSViewItems: React.FC<FSViewProps> = ({ nodes }) => {
       // @ts-ignore
       ds.unsubscribe("__add", add);
     };
-  }, [containerRef, ds]);
+  }, [containerRef, ds, setDragging]);
 
   return (
     <div

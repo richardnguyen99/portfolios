@@ -14,11 +14,13 @@ export enum FEViewSize {
 }
 
 export type FileExplorerContextType = {
+  dragging: boolean;
   viewType: FEViewType;
   viewSize: FEViewSize;
 
   setViewSize: React.Dispatch<React.SetStateAction<FEViewSize>>;
   setViewType: React.Dispatch<React.SetStateAction<FEViewType>>;
+  setDragging: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export type FileExplorerProviderProps = {
