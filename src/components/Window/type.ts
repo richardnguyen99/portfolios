@@ -18,8 +18,11 @@ export type WindowContextType = {
   getActiveState: () => boolean;
   getFullScreenState: () => boolean;
   getTitle: () => string;
+  getDefaultSize: () => WindowSize;
+  getMinimumSize: () => WindowSize;
   getSize: () => WindowSize;
   getPosition: () => WindowPosition;
+  getDefaultPosition: () => WindowPosition;
 
   setSize: (value: SetWindowSizeParams) => void;
   setPosition: (value: SetPositionParams) => void;
@@ -57,6 +60,15 @@ export type WindowProviderProps = {
    * @default { width: 384, height: 384 }
    */
   initialSize?: WindowSize;
+
+  /**
+   * The mininum size of the window. If not provided, the window will be given
+   * with its own default minimum size.
+   *
+   * @default undefined
+   * @default { width: 384, height: 384 }
+   */
+  minimumSize?: WindowSize;
 
   /**
    * The initial position of the window. If not provided, the window will be

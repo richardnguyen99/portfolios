@@ -9,16 +9,13 @@ import useWindow from "./useWindow";
 
 type Props = React.HTMLAttributes<HTMLDivElement>;
 
-const DEFAULT_X = 48;
-const DEFAULT_Y = 48;
-const DEFAULT_WIDTH = 384;
-const DEFAULT_HEIGHT = 384;
-
 const RnDWindow: React.FC<Props> = ({ id = "", children }) => {
   const { closeModal, selectModal } = useModal();
   const {
     getPosition,
     getSize,
+    getDefaultSize,
+    getMinimumSize,
     setPosition: setPos,
     setSize,
     getActiveState,
@@ -40,8 +37,11 @@ const RnDWindow: React.FC<Props> = ({ id = "", children }) => {
   );
   const title = React.useMemo(() => getTitle(), [getTitle]);
   const active = React.useMemo(() => getActiveState(), [getActiveState]);
+  const defaultPos = React.useMemo(() => getPosition(), [getPosition]);
   const pos = React.useMemo(() => getPosition(), [getPosition]);
   const size = React.useMemo(() => getSize(), [getSize]);
+  const minimumSize = React.useMemo(() => getMinimumSize(), [getMinimumSize]);
+  const defaultSize = React.useMemo(() => getDefaultSize(), [getDefaultSize]);
 
   useHotkeys("ctrl+alt+w", () => {
     if (!active) return;
@@ -54,10 +54,10 @@ const RnDWindow: React.FC<Props> = ({ id = "", children }) => {
       x-data-window-id={id}
       x-data-active-tab={active.toString()}
       default={{
-        x: DEFAULT_X,
-        y: DEFAULT_Y,
-        width: DEFAULT_WIDTH,
-        height: DEFAULT_HEIGHT,
+        x: defaultPos.x,
+        y: defaultPos.y,
+        width: defaultSize.width,
+        height: defaultSize.height,
       }}
       disableDragging={fullscreen || !active}
       enableResizing={{
@@ -94,8 +94,8 @@ const RnDWindow: React.FC<Props> = ({ id = "", children }) => {
       cancel=".action-btn"
       enableUserSelectHack={false}
       style={{ display: "flex" }}
-      minWidth={DEFAULT_WIDTH}
-      minHeight={DEFAULT_HEIGHT}
+      minWidth={minimumSize.width}
+      minHeight={minimumSize.height}
       onMouseDown={handleSelect}
       className={clsx(
         "absolute flex flex-col",

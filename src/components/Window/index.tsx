@@ -10,6 +10,7 @@ const Window: React.FC<WindowProviderProps> = ({
   fullscreen,
   initialPosition,
   initialSize,
+  minimumSize,
   id,
 }) => {
   return (
@@ -20,6 +21,7 @@ const Window: React.FC<WindowProviderProps> = ({
       initialPosition={initialPosition}
       initialSize={initialSize}
       fullscreen={fullscreen}
+      minimumSize={minimumSize}
     >
       {children}
     </WindowProvider>

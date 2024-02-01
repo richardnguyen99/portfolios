@@ -90,6 +90,7 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
           fullscreen={modal.isFullScreen}
           initialPosition={modal.initialPosition}
           initialSize={modal.initialSize}
+          minimumSize={modal.minimumSize}
         >
           <Component {...props} />
         </Window>

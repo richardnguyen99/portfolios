@@ -57,6 +57,11 @@ const App: React.FC = () => {
           y: 64,
         },
 
+        minimumSize: {
+          width: 680,
+          height: 400,
+        },
+
         isFullScreen: false,
         isFullScreenAllowed: true,
         component: FileExplorer,
