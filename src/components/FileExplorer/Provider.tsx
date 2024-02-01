@@ -7,16 +7,18 @@ import {
   FileExplorerContextType,
   type FileExplorerProviderProps,
 } from "./type";
-import { INode } from "@util/fs/type";
+import { FileType, IDirectory, INode } from "@util/fs/type";
+import useFileTree from "@contexts/FileTree/useFileTree";
 
 const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
   children,
   initialDirectory,
 }) => {
+  const { home } = useFileTree();
   const [dragging, setDragging] = React.useState<boolean>(false);
   const [size, setSize] = React.useState<FEViewSize>(FEViewSize.Normal);
   const [view, setView] = React.useState<FEViewType>(FEViewType.List);
-  const [currDir] = React.useState<INode>(initialDirectory);
+  const [currDir, setCurrDir] = React.useState<INode>(initialDirectory);
 
   const contextValue = React.useMemo<FileExplorerContextType>(() => {
     return {
@@ -31,9 +33,49 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
     };
   }, [currDir, dragging, size, view]);
 
+  const updateNode = React.useCallback(
+    (startNode: IDirectory, searchNode: IDirectory) => {
+      const stack = [startNode];
+      const visited = new Set<IDirectory>();
+      let foundNode: IDirectory | null = null;
+
+      while (stack.length > 0) {
+        const node = stack.pop() as IDirectory;
+
+        if (node.id === searchNode.id) {
+          foundNode = node;
+          break;
+        }
+
+        if (visited.has(node)) {
+          continue;
+        }
+
+        visited.add(node);
+
+        for (let i = node.children.length - 1; i >= 0; i--) {
+          const child = node.children[i];
+
+          if (child.type === FileType.Directory) {
+            stack.push(child as IDirectory);
+          }
+        }
+      }
+
+      return foundNode;
+    },
+    [],
+  );
+
   React.useEffect(() => {
-    console.log(currDir);
-  }, [currDir]);
+    console.log(
+      "FileExplorerProvider: currDir changed ",
+      Object.is(currDir, home),
+    );
+
+    const newNode = updateNode(home, currDir as IDirectory);
+    setCurrDir(newNode as INode);
+  }, [home, updateNode]);
 
   return (
     <FileExplorerContext.Provider value={contextValue}>

@@ -8,9 +8,11 @@ import GridView from "./GridView";
 import useFileExplorer from "./hook";
 import { FEViewType } from "./type";
 import ListView from "./ListView";
+import useFileTree from "@contexts/FileTree/useFileTree";
 
 const FSViewItems: React.FC = () => {
   const { getId } = useWindow();
+  const { home } = useFileTree();
   const { currDir, viewType, setDragging } = useFileExplorer();
   const { ds } = useDragSelect();
 
@@ -20,7 +22,7 @@ const FSViewItems: React.FC = () => {
 
   const nodes = React.useMemo(() => {
     return (currDir as IDirectory).children;
-  }, [currDir]);
+  }, [currDir, home]);
 
   const updateSelectorArea = React.useCallback(
     (

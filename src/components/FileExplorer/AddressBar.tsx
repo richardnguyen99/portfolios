@@ -4,9 +4,44 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@primer/octicons-react";
 
 import IconBtn from "./IconBtn";
 import useFileExplorer from "./hook";
+import useFileTree from "@contexts/FileTree/useFileTree";
+import { type IDirectory } from "@util/fs/type";
+
+const AddressBtn: React.FC<
+  React.PropsWithChildren<React.HTMLAttributes<HTMLButtonElement>>
+> = ({ children, ...rest }) => (
+  <button
+    {...rest}
+    className={clsx(
+      "flex items-center gap-1",
+      "rounded-md",
+      "px-1 py-0.5",
+      "hover:bg-gray-400/40 dark:hover:bg-gray-600/40",
+      "active:bg-gray-400/60 dark:active:bg-gray-600/60",
+    )}
+  >
+    {children}
+  </button>
+);
 
 const AddressBar: React.FC = () => {
-  const { dragging } = useFileExplorer();
+  const { home } = useFileTree();
+  const { dragging, currDir } = useFileExplorer();
+
+  const addressList = React.useMemo(() => {
+    const pathList = [];
+    let currentDir = currDir;
+    console.log("is currentDir home? ", Object.is(currentDir, home));
+
+    while (currentDir && currentDir.id !== home.id) {
+      pathList.push(currentDir);
+      currentDir = currentDir.parent as unknown as IDirectory;
+    }
+
+    pathList.push(home);
+
+    return pathList.reverse();
+  }, [currDir, home]);
 
   return (
     <div
@@ -38,16 +73,12 @@ const AddressBar: React.FC = () => {
           },
         )}
       >
-        <h1>Home</h1>
-        <h1>/</h1>
-        <h1>Home</h1>
-        <h1>/</h1>
-        <h1>Home</h1>
-        <h1>/</h1>
-        <h1>Home</h1>
-        <h1>/</h1>
-        <h1>Home</h1>
-        <h1>/</h1>
+        {addressList.map((address, i) => (
+          <div key={i} className="flex items-center gap-3">
+            <AddressBtn key={i}>{address.name}</AddressBtn>
+            <p key={`p-${i}`}>/</p>
+          </div>
+        ))}
         <div
           className={clsx(
             "absolute w-10 h-full right-0",
