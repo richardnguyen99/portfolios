@@ -1,101 +1,7 @@
 import * as React from "react";
 import clsx from "classnames";
 
-import { INode } from "@util/fs/type";
 import GridView from "./FSView";
-
-const MockFS: INode[] = [
-  {
-    id: "1",
-    name: "Documents",
-    type: 1,
-    executePermission: true,
-    readPermission: true,
-    writePermission: true,
-    parent: null,
-
-    lastAccessed: new Date(),
-    lastModified: new Date(),
-    lastChanged: new Date(),
-    lastCreated: new Date(),
-    owner: "richard",
-  },
-  {
-    id: "2",
-    name: "Videos",
-    type: 1,
-    executePermission: true,
-    readPermission: true,
-    writePermission: true,
-    parent: null,
-
-    lastAccessed: new Date(),
-    lastModified: new Date(),
-    lastChanged: new Date(),
-    lastCreated: new Date(),
-    owner: "richard",
-  },
-  {
-    id: "3",
-    name: "Pictures",
-    type: 1,
-    executePermission: true,
-    readPermission: true,
-    writePermission: true,
-    parent: null,
-
-    lastAccessed: new Date(),
-    lastModified: new Date(),
-    lastChanged: new Date(),
-    lastCreated: new Date(),
-    owner: "richard",
-  },
-  {
-    id: "4",
-    name: "Desktop",
-    type: 1,
-    executePermission: true,
-    readPermission: true,
-    writePermission: true,
-    parent: null,
-
-    lastAccessed: new Date(),
-    lastModified: new Date(),
-    lastChanged: new Date(),
-    lastCreated: new Date(),
-    owner: "richard",
-  },
-  {
-    id: "5",
-    name: "Downloads",
-    type: 1,
-    executePermission: true,
-    readPermission: true,
-    writePermission: true,
-    parent: null,
-
-    lastAccessed: new Date(),
-    lastModified: new Date(),
-    lastChanged: new Date(),
-    lastCreated: new Date(),
-    owner: "richard",
-  },
-  {
-    id: "6",
-    name: "test asdasdfasdfasdfasdfasdfasdfsadfasdfasdfasdfasdfasdfasdfasdfasdasdasdasdasdasdasdasdasdasd.txt",
-    type: 0,
-    executePermission: true,
-    readPermission: true,
-    writePermission: true,
-    parent: null,
-
-    lastAccessed: new Date(),
-    lastModified: new Date(),
-    lastChanged: new Date(),
-    lastCreated: new Date(),
-    owner: "richard",
-  },
-];
 
 const FSContent: React.FC = () => {
   return (
@@ -129,7 +35,7 @@ const FSContent: React.FC = () => {
           </div>
         </div>
       </div>
-      <GridView nodes={MockFS} />
+      <GridView />
     </div>
   );
 };

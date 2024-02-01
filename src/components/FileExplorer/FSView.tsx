@@ -3,21 +3,16 @@ import clsx from "classnames";
 import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 import { CheckBadgeIcon } from "@heroicons/react/16/solid";
 
-import { INode } from "@util/fs/type";
 import DragSelect from "./DragSelect";
 import FSViewItems from "./FSViewItems";
 import FSFooter from "./FSFooter";
 
-type FSViewProps = {
-  nodes: INode[];
-};
-
-const FSView: React.FC<FSViewProps> = ({ nodes }) => {
+const FSView: React.FC = () => {
   return (
     <ContextMenuPrimitive.Root>
       <ContextMenuPrimitive.Trigger className="relative flex flex-col w-full justify-between select-none overflow-x-hidden">
         <DragSelect.Provider initialSettings={{ selectedClass: "selector" }}>
-          <FSViewItems nodes={nodes} />
+          <FSViewItems />
           <FSFooter />
         </DragSelect.Provider>
       </ContextMenuPrimitive.Trigger>

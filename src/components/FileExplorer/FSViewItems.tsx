@@ -2,25 +2,25 @@ import * as React from "react";
 import { type DSCallbackObject, type DSInputElement } from "dragselect";
 
 import useWindow from "@components/Window/useWindow";
-import { type INode } from "@util/fs/type";
+import { IDirectory } from "@util/fs/type";
 import useDragSelect from "./DragSelect/hook";
 import GridView from "./GridView";
 import useFileExplorer from "./hook";
 import { FEViewType } from "./type";
 import ListView from "./ListView";
 
-type FSViewProps = {
-  nodes: INode[];
-};
-
-const FSViewItems: React.FC<FSViewProps> = ({ nodes }) => {
+const FSViewItems: React.FC = () => {
   const { getId } = useWindow();
-  const { viewType, setDragging } = useFileExplorer();
+  const { currDir, viewType, setDragging } = useFileExplorer();
   const { ds } = useDragSelect();
 
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   const [, setItemCount] = React.useState(0);
+
+  const nodes = React.useMemo(() => {
+    return (currDir as IDirectory).children;
+  }, [currDir]);
 
   const updateSelectorArea = React.useCallback(
     (
@@ -52,7 +52,7 @@ const FSViewItems: React.FC<FSViewProps> = ({ nodes }) => {
         selectorArea.style.top = `${rect.y}px`;
       }
     },
-    [],
+    [viewType],
   );
 
   // This useEffect is used to update the dimension and position of the
@@ -110,7 +110,7 @@ const FSViewItems: React.FC<FSViewProps> = ({ nodes }) => {
         mutationObserver.disconnect();
       }
     };
-  }, [getId]);
+  }, [getId, updateSelectorArea]);
 
   React.useEffect(() => {
     if (!containerRef.current || !ds) return;

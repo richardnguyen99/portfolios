@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import { INode } from "@util/fs/type";
+
 export enum FEViewType {
   List = 0,
   Grid = 1,
@@ -14,6 +16,7 @@ export enum FEViewSize {
 }
 
 export type FileExplorerContextType = {
+  currDir: INode;
   dragging: boolean;
   viewType: FEViewType;
   viewSize: FEViewSize;
@@ -25,4 +28,5 @@ export type FileExplorerContextType = {
 
 export type FileExplorerProviderProps = {
   children: React.ReactNode;
+  initialDirectory: INode;
 };
