@@ -49,7 +49,7 @@ const FSViewItems: React.FC<FSViewProps> = ({ nodes }) => {
         const panelRect = fsListViewSortPanel.getBoundingClientRect();
 
         selectorArea.style.height = `${rect.height - panelRect.height}px`;
-        selectorArea.style.top = `${rect.y + panelRect.height}px`;
+        selectorArea.style.top = `${rect.y}px`;
       }
     },
     [],

@@ -6,6 +6,7 @@ import { CheckBadgeIcon } from "@heroicons/react/16/solid";
 import { INode } from "@util/fs/type";
 import DragSelect from "./DragSelect";
 import FSViewItems from "./FSViewItems";
+import FSFooter from "./FSFooter";
 
 type FSViewProps = {
   nodes: INode[];
@@ -17,19 +18,7 @@ const FSView: React.FC<FSViewProps> = ({ nodes }) => {
       <ContextMenuPrimitive.Trigger className="relative flex flex-col w-full justify-between select-none overflow-x-hidden">
         <DragSelect.Provider initialSettings={{ selectedClass: "selector" }}>
           <FSViewItems nodes={nodes} />
-          <div className="flex fixed bottom-0 right-0">
-            <div
-              className={clsx(
-                "relative ml-auto",
-                "p-1 rounded-tl-lg text-xs",
-                "border-t border-l",
-                "border-gray-400/45 dark:border-gray-600",
-                "bg-gray-300/45 dark:bg-gray-700",
-              )}
-            >
-              Hello, World
-            </div>
-          </div>
+          <FSFooter />
         </DragSelect.Provider>
       </ContextMenuPrimitive.Trigger>
       <ContextMenuPrimitive.Content
