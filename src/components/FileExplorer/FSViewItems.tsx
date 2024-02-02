@@ -22,7 +22,7 @@ const FSViewItems: React.FC = () => {
 
   const nodes = React.useMemo(() => {
     return (currDir as IDirectory).children;
-  }, [currDir, home]);
+  }, [currDir]);
 
   const updateSelectorArea = React.useCallback(
     (

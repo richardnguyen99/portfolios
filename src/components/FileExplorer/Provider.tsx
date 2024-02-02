@@ -30,6 +30,7 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
       setDragging: setDragging,
       setViewSize: setSize,
       setViewType: setView,
+      setCurrDir,
     };
   }, [currDir, dragging, size, view]);
 
@@ -75,6 +76,7 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
 
     const newNode = updateNode(home, currDir as IDirectory);
     setCurrDir(newNode as INode);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [home, updateNode]);
 
   return (

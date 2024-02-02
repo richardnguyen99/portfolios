@@ -5,6 +5,7 @@ import { FileType, INode } from "@util/fs/type";
 import useDragSelect from "./DragSelect/hook";
 import { Icon } from "@components";
 import { StarFillIcon, StarIcon } from "@primer/octicons-react";
+import useFileExplorer from "./hook";
 
 type Props = {
   node: INode;
@@ -12,6 +13,7 @@ type Props = {
 
 const ListViewItem: React.FC<Props> = ({ node }) => {
   const { ds } = useDragSelect();
+  const { setCurrDir } = useFileExplorer();
 
   const itemRef = React.useRef<HTMLDivElement>(null);
   const [starred, setStarred] = React.useState(false);
@@ -19,6 +21,17 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
   const handleStarClick = React.useCallback(() => {
     setStarred((prev) => !prev);
   }, []);
+
+  const handleDoubleClick = React.useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      e.preventDefault();
+
+      if (node.type !== FileType.Directory) return;
+
+      setCurrDir(node);
+    },
+    [node, setCurrDir],
+  );
 
   React.useEffect(() => {
     if (!itemRef.current || !ds) return;
@@ -37,6 +50,7 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
     <div
       ref={itemRef}
       key={node.name}
+      onDoubleClick={handleDoubleClick}
       className={clsx(
         "selectable",
         "flex items-center",

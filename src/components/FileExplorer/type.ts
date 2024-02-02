@@ -24,6 +24,7 @@ export type FileExplorerContextType = {
   setViewSize: React.Dispatch<React.SetStateAction<FEViewSize>>;
   setViewType: React.Dispatch<React.SetStateAction<FEViewType>>;
   setDragging: React.Dispatch<React.SetStateAction<boolean>>;
+  setCurrDir: React.Dispatch<React.SetStateAction<INode>>;
 };
 
 export type FileExplorerProviderProps = {
