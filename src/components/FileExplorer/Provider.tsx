@@ -6,8 +6,10 @@ import {
   FEViewType,
   FileExplorerContextType,
   type FileExplorerProviderProps,
+  type FEHistory,
 } from "./type";
 import { FileType, IDirectory, INode } from "@util/fs/type";
+import List from "@util/list";
 import useFileTree from "@contexts/FileTree/useFileTree";
 
 const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
@@ -19,11 +21,30 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
   const [size, setSize] = React.useState<FEViewSize>(FEViewSize.Normal);
   const [view, setView] = React.useState<FEViewType>(FEViewType.List);
   const [currDir, setCurrDir] = React.useState<INode>(initialDirectory);
+  const [history, setHistory] = React.useState<List<FEHistory>>();
+
+  React.useEffect(() => {
+    setHistory((prev) => {
+      if (!prev) {
+        const list = new List<FEHistory>();
+        list.pushBack({
+          id: currDir.id,
+          name: currDir.name,
+          parentId: currDir.parent ? currDir.parent.id : "",
+        });
+
+        return list;
+      }
+
+      return prev;
+    });
+  }, [currDir.id, currDir.name, currDir.parent, history]);
 
   const contextValue = React.useMemo<FileExplorerContextType>(() => {
     return {
       currDir,
       dragging,
+      history,
       viewType: view,
       viewSize: size,
 
@@ -32,7 +53,7 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
       setViewType: setView,
       setCurrDir,
     };
-  }, [currDir, dragging, size, view]);
+  }, [currDir, dragging, history, size, view]);
 
   const updateNode = React.useCallback(
     (startNode: IDirectory, searchNode: IDirectory) => {

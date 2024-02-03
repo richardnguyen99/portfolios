@@ -26,7 +26,7 @@ const AddressBtn: React.FC<
 
 const AddressBar: React.FC = () => {
   const { home } = useFileTree();
-  const { dragging, currDir } = useFileExplorer();
+  const { dragging, currDir, history } = useFileExplorer();
 
   const addressList = React.useMemo(() => {
     const pathList = [];
@@ -42,6 +42,12 @@ const AddressBar: React.FC = () => {
 
     return pathList.reverse();
   }, [currDir, home]);
+
+  React.useEffect(() => {
+    if (typeof history === "undefined") return;
+
+    console.log(history.front());
+  }, [history]);
 
   return (
     <div
