@@ -21,24 +21,9 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
   const [size, setSize] = React.useState<FEViewSize>(FEViewSize.Normal);
   const [view, setView] = React.useState<FEViewType>(FEViewType.List);
   const [currDir, setCurrDir] = React.useState<INode>(initialDirectory);
-  const [history, setHistory] = React.useState<List<FEHistory>>();
-
-  React.useEffect(() => {
-    setHistory((prev) => {
-      if (!prev) {
-        const list = new List<FEHistory>();
-        list.pushBack({
-          id: currDir.id,
-          name: currDir.name,
-          parentId: currDir.parent ? currDir.parent.id : "",
-        });
-
-        return list;
-      }
-
-      return prev;
-    });
-  }, [currDir.id, currDir.name, currDir.parent, history]);
+  const [history, setHistory] = React.useState<List<FEHistory>>(
+    new List<FEHistory>(),
+  );
 
   const contextValue = React.useMemo<FileExplorerContextType>(() => {
     return {
@@ -99,6 +84,10 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
     setCurrDir(newNode as INode);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [home, updateNode]);
+
+  React.useEffect(() => {
+    console.log(currDir);
+  }, [currDir]);
 
   return (
     <FileExplorerContext.Provider value={contextValue}>

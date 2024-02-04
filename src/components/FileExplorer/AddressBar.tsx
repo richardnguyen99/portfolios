@@ -43,8 +43,25 @@ const AddressBar: React.FC = () => {
     return pathList.reverse();
   }, [currDir, home]);
 
+  const handlePreviousClick = React.useCallback(
+    (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      e.preventDefault();
+      console.log("previous clicked");
+    },
+    [],
+  );
+
+  const handleNextClick = React.useCallback(
+    (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      e.preventDefault();
+      console.log("next clicked");
+    },
+    [],
+  );
+
   React.useEffect(() => {
     if (typeof history === "undefined") return;
+    if (history.size() <= 0) return;
 
     console.log(history.front());
   }, [history]);
@@ -59,10 +76,10 @@ const AddressBar: React.FC = () => {
       )}
     >
       <div id="fe-history" className="flex flex-[0_0_auto] gap-3 items-center">
-        <IconBtn>
+        <IconBtn onClick={handlePreviousClick}>
           <ChevronLeftIcon />
         </IconBtn>
-        <IconBtn>
+        <IconBtn onClick={handleNextClick}>
           <ChevronRightIcon />
         </IconBtn>
       </div>

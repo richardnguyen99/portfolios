@@ -47,6 +47,7 @@ class List<T> implements IList<T> {
       oldNode.prev = newNode;
     }
 
+    this._size++;
     this._head.next = newNode;
   }
 
@@ -65,6 +66,7 @@ class List<T> implements IList<T> {
       oldNode.next = newNode;
     }
 
+    this._size++;
     this._tail = newNode;
   }
 
@@ -82,6 +84,8 @@ class List<T> implements IList<T> {
     } else {
       node.next.prev = this._head;
     }
+
+    this._size--;
 
     return node.value;
   }
@@ -101,6 +105,8 @@ class List<T> implements IList<T> {
       node.prev.next = null;
     }
 
+    this._size--;
+
     return node.value;
   }
 
@@ -118,6 +124,8 @@ class List<T> implements IList<T> {
     } else {
       newNode.prev.next = newNode;
     }
+
+    this._size++;
   }
 
   removeAt(removeNode: ListNode<T>): T | null {
@@ -133,17 +141,21 @@ class List<T> implements IList<T> {
       removeNode.next.prev = removeNode.prev;
     }
 
+    this._size--;
+
     return removeNode.value;
   }
 
   dropFrom(pred: (arg0: T) => boolean): void {
     let node = this._head.next;
+    let distance = 0;
 
     while (node !== null) {
       if (pred(node.value)) {
         break;
       }
 
+      distance++;
       node = node.next;
     }
 
@@ -153,16 +165,19 @@ class List<T> implements IList<T> {
 
     node.next = null;
     this._tail = node;
+    this._size = distance;
   }
 
   dropTo(pred: (arg0: T) => boolean): void {
     let node = this._head.next;
+    let distance = 0;
 
     while (node !== null) {
       if (pred(node.value)) {
         break;
       }
 
+      distance++;
       node = node.next;
     }
 
@@ -172,6 +187,7 @@ class List<T> implements IList<T> {
 
     this._head.next = node;
     node.prev = this._head;
+    this._size -= distance;
   }
 
   search(pred: (arg0: T) => boolean): ListNode<T> | null {
