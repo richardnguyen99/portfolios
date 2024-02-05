@@ -5,25 +5,65 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@primer/octicons-react";
 import IconBtn from "./IconBtn";
 import useFileExplorer from "./hook";
 import useFileTree from "@contexts/FileTree/useFileTree";
-import { type IDirectory } from "@util/fs/type";
+import { INode, type IDirectory } from "@util/fs/type";
 import useSystemCall from "@contexts/SystemCall/useSystemCall";
 
 const AddressBtn: React.FC<
-  React.PropsWithChildren<React.HTMLAttributes<HTMLButtonElement>>
-> = ({ children, ...rest }) => (
-  <button
-    {...rest}
-    className={clsx(
-      "flex items-center gap-1",
-      "rounded-md",
-      "px-1 py-0.5",
-      "hover:bg-gray-400/40 dark:hover:bg-gray-600/40",
-      "active:bg-gray-400/60 dark:active:bg-gray-600/60",
-    )}
+  React.PropsWithChildren<
+    { node: INode; nodeIdx: number } & React.HTMLAttributes<HTMLButtonElement>
   >
-    {children}
-  </button>
-);
+> = ({ node, nodeIdx, ...rest }) => {
+  const { dragging, currDir, historyState, setCurrDir, dispatchHistoryState } =
+    useFileExplorer();
+  const { searchNodeFromRoot } = useSystemCall();
+
+  const handleClick = React.useCallback(
+    (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+      e.preventDefault();
+
+      if (nodeIdx < 0 || nodeIdx >= historyState.history.length - 1) {
+        return;
+      }
+
+      const currTab = historyState.history[nodeIdx];
+      const newNode = searchNodeFromRoot(currTab.id);
+
+      if (newNode) {
+        setCurrDir(newNode);
+        dispatchHistoryState({
+          type: "manual",
+          payload: {
+            index: nodeIdx,
+            history: [...historyState.history.slice(0, nodeIdx + 1)],
+          },
+        });
+      }
+    },
+    [
+      dispatchHistoryState,
+      historyState.history,
+      nodeIdx,
+      searchNodeFromRoot,
+      setCurrDir,
+    ],
+  );
+
+  return (
+    <button
+      {...rest}
+      onClick={handleClick}
+      className={clsx(
+        "flex items-center gap-1",
+        "rounded-md",
+        "px-1 py-0.5",
+        "hover:bg-gray-400/40 dark:hover:bg-gray-600/40",
+        "active:bg-gray-400/60 dark:active:bg-gray-600/60",
+      )}
+    >
+      {node.name}
+    </button>
+  );
+};
 
 const AddressBar: React.FC = () => {
   const { home } = useFileTree();
@@ -141,7 +181,7 @@ const AddressBar: React.FC = () => {
       >
         {addressList.map((address, i) => (
           <div key={i} className="flex items-center gap-3">
-            <AddressBtn key={i}>{address.name}</AddressBtn>
+            <AddressBtn key={i} nodeIdx={i} node={address} />
             <p key={`p-${i}`}>/</p>
           </div>
         ))}

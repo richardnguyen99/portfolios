@@ -49,6 +49,11 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
             index: state.index + 1,
             history: state.history,
           };
+        case "manual":
+          return {
+            index: action.payload.index,
+            history: [...action.payload.history],
+          };
         default:
           return state;
       }

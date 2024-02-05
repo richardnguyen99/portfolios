@@ -30,7 +30,8 @@ export type FEHistoryAction =
   | { type: "push"; payload: FEHistory }
   | { type: "pop" }
   | { type: "previous" }
-  | { type: "next" };
+  | { type: "next" }
+  | { type: "manual"; payload: FEHistoryState };
 
 export type FileExplorerContextType = {
   currDir: INode;
