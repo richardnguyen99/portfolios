@@ -36,12 +36,16 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
         return;
       }
 
-      const filteredModal = modals.map((modal) => ({
-        ...modal,
-        active: false,
-      }));
+      setModals((_modals) => {
+        const filteredModal = _modals.map((modal) => ({
+          ...modal,
+          active: false,
+        }));
 
-      setModals(() => [...filteredModal, modal]);
+        const newModals = [...filteredModal, modal];
+
+        return newModals;
+      });
     },
     [modals, selectModal],
   );

@@ -150,8 +150,6 @@ const useLocalStorage = <T>(
         ? fileTreeReviver()
         : undefined;
 
-      console.log(store);
-
       if (store === "") return "";
 
       const value = JSON.parse(store, reviver);

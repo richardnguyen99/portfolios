@@ -1,11 +1,13 @@
 import * as React from "react";
 import clsx from "classnames";
-
-import { FileType, INode } from "@util/fs/type";
-import useDragSelect from "./DragSelect/hook";
-import { Icon } from "@components";
 import { StarFillIcon, StarIcon } from "@primer/octicons-react";
+
+import { FileType, IFile, INode } from "@util/fs/type";
+import useDragSelect from "./DragSelect/hook";
+import { Editor, Icon } from "@components";
 import useFileExplorer from "./hook";
+import useModal from "@contexts/Modal/useModal";
+import { ModalProps } from "@contexts/Modal/type";
 
 type Props = {
   node: INode;
@@ -13,6 +15,7 @@ type Props = {
 
 const ListViewItem: React.FC<Props> = ({ node }) => {
   const { ds } = useDragSelect();
+  const { addModal } = useModal();
   const { setCurrDir, dispatchHistoryState } = useFileExplorer();
 
   const itemRef = React.useRef<HTMLDivElement>(null);
@@ -26,7 +29,30 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       e.preventDefault();
 
-      if (node.type !== FileType.Directory) return;
+      if (node.type === FileType.File) {
+        console.log(node.id);
+        const editorModal: ModalProps = {
+          id: node.id,
+          title: node.name,
+          active: true,
+          isFullScreen: false,
+          isFullScreenAllowed: true,
+          type: "editor",
+          file: node as IFile,
+          component: Editor,
+
+          componentProps: {
+            file: node as IFile,
+            initialText: (node as IFile).content,
+            readOnly: node.writePermission === false,
+          },
+        };
+
+        ds?.SelectedSet.clear();
+        addModal(editorModal);
+
+        return;
+      }
 
       dispatchHistoryState({
         type: "push",
