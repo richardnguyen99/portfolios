@@ -13,7 +13,7 @@ type Props = {
 
 const ListViewItem: React.FC<Props> = ({ node }) => {
   const { ds } = useDragSelect();
-  const { currDir, setCurrDir, dispatchHistoryState } = useFileExplorer();
+  const { setCurrDir, dispatchHistoryState } = useFileExplorer();
 
   const itemRef = React.useRef<HTMLDivElement>(null);
   const [starred, setStarred] = React.useState(false);
@@ -38,8 +38,9 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
       });
 
       setCurrDir(node);
+      ds?.SelectedSet.clear();
     },
-    [dispatchHistoryState, node, setCurrDir],
+    [dispatchHistoryState, ds, node, setCurrDir],
   );
 
   React.useEffect(() => {
@@ -65,6 +66,7 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
         "[&.selected]:bg-sky-300/40 dark:[&.selected]:bg-sky-400/40",
         "[&.selected]:hover:bg-sky-300/60 dark:[&.selected]:hover:bg-sky-400/60",
       )}
+      data-node-id={node.id}
     >
       <div
         className={clsx(
