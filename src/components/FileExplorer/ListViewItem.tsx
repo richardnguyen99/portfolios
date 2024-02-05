@@ -13,7 +13,7 @@ type Props = {
 
 const ListViewItem: React.FC<Props> = ({ node }) => {
   const { ds } = useDragSelect();
-  const { setCurrDir } = useFileExplorer();
+  const { currDir, setCurrDir, dispatchHistoryState } = useFileExplorer();
 
   const itemRef = React.useRef<HTMLDivElement>(null);
   const [starred, setStarred] = React.useState(false);
@@ -28,22 +28,35 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
 
       if (node.type !== FileType.Directory) return;
 
+      dispatchHistoryState({
+        type: "push",
+        payload: {
+          id: currDir.id,
+          name: currDir.name,
+          parentId: currDir.parent?.id ?? "",
+        },
+      });
+
       setCurrDir(node);
     },
-    [node, setCurrDir],
+    [
+      currDir.id,
+      currDir.name,
+      currDir.parent?.id,
+      dispatchHistoryState,
+      node,
+      setCurrDir,
+    ],
   );
 
   React.useEffect(() => {
     if (!itemRef.current || !ds) return;
 
     if (!ds.SelectableSet.has(itemRef.current)) {
-      console.log("add selectables");
       ds.addSelectables(itemRef.current);
     }
 
-    ds.subscribe("DS:end", (e) => {
-      console.log(e);
-    });
+    // ds.subscribe("DS:end", (e) => {});
   }, [ds]);
 
   return (

@@ -12,6 +12,7 @@ const IconBtn = React.forwardRef<HTMLButtonElement, Props>(
 
     return (
       <button
+        disabled={rest["aria-disabled"] as boolean}
         ref={ref as React.RefObject<HTMLButtonElement>}
         {...rest}
         onClick={onClick}

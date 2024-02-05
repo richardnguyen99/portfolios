@@ -38,6 +38,8 @@ export type SystemCallContextType = {
   removeINode: (parent: IDirectory, node: INode) => void;
   walkNode: (currentDir: IDirectory, pathList: string[]) => IDirectory;
   readDir: (fileTree: IDirectory) => INode[];
+
+  searchNodeFromRoot: (nodeId: string) => INode | null;
 };
 
 export type SystemCallProviderProps = {

@@ -6,6 +6,7 @@ import IconBtn from "./IconBtn";
 import useFileExplorer from "./hook";
 import useFileTree from "@contexts/FileTree/useFileTree";
 import { type IDirectory } from "@util/fs/type";
+import useSystemCall from "@contexts/SystemCall/useSystemCall";
 
 const AddressBtn: React.FC<
   React.PropsWithChildren<React.HTMLAttributes<HTMLButtonElement>>
@@ -26,7 +27,9 @@ const AddressBtn: React.FC<
 
 const AddressBar: React.FC = () => {
   const { home } = useFileTree();
-  const { dragging, currDir, history } = useFileExplorer();
+  const { dragging, currDir, historyState, setCurrDir, dispatchHistoryState } =
+    useFileExplorer();
+  const { searchNodeFromRoot } = useSystemCall();
 
   const addressList = React.useMemo(() => {
     const pathList = [];
@@ -47,8 +50,26 @@ const AddressBar: React.FC = () => {
     (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       e.preventDefault();
       console.log("previous clicked");
+
+      const currTab = historyState.history[historyState.index];
+      const newNode = searchNodeFromRoot(currTab.id);
+
+      if (newNode) {
+        console.log("found node", newNode);
+
+        setCurrDir(newNode);
+        dispatchHistoryState({
+          type: "previous",
+        });
+      }
     },
-    [],
+    [
+      dispatchHistoryState,
+      historyState.history,
+      historyState.index,
+      searchNodeFromRoot,
+      setCurrDir,
+    ],
   );
 
   const handleNextClick = React.useCallback(
@@ -60,11 +81,11 @@ const AddressBar: React.FC = () => {
   );
 
   React.useEffect(() => {
-    if (typeof history === "undefined") return;
-    if (history.size() <= 0) return;
+    if (typeof historyState === "undefined") return;
+    if (historyState.history.length <= 0) return;
 
-    console.log(history.front());
-  }, [history]);
+    console.log(historyState.history);
+  }, [historyState]);
 
   return (
     <div
@@ -76,7 +97,10 @@ const AddressBar: React.FC = () => {
       )}
     >
       <div id="fe-history" className="flex flex-[0_0_auto] gap-3 items-center">
-        <IconBtn onClick={handlePreviousClick}>
+        <IconBtn
+          aria-disabled={historyState.index <= 0}
+          onClick={handlePreviousClick}
+        >
           <ChevronLeftIcon />
         </IconBtn>
         <IconBtn onClick={handleNextClick}>

@@ -125,8 +125,6 @@ const FSViewItems: React.FC = () => {
       selectedClass: "selected",
     });
 
-    console.log(ds);
-
     const dsCallback = ({
       items,
       isDragging,

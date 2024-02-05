@@ -7,9 +7,10 @@ import {
   FileExplorerContextType,
   type FileExplorerProviderProps,
   type FEHistory,
+  FEHistoryState,
+  FEHistoryAction,
 } from "./type";
 import { FileType, IDirectory, INode } from "@util/fs/type";
-import List from "@util/list";
 import useFileTree from "@contexts/FileTree/useFileTree";
 
 const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
@@ -21,24 +22,64 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
   const [size, setSize] = React.useState<FEViewSize>(FEViewSize.Normal);
   const [view, setView] = React.useState<FEViewType>(FEViewType.List);
   const [currDir, setCurrDir] = React.useState<INode>(initialDirectory);
-  const [history, setHistory] = React.useState<List<FEHistory>>(
-    new List<FEHistory>(),
+
+  const [historyState, setHistoryState] = React.useReducer(
+    (state: FEHistoryState, action: FEHistoryAction) => {
+      switch (action.type) {
+        case "push":
+          return {
+            index: state.index + 1,
+            history: [
+              ...state.history.slice(0, state.index + 1),
+              action.payload,
+            ],
+          };
+        case "pop":
+          return {
+            index: state.index - 1,
+            history: state.history.slice(0, state.index),
+          };
+        case "previous":
+          return {
+            index: state.index - 1,
+            history: state.history,
+          };
+        case "next":
+          return {
+            index: state.index + 1,
+            history: state.history,
+          };
+        default:
+          return state;
+      }
+    },
+    {
+      index: 0,
+      history: [
+        {
+          id: currDir.id,
+          name: currDir.name,
+          parentId: currDir.parent?.id ?? "",
+        },
+      ] as FEHistory[],
+    },
   );
 
   const contextValue = React.useMemo<FileExplorerContextType>(() => {
     return {
       currDir,
       dragging,
-      history,
       viewType: view,
       viewSize: size,
+      historyState,
 
       setDragging: setDragging,
       setViewSize: setSize,
       setViewType: setView,
       setCurrDir,
+      dispatchHistoryState: setHistoryState,
     };
-  }, [currDir, dragging, history, size, view]);
+  }, [currDir, dragging, historyState, size, view]);
 
   const updateNode = React.useCallback(
     (startNode: IDirectory, searchNode: IDirectory) => {
@@ -75,11 +116,6 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
   );
 
   React.useEffect(() => {
-    console.log(
-      "FileExplorerProvider: currDir changed ",
-      Object.is(currDir, home),
-    );
-
     const newNode = updateNode(home, currDir as IDirectory);
     setCurrDir(newNode as INode);
     // eslint-disable-next-line react-hooks/exhaustive-deps
