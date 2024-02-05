@@ -58,6 +58,14 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
       };
 
       addINode(parentNode, newFile as INode);
+      window.localStorage.setItem(`file-${newFile.id}`, content);
+      window.dispatchEvent(
+        new StorageEvent("storage", {
+          key: newFile.id,
+          oldValue: null,
+          newValue: content,
+        }),
+      );
     },
     [addINode],
   );

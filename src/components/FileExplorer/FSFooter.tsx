@@ -3,7 +3,7 @@ import clsx from "classnames";
 
 import useDragSelect from "./DragSelect/hook";
 import useFileExplorer from "./hook";
-import { FileType, IDirectory } from "@util/fs/type";
+import { FileType, IDirectory, IFile } from "@util/fs/type";
 
 const FSFooter: React.FC = () => {
   const { ds } = useDragSelect();
@@ -22,6 +22,7 @@ const FSFooter: React.FC = () => {
       let numDirs = 0;
       let subItems = 0;
       let numFiles = 0;
+      let totalSize = 0;
 
       for (const item of items) {
         const itemId = item.attributes.getNamedItem("data-node-id")?.value;
@@ -38,6 +39,8 @@ const FSFooter: React.FC = () => {
           numDirs++;
           subItems += (node as IDirectory).children.length;
         } else {
+          const file = localStorage.getItem(`file-${node.id}`)!;
+          totalSize += file.length;
           numFiles++;
         }
       }
@@ -45,7 +48,7 @@ const FSFooter: React.FC = () => {
       setText(
         `\
 ${numDirs} folders selected (containing ${subItems} items totally), \
-${numFiles} files selected`,
+${numFiles} files selected (totally ${totalSize} bytes)`,
       );
     });
 
