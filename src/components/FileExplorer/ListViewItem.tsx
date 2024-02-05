@@ -31,22 +31,15 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
       dispatchHistoryState({
         type: "push",
         payload: {
-          id: currDir.id,
-          name: currDir.name,
-          parentId: currDir.parent?.id ?? "",
+          id: node.id,
+          name: node.name,
+          parentId: node.parent?.id ?? "",
         },
       });
 
       setCurrDir(node);
     },
-    [
-      currDir.id,
-      currDir.name,
-      currDir.parent?.id,
-      dispatchHistoryState,
-      node,
-      setCurrDir,
-    ],
+    [dispatchHistoryState, node, setCurrDir],
   );
 
   React.useEffect(() => {

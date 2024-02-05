@@ -51,12 +51,14 @@ const AddressBar: React.FC = () => {
       e.preventDefault();
       console.log("previous clicked");
 
-      const currTab = historyState.history[historyState.index];
+      if (historyState.index <= 0) {
+        return;
+      }
+
+      const currTab = historyState.history[historyState.index - 1];
       const newNode = searchNodeFromRoot(currTab.id);
 
       if (newNode) {
-        console.log("found node", newNode);
-
         setCurrDir(newNode);
         dispatchHistoryState({
           type: "previous",
@@ -76,8 +78,22 @@ const AddressBar: React.FC = () => {
     (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       e.preventDefault();
       console.log("next clicked");
+
+      if (historyState.index >= historyState.history.length - 1) {
+        return;
+      }
+
+      const currTab = historyState.history[historyState.index + 1];
+      const newNode = searchNodeFromRoot(currTab.id);
+
+      if (newNode) {
+        setCurrDir(newNode);
+        dispatchHistoryState({
+          type: "next",
+        });
+      }
     },
-    [],
+    [dispatchHistoryState, historyState, searchNodeFromRoot, setCurrDir],
   );
 
   React.useEffect(() => {
@@ -103,7 +119,10 @@ const AddressBar: React.FC = () => {
         >
           <ChevronLeftIcon />
         </IconBtn>
-        <IconBtn onClick={handleNextClick}>
+        <IconBtn
+          aria-disabled={historyState.index >= historyState.history.length - 1}
+          onClick={handleNextClick}
+        >
           <ChevronRightIcon />
         </IconBtn>
       </div>

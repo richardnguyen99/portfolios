@@ -12,7 +12,6 @@ const IconBtn = React.forwardRef<HTMLButtonElement, Props>(
 
     return (
       <button
-        disabled={rest["aria-disabled"] as boolean}
         ref={ref as React.RefObject<HTMLButtonElement>}
         {...rest}
         onClick={onClick}
@@ -31,8 +30,11 @@ const IconBtn = React.forwardRef<HTMLButtonElement, Props>(
 
             {
               "cursor-default": dragging,
-              "hover:bg-gray-300 dark:hover:bg-gray-700": !dragging,
-              "hover:text-slate-800 dark:hover:text-gray-200": !dragging,
+              "cursor-not-allowed": rest["aria-disabled"],
+              "hover:bg-gray-300 dark:hover:bg-gray-700":
+                !dragging && !rest["aria-disabled"],
+              "hover:text-slate-800 dark:hover:text-gray-200":
+                !dragging && !rest["aria-disabled"],
             },
           ),
           className,
