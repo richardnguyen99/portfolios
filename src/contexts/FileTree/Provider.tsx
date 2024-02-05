@@ -221,7 +221,8 @@ const FileTreeProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     [getHomeFolder, getRootFolder, homeFolder, setHomeFolder],
   );
 
-  // Side effect to update the home folder when the home folder is changed
+  // Side effect to update the home folder to local storage when the home
+  // folder is changed
   React.useEffect(() => {
     if (homeFolder.parent === null) {
       console.log("file system remounted");
