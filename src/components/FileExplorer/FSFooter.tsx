@@ -3,7 +3,7 @@ import clsx from "classnames";
 
 import useDragSelect from "./DragSelect/hook";
 import useFileExplorer from "./hook";
-import { FileType, IDirectory, IFile } from "@util/fs/type";
+import { FileType, IDirectory } from "@util/fs/type";
 
 const FSFooter: React.FC = () => {
   const { ds } = useDragSelect();
@@ -45,11 +45,24 @@ const FSFooter: React.FC = () => {
         }
       }
 
-      setText(
-        `\
-${numDirs} folders selected (containing ${subItems} items totally), \
-${numFiles} files selected (totally ${totalSize} bytes)`,
-      );
+      let constructedText = "";
+
+      if (numDirs) {
+        constructedText += `${numDirs} folder${
+          numDirs > 1 ? "s" : ""
+        } selected (containing ${subItems} item${
+          subItems > 1 ? "s" : ""
+        } totally)`;
+      }
+
+      if (numFiles) {
+        if (constructedText) constructedText += ", ";
+        constructedText += `${numFiles} file${
+          numFiles > 1 ? "s" : ""
+        } selected (totally ${totalSize} bytes)`;
+      }
+
+      setText(constructedText);
     });
 
     ds.subscribe("DS:start", () => {

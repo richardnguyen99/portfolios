@@ -13,8 +13,7 @@ const AddressBtn: React.FC<
     { node: INode; nodeIdx: number } & React.HTMLAttributes<HTMLButtonElement>
   >
 > = ({ node, nodeIdx, ...rest }) => {
-  const { dragging, currDir, historyState, setCurrDir, dispatchHistoryState } =
-    useFileExplorer();
+  const { historyState, setCurrDir, dispatchHistoryState } = useFileExplorer();
   const { searchNodeFromRoot } = useSystemCall();
 
   const handleClick = React.useCallback(

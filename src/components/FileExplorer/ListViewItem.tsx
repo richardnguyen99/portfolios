@@ -2,7 +2,7 @@ import * as React from "react";
 import clsx from "classnames";
 import { StarFillIcon, StarIcon } from "@primer/octicons-react";
 
-import { FileType, IFile, INode } from "@util/fs/type";
+import { FileType, IDirectory, IFile, INode } from "@util/fs/type";
 import useDragSelect from "./DragSelect/hook";
 import { Editor, Icon } from "@components";
 import useFileExplorer from "./hook";
@@ -66,8 +66,19 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
       setCurrDir(node);
       ds?.SelectedSet.clear();
     },
-    [dispatchHistoryState, ds, node, setCurrDir],
+    [addModal, dispatchHistoryState, ds, node, setCurrDir],
   );
+
+  const getNodeSize = React.useCallback(() => {
+    if (node.type === FileType.Directory) {
+      const numChild = (node as IDirectory).children.length;
+
+      return `${numChild} item${numChild > 1 ? "s" : ""}`;
+    }
+
+    const file = localStorage.getItem(`file-${node.id}`)!;
+    return `${file.length} B`;
+  }, [node]);
 
   React.useEffect(() => {
     if (!itemRef.current || !ds) return;
@@ -112,7 +123,7 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
         </span>
       </div>
       <div className="flex-grow-0 flex-shrink-0 basis-20 px-2 py-1">
-        {node.type === FileType.File ? "0 bytes" : "0 items"}
+        {getNodeSize()}
       </div>
       <div className="flex-grow-0 flex-shrink-0 basis-44 px-2 py-1">
         {new Date(node.lastModified).toLocaleString()}
