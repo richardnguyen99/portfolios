@@ -2,6 +2,15 @@ import * as React from "react";
 
 import { INode } from "@util/fs/type";
 
+export enum FESortType {
+  NAME_ASC = 0,
+  NAME_DESC = 1,
+  DATE_ASC = 2,
+  DATE_DESC = 3,
+  SIZE_ASC = 4,
+  SIZE_DESC = 5,
+}
+
 export enum FEViewType {
   List = 0,
   Grid = 1,
