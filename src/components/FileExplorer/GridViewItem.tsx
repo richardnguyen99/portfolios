@@ -92,20 +92,23 @@ const GridViewItem: React.FC<Props> = ({ node }) => {
       ref={itemRef}
       key={node.name}
       onDoubleClick={handleDoubleClick}
-      className={clsx(
-        "selectable",
-        "flex flex-col items-center",
-        "rounded-md p-2",
-        "hover:bg-gray-300/60 dark:hover:bg-gray-600/40",
-        "[&.selected]:bg-sky-300/40 dark:[&.selected]:bg-sky-400/40",
-        "[&.selected]:hover:bg-sky-300/60 dark:[&.selected]:hover:bg-sky-400/60",
-      )}
+      className={clsx("selectable", "group")}
       data-node-id={node.id}
     >
-      {node.type === 1 ? <Icon.Folder /> : <Icon.PlainText />}
-      <span className="line-clamp-2 text-center [overflow-wrap:_anywhere] text-overflow">
-        {node.name}
-      </span>
+      <div
+        className={clsx(
+          "flex flex-col items-center",
+          "rounded-md p-2",
+          "hover:bg-gray-300/60 dark:hover:bg-gray-600/40",
+          "group-[.selected]:bg-sky-300/40 dark:group-[.selected]:bg-sky-400/40",
+          "group-[.selected]:hover:bg-sky-300/60 dark:group-[.selected]:hover:bg-sky-400/60",
+        )}
+      >
+        {node.type === 1 ? <Icon.Folder /> : <Icon.PlainText />}
+        <span className="line-clamp-2 text-center [overflow-wrap:_anywhere] text-overflow">
+          {node.name}
+        </span>
+      </div>
     </div>
   );
 };
