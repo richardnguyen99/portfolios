@@ -12,12 +12,15 @@ import {
 } from "./type";
 import { FileType, IDirectory, INode } from "@util/fs/type";
 import useFileTree from "@contexts/FileTree/useFileTree";
+import useSystemCall from "@contexts/SystemCall/useSystemCall";
 
 const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
   children,
   initialDirectory,
 }) => {
   const { home } = useFileTree();
+  const { searchNodeFromRoot } = useSystemCall();
+
   const [dragging, setDragging] = React.useState<boolean>(false);
   const [size, setSize] = React.useState<FEViewSize>(FEViewSize.Normal);
   const [view, setView] = React.useState<FEViewType>(FEViewType.List);
@@ -62,9 +65,9 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
       index: 0,
       history: [
         {
-          id: currDir.id,
-          name: currDir.name,
-          parentId: currDir.parent?.id ?? "",
+          id: currDir?.id ?? "",
+          name: currDir?.name ?? "",
+          parentId: currDir?.parent?.id ?? "",
         },
       ] as FEHistory[],
     },
@@ -128,7 +131,21 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
 
   React.useEffect(() => {
     console.log(currDir);
-  }, [currDir]);
+
+    if (!currDir) {
+      const prevTab = historyState.history[historyState.index - 1];
+      const newNode = searchNodeFromRoot(prevTab.id);
+
+      if (newNode) {
+        setCurrDir(newNode);
+        setHistoryState({
+          type: "pop",
+        });
+      }
+    }
+  }, [currDir, historyState, searchNodeFromRoot]);
+
+  if (!currDir) return null;
 
   return (
     <FileExplorerContext.Provider value={contextValue}>

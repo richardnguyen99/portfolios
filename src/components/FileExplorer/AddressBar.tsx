@@ -73,7 +73,6 @@ const AddressBar: React.FC = () => {
   const addressList = React.useMemo(() => {
     const pathList = [];
     let currentDir = currDir;
-    console.log("is currentDir home? ", Object.is(currentDir, home));
 
     while (currentDir && currentDir.id !== home.id) {
       pathList.push(currentDir);
@@ -88,7 +87,6 @@ const AddressBar: React.FC = () => {
   const handlePreviousClick = React.useCallback(
     (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       e.preventDefault();
-      console.log("previous clicked");
 
       if (historyState.index <= 0) {
         return;
@@ -116,7 +114,6 @@ const AddressBar: React.FC = () => {
   const handleNextClick = React.useCallback(
     (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       e.preventDefault();
-      console.log("next clicked");
 
       if (historyState.index >= historyState.history.length - 1) {
         return;
@@ -138,8 +135,6 @@ const AddressBar: React.FC = () => {
   React.useEffect(() => {
     if (typeof historyState === "undefined") return;
     if (historyState.history.length <= 0) return;
-
-    console.log(historyState.history);
   }, [historyState]);
 
   return (

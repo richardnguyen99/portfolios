@@ -14,6 +14,19 @@ import {
 } from "@heroicons/react/16/solid";
 import useFileTree from "@contexts/FileTree/useFileTree";
 import useFileExplorer from "./hook";
+import { FileType, IDirectory } from "@util/fs/type";
+
+interface QuickAccessFolders {
+  [key: string]: IDirectory;
+}
+
+const QuickAccessFolderNames = [
+  "Documents",
+  "Downloads",
+  "Music",
+  "Videos",
+  "Desktop",
+];
 
 const FSQuickAccessItem: React.FC<
   React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>
@@ -38,9 +51,11 @@ const FSQuickAccessItem: React.FC<
 
 const FSQuickAccessSubItem: React.FC<
   React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>
-> = ({ children }) => {
+> = ({ children, onClick, ...rest }) => {
   return (
     <div
+      {...rest}
+      onClick={onClick}
       className={clsx(
         "flex items-center gap-1",
         "text-sm",
@@ -59,6 +74,23 @@ const FSQuickAccess: React.FC = () => {
   const { home } = useFileTree();
   const { currDir, setCurrDir, dispatchHistoryState } = useFileExplorer();
 
+  const quickAccessFolders = React.useMemo(() => {
+    const children = (currDir as IDirectory).children;
+    const obj: QuickAccessFolders = {};
+
+    children.forEach((child) => {
+      if (child.type === FileType.Directory) {
+        if (!QuickAccessFolderNames.includes(child.name)) {
+          return;
+        }
+
+        obj[child.name] = child as IDirectory;
+      }
+    });
+
+    return obj;
+  }, [currDir]);
+
   const handleHomeClick = React.useCallback(() => {
     if (currDir.id === home.id) return;
 
@@ -73,6 +105,23 @@ const FSQuickAccess: React.FC = () => {
 
     setCurrDir(home);
   }, [currDir.id, dispatchHistoryState, home, setCurrDir]);
+
+  const handleDocumentClick = React.useCallback(() => {
+    const doc = quickAccessFolders["Documents"];
+
+    if (!doc) return;
+
+    dispatchHistoryState({
+      type: "push",
+      payload: {
+        id: doc.id,
+        name: doc.name,
+        parentId: doc.parent?.id ?? "",
+      },
+    });
+
+    setCurrDir(doc);
+  }, [dispatchHistoryState, quickAccessFolders, setCurrDir]);
 
   return (
     <div
@@ -107,7 +156,7 @@ const FSQuickAccess: React.FC = () => {
             </>
           </FSQuickAccessItem>
           <div className="flex flex-col gap-2 ml-[26px] mt-1">
-            <FSQuickAccessSubItem>
+            <FSQuickAccessSubItem onClick={handleDocumentClick}>
               <>
                 <FileIcon />
                 <span>Documents</span>
