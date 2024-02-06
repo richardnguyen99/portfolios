@@ -14,6 +14,8 @@ const FSFooter: React.FC = () => {
   React.useEffect(() => {
     if (!ds) return;
 
+    setText("");
+
     ds.subscribe("DS:end", (e) => {
       const items = e.items as HTMLDivElement[];
 

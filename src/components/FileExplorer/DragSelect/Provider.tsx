@@ -3,11 +3,14 @@ import DragSelect, { type DSInputElement } from "dragselect";
 
 import { type DragSelectProviderProps } from "./type";
 import DragSelectContext from "./Context";
+import useFileExplorer from "../hook";
 
 const DragSelectProvider: React.FC<DragSelectProviderProps> = ({
   children,
   initialSettings = {},
 }) => {
+  const { currDir } = useFileExplorer();
+
   const [ds, setDS] = React.useState<DragSelect<DSInputElement>>();
   const [settings, setSettings] = React.useState({ id: 0, ...initialSettings });
 
@@ -39,6 +42,12 @@ const DragSelectProvider: React.FC<DragSelectProviderProps> = ({
     }),
     [ds],
   );
+
+  React.useEffect(() => {
+    if (!ds) return;
+
+    ds.SelectedSet.clear();
+  }, [currDir, ds]);
 
   return (
     <DragSelectContext.Provider value={contextValue}>

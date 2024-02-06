@@ -59,30 +59,24 @@ const GridViewItem: React.FC<Props> = ({ node }) => {
       setCurrDir(node);
       ds?.SelectedSet.clear();
     },
-    [dispatchHistoryState, ds, node, setCurrDir],
+    [addModal, dispatchHistoryState, ds?.SelectedSet, node, setCurrDir],
   );
 
   React.useEffect(() => {
     if (!itemRef.current || !ds) return;
+
+    const item = itemRef.current;
 
     if (!ds.SelectableSet.has(itemRef.current)) {
       ds.addSelectables(itemRef.current);
     }
 
     // ds.subscribe("DS:end", (e) => {});
-  }, [ds]);
 
-  React.useEffect(() => {
-    if (!itemRef.current || !ds) return;
-
-    if (!ds.SelectableSet.has(itemRef.current)) {
-      console.log("add selectables");
-      ds.addSelectables(itemRef.current);
-    }
-
-    ds.subscribe("DS:end", (e) => {
-      console.log(e);
-    });
+    return () => {
+      ds.removeSelectables(item);
+      ds.SelectedSet.clear();
+    };
   }, [ds]);
 
   return (

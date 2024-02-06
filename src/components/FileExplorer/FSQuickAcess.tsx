@@ -75,7 +75,7 @@ const FSQuickAccess: React.FC = () => {
   const { currDir, setCurrDir, dispatchHistoryState } = useFileExplorer();
 
   const quickAccessFolders = React.useMemo(() => {
-    const children = (currDir as IDirectory).children;
+    const children = (home as IDirectory).children;
     const obj: QuickAccessFolders = {};
 
     children.forEach((child) => {
@@ -89,7 +89,7 @@ const FSQuickAccess: React.FC = () => {
     });
 
     return obj;
-  }, [currDir]);
+  }, [home]);
 
   const handleHomeClick = React.useCallback(() => {
     if (currDir.id === home.id) return;
@@ -106,22 +106,30 @@ const FSQuickAccess: React.FC = () => {
     setCurrDir(home);
   }, [currDir.id, dispatchHistoryState, home, setCurrDir]);
 
-  const handleDocumentClick = React.useCallback(() => {
-    const doc = quickAccessFolders["Documents"];
+  const handleTabClick = React.useCallback(
+    (dirName: string) => {
+      return (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        e.preventDefault();
+        const dir = quickAccessFolders[dirName];
 
-    if (!doc) return;
+        if (dirName === currDir.name) return;
 
-    dispatchHistoryState({
-      type: "push",
-      payload: {
-        id: doc.id,
-        name: doc.name,
-        parentId: doc.parent?.id ?? "",
-      },
-    });
+        if (!dir) return;
 
-    setCurrDir(doc);
-  }, [dispatchHistoryState, quickAccessFolders, setCurrDir]);
+        dispatchHistoryState({
+          type: "push",
+          payload: {
+            id: dir.id,
+            name: dir.name,
+            parentId: dir.parent?.id ?? "",
+          },
+        });
+
+        setCurrDir(dir);
+      };
+    },
+    [currDir.name, dispatchHistoryState, quickAccessFolders, setCurrDir],
+  );
 
   return (
     <div
@@ -156,31 +164,31 @@ const FSQuickAccess: React.FC = () => {
             </>
           </FSQuickAccessItem>
           <div className="flex flex-col gap-2 ml-[26px] mt-1">
-            <FSQuickAccessSubItem onClick={handleDocumentClick}>
+            <FSQuickAccessSubItem onDoubleClick={handleTabClick("Documents")}>
               <>
                 <FileIcon />
                 <span>Documents</span>
               </>
             </FSQuickAccessSubItem>
-            <FSQuickAccessSubItem>
+            <FSQuickAccessSubItem onDoubleClick={handleTabClick("Downloads")}>
               <>
                 <MoveToBottomIcon />
                 <span>Downloads</span>
               </>
             </FSQuickAccessSubItem>
-            <FSQuickAccessSubItem>
+            <FSQuickAccessSubItem onDoubleClick={handleTabClick("Music")}>
               <>
                 <MusicalNoteIcon className="w-4 h-4" />
                 <span>Music</span>
               </>
             </FSQuickAccessSubItem>
-            <FSQuickAccessSubItem>
+            <FSQuickAccessSubItem onDoubleClick={handleTabClick("Videos")}>
               <>
                 <VideoCameraIcon className="w-4 h-4" />
                 <span>Videos</span>
               </>
             </FSQuickAccessSubItem>
-            <FSQuickAccessSubItem>
+            <FSQuickAccessSubItem onDoubleClick={handleTabClick("Desktop")}>
               <>
                 <ComputerDesktopIcon className="w-4 h-4" />
                 <span>Desktop</span>

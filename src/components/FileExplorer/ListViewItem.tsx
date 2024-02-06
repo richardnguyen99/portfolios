@@ -83,11 +83,19 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
   React.useEffect(() => {
     if (!itemRef.current || !ds) return;
 
+    const item = itemRef.current;
+
     if (!ds.SelectableSet.has(itemRef.current)) {
       ds.addSelectables(itemRef.current);
     }
 
     // ds.subscribe("DS:end", (e) => {});
+    return () => {
+      console.log("remove selectables");
+      ds.removeSelectables(item);
+      ds.SelectedSet.clear();
+      console.log(ds.SelectableSet.size);
+    };
   }, [ds]);
 
   return (

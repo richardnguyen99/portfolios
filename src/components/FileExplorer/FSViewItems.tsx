@@ -152,7 +152,7 @@ const FSViewItems: React.FC = () => {
       // @ts-ignore
       ds.unsubscribe("__add", add);
     };
-  }, [containerRef, ds, setDragging]);
+  }, [containerRef, ds, setDragging, viewType]);
 
   return (
     <div

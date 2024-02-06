@@ -130,8 +130,6 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
   }, [home, updateNode]);
 
   React.useEffect(() => {
-    console.log(currDir);
-
     if (!currDir) {
       const prevTab = historyState.history[historyState.index - 1];
       const newNode = searchNodeFromRoot(prevTab.id);
