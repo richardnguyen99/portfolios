@@ -12,10 +12,16 @@ import {
   MusicalNoteIcon,
   VideoCameraIcon,
 } from "@heroicons/react/16/solid";
+import useFileTree from "@contexts/FileTree/useFileTree";
+import useFileExplorer from "./hook";
 
-const FSQuickAccessItem: React.FC<React.PropsWithChildren> = ({ children }) => {
+const FSQuickAccessItem: React.FC<
+  React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>
+> = ({ children, onClick, ...rest }) => {
   return (
     <div
+      {...rest}
+      onClick={onClick}
       className={clsx(
         "flex items-center gap-2",
         "text-base font-bold",
@@ -30,9 +36,9 @@ const FSQuickAccessItem: React.FC<React.PropsWithChildren> = ({ children }) => {
   );
 };
 
-const FSQuickAccessSubItem: React.FC<React.PropsWithChildren> = ({
-  children,
-}) => {
+const FSQuickAccessSubItem: React.FC<
+  React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>
+> = ({ children }) => {
   return (
     <div
       className={clsx(
@@ -50,6 +56,24 @@ const FSQuickAccessSubItem: React.FC<React.PropsWithChildren> = ({
 };
 
 const FSQuickAccess: React.FC = () => {
+  const { home } = useFileTree();
+  const { currDir, setCurrDir, dispatchHistoryState } = useFileExplorer();
+
+  const handleHomeClick = React.useCallback(() => {
+    if (currDir.id === home.id) return;
+
+    dispatchHistoryState({
+      type: "push",
+      payload: {
+        id: home.id,
+        name: home.name,
+        parentId: home.parent?.id ?? "",
+      },
+    });
+
+    setCurrDir(home);
+  }, [currDir.id, dispatchHistoryState, home, setCurrDir]);
+
   return (
     <div
       id="fe-fs-quick-access"
@@ -76,7 +100,7 @@ const FSQuickAccess: React.FC = () => {
               <span>Starred</span>
             </>
           </FSQuickAccessItem>
-          <FSQuickAccessItem>
+          <FSQuickAccessItem onClick={handleHomeClick}>
             <>
               <HomeIcon />
               <span>Home</span>
