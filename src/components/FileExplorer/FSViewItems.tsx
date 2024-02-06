@@ -11,7 +11,7 @@ import ListView from "./ListView";
 
 const FSViewItems: React.FC = () => {
   const { getId } = useWindow();
-  const { currDir, viewType, setDragging } = useFileExplorer();
+  const { currDir, viewType, setDragging, doesShowHidden } = useFileExplorer();
   const { ds } = useDragSelect();
 
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -54,6 +54,14 @@ const FSViewItems: React.FC = () => {
     },
     [viewType],
   );
+
+  const filterNodes = React.useMemo(() => {
+    return nodes.filter((node) => {
+      if (node.name.startsWith(".") && !doesShowHidden) return false;
+
+      return true;
+    });
+  }, [doesShowHidden, nodes]);
 
   // This useEffect is used to update the dimension and position of the
   // selector area. DragSelect uses an actual DOM element, which is done
@@ -160,9 +168,9 @@ const FSViewItems: React.FC = () => {
       className="flex flex-col justify-between m-0 h-full"
     >
       {viewType === FEViewType.Grid ? (
-        <GridView nodes={nodes} />
+        <GridView nodes={filterNodes} />
       ) : (
-        <ListView nodes={nodes} />
+        <ListView nodes={filterNodes} />
       )}
     </div>
   );

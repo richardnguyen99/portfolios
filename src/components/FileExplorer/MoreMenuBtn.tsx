@@ -4,6 +4,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { ThreeBarsIcon } from "@primer/octicons-react";
 
 import IconBtn from "./IconBtn";
+import useFileExplorer from "./hook";
 
 type MoreMenuItemProps = {
   active: boolean;
@@ -39,6 +40,12 @@ const MoreMenuItemComponent = (
 const ForwardedMoreMenuItem = React.forwardRef(MoreMenuItemComponent);
 
 const MoreMenuBtn: React.FC = () => {
+  const { doesShowHidden, setShowHidden } = useFileExplorer();
+
+  const handleSetHiddenClick = React.useCallback(() => {
+    setShowHidden((prev) => !prev);
+  }, [setShowHidden]);
+
   return (
     <div>
       <Menu as="div" className="relative inline-block text-left">
@@ -79,11 +86,9 @@ const MoreMenuBtn: React.FC = () => {
                 {({ active }) => (
                   <ForwardedMoreMenuItem
                     active={active}
-                    onClick={() => {
-                      console.log("show hidden folders");
-                    }}
+                    onClick={handleSetHiddenClick}
                   >
-                    Show hidden folders
+                    {doesShowHidden ? "Hide" : "Show"} hidden folders
                   </ForwardedMoreMenuItem>
                 )}
               </Menu.Item>

@@ -24,6 +24,7 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
   const [dragging, setDragging] = React.useState<boolean>(false);
   const [size, setSize] = React.useState<FEViewSize>(FEViewSize.Normal);
   const [view, setView] = React.useState<FEViewType>(FEViewType.List);
+  const [doesShowHidden, setShowHidden] = React.useState<boolean>(false);
   const [currDir, setCurrDir] = React.useState<INode>(initialDirectory);
 
   const [historyState, setHistoryState] = React.useReducer(
@@ -79,15 +80,17 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
       dragging,
       viewType: view,
       viewSize: size,
+      doesShowHidden,
       historyState,
 
       setDragging: setDragging,
       setViewSize: setSize,
       setViewType: setView,
       setCurrDir,
+      setShowHidden,
       dispatchHistoryState: setHistoryState,
     };
-  }, [currDir, dragging, historyState, size, view]);
+  }, [currDir, doesShowHidden, dragging, historyState, size, view]);
 
   const updateNode = React.useCallback(
     (startNode: IDirectory, searchNode: IDirectory) => {

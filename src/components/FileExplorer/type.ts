@@ -38,12 +38,14 @@ export type FileExplorerContextType = {
   dragging: boolean;
   viewType: FEViewType;
   viewSize: FEViewSize;
+  doesShowHidden: boolean;
   historyState: FEHistoryState;
 
   setViewSize: React.Dispatch<React.SetStateAction<FEViewSize>>;
   setViewType: React.Dispatch<React.SetStateAction<FEViewType>>;
   setDragging: React.Dispatch<React.SetStateAction<boolean>>;
   setCurrDir: React.Dispatch<React.SetStateAction<INode>>;
+  setShowHidden: React.Dispatch<React.SetStateAction<boolean>>;
   dispatchHistoryState: React.Dispatch<FEHistoryAction>;
 };
 
