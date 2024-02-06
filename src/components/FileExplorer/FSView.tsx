@@ -10,7 +10,12 @@ import FSFooter from "./FSFooter";
 const FSView: React.FC = () => {
   return (
     <ContextMenuPrimitive.Root>
-      <ContextMenuPrimitive.Trigger className="relative flex flex-col w-full justify-between select-none overflow-x-hidden">
+      <ContextMenuPrimitive.Trigger
+        onContextMenuCapture={(e) => {
+          console.log(e);
+        }}
+        className="relative flex flex-col w-full justify-between select-none overflow-x-hidden"
+      >
         <DragSelect.Provider initialSettings={{ selectedClass: "selector" }}>
           <FSViewItems />
           <FSFooter />
@@ -29,6 +34,7 @@ const FSView: React.FC = () => {
           "shadow-gray-400 dark:shadow-gray-900",
         )}
       >
+        {}
         <ContextMenuPrimitive.Item
           className={clsx(
             "flex items-center",
