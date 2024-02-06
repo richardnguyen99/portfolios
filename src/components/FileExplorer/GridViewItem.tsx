@@ -15,7 +15,7 @@ type Props = {
 const GridViewItem: React.FC<Props> = ({ node }) => {
   const { ds } = useDragSelect();
   const { addModal } = useModal();
-  const { dispatchHistoryState, setCurrDir } = useFileExplorer();
+  const { dispatchHistoryState, setCurrDir, setDragging } = useFileExplorer();
 
   const itemRef = React.useRef<HTMLDivElement>(null);
 
@@ -43,6 +43,7 @@ const GridViewItem: React.FC<Props> = ({ node }) => {
 
         ds?.SelectedSet.clear();
         addModal(editorModal);
+        setDragging(false);
 
         return;
       }
@@ -59,7 +60,14 @@ const GridViewItem: React.FC<Props> = ({ node }) => {
       setCurrDir(node);
       ds?.SelectedSet.clear();
     },
-    [addModal, dispatchHistoryState, ds?.SelectedSet, node, setCurrDir],
+    [
+      addModal,
+      dispatchHistoryState,
+      ds?.SelectedSet,
+      node,
+      setCurrDir,
+      setDragging,
+    ],
   );
 
   React.useEffect(() => {

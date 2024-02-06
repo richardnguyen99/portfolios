@@ -16,7 +16,7 @@ type Props = {
 const ListViewItem: React.FC<Props> = ({ node }) => {
   const { ds } = useDragSelect();
   const { addModal } = useModal();
-  const { setCurrDir, dispatchHistoryState } = useFileExplorer();
+  const { setCurrDir, dispatchHistoryState, setDragging } = useFileExplorer();
 
   const itemRef = React.useRef<HTMLDivElement>(null);
   const [starred, setStarred] = React.useState(false);
@@ -64,8 +64,16 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
 
       setCurrDir(node);
       ds?.SelectedSet.clear();
+      setDragging(false);
     },
-    [addModal, dispatchHistoryState, ds, node, setCurrDir],
+    [
+      addModal,
+      dispatchHistoryState,
+      ds?.SelectedSet,
+      node,
+      setCurrDir,
+      setDragging,
+    ],
   );
 
   const getNodeSize = React.useCallback(() => {

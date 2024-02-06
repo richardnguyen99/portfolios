@@ -144,6 +144,8 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
         });
       }
     }
+
+    setDragging(false);
   }, [currDir, historyState, searchNodeFromRoot]);
 
   if (!currDir) return null;

@@ -1,11 +1,12 @@
 import * as React from "react";
 import clsx from "classnames";
+import { ChevronDownIcon, ChevronUpIcon } from "@primer/octicons-react";
+import { FolderIcon } from "@heroicons/react/24/outline";
 
 import { FileType, IDirectory, type INode } from "@util/fs/type";
 import ListViewItem from "./ListViewItem";
 import useFileExplorer from "./hook";
 import { FESortType } from "./type";
-import { ChevronDownIcon, ChevronUpIcon } from "@primer/octicons-react";
 
 type Props = {
   nodes: INode[];
@@ -48,6 +49,8 @@ const ListViewSortAction: React.FC<
 };
 
 const ListView: React.FC<Props> = ({ nodes }) => {
+  const { setDragging } = useFileExplorer();
+
   const [sortType, setSortType] = React.useState(FESortType.NAME_ASC);
 
   const handleNameClick = React.useCallback(() => {
@@ -159,61 +162,74 @@ const ListView: React.FC<Props> = ({ nodes }) => {
     });
   }, [sortType, nodes]);
 
+  React.useEffect(() => {
+    return () => {
+      setDragging(false);
+    };
+  }, [setDragging]);
+
   return (
-    <div>
-      <div
-        className={clsx(
-          "flex flex-col",
-          "window-scrollbar",
-          "w-full px-4 pb-4",
-        )}
-      >
-        <div id="fe-listView-sort-panel" className={clsx("flex")}>
-          <ListViewSortAction
-            onClick={handleNameClick}
-            type={
-              sortType === FESortType.NAME_ASC
-                ? "asc"
-                : sortType === FESortType.NAME_DESC
-                  ? "desc"
-                  : "unset"
-            }
-          >
-            Name
-          </ListViewSortAction>
-          <ListViewSortAction
-            onClick={handleSizeClick}
-            type={
-              sortType === FESortType.SIZE_ASC
-                ? "asc"
-                : sortType === FESortType.SIZE_DESC
-                  ? "desc"
-                  : "unset"
-            }
-          >
-            Size
-          </ListViewSortAction>
-          <ListViewSortAction
-            onClick={handleDateClick}
-            type={
-              sortType === FESortType.DATE_ASC
-                ? "asc"
-                : sortType === FESortType.DATE_DESC
-                  ? "desc"
-                  : "unset"
-            }
-          >
-            Modifed
-          </ListViewSortAction>
-          <ListViewSortAction type="unset">Starred</ListViewSortAction>
+    <div className="h-full">
+      {sortedNodes.length > 0 ? (
+        <div
+          className={clsx(
+            "flex flex-col",
+            "window-scrollbar",
+            "w-full px-4 pb-4",
+          )}
+        >
+          <div id="fe-listView-sort-panel" className={clsx("flex")}>
+            <ListViewSortAction
+              onClick={handleNameClick}
+              type={
+                sortType === FESortType.NAME_ASC
+                  ? "asc"
+                  : sortType === FESortType.NAME_DESC
+                    ? "desc"
+                    : "unset"
+              }
+            >
+              Name
+            </ListViewSortAction>
+            <ListViewSortAction
+              onClick={handleSizeClick}
+              type={
+                sortType === FESortType.SIZE_ASC
+                  ? "asc"
+                  : sortType === FESortType.SIZE_DESC
+                    ? "desc"
+                    : "unset"
+              }
+            >
+              Size
+            </ListViewSortAction>
+            <ListViewSortAction
+              onClick={handleDateClick}
+              type={
+                sortType === FESortType.DATE_ASC
+                  ? "asc"
+                  : sortType === FESortType.DATE_DESC
+                    ? "desc"
+                    : "unset"
+              }
+            >
+              Modifed
+            </ListViewSortAction>
+            <ListViewSortAction type="unset">Starred</ListViewSortAction>
+          </div>
+          <div className="h-[1px] -ml-4 -mr-1 bg-gray-300 dark:bg-gray-700" />
+          <div className="flex flex-col gap-1">
+            {sortedNodes.map((node) => {
+              return <ListViewItem key={node.id} node={node} />;
+            })}
+          </div>
         </div>
-        <div className="h-[1px] -ml-4 -mr-1 bg-gray-300 dark:bg-gray-700" />
-        <div className="flex flex-col gap-1">
-          {sortedNodes.map((node) => {
-            return <ListViewItem key={node.id} node={node} />;
-          })}
+      ) : (
+        <div className="flex flex-col items-center justify-center h-full opacity-70">
+          <FolderIcon className="w-32 h-32" />
+          <p className="text-2xl font-extrabold">Folder is empty</p>
         </div>
-      </div>
+      )}
     </div>
   );
 };
