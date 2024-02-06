@@ -78,7 +78,7 @@ const FSFooter: React.FC = () => {
   }, [currDir, ds]);
 
   return (
-    <div className="flex fixed bottom-0 right-0">
+    <div className="flex fixed bottom-0 right-0 z-10">
       {text && (
         <div
           className={clsx(
