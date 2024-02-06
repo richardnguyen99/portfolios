@@ -1,7 +1,7 @@
 import * as React from "react";
 import clsx from "classnames";
 
-import { type INode } from "@util/fs/type";
+import { FileType, IDirectory, type INode } from "@util/fs/type";
 import ListViewItem from "./ListViewItem";
 import useFileExplorer from "./hook";
 import { FESortType } from "./type";
@@ -80,6 +80,69 @@ const ListView: React.FC<Props> = ({ nodes }) => {
     }
   }, [sortType]);
 
+  const sortedNodes = React.useMemo(() => {
+    return nodes.slice().sort((a, b) => {
+      if (sortType === FESortType.NAME_ASC) {
+        return a.name.localeCompare(b.name);
+      }
+
+      if (sortType === FESortType.NAME_DESC) {
+        return b.name.localeCompare(a.name);
+      }
+
+      if (sortType === FESortType.DATE_ASC) {
+        return -1;
+      }
+
+      if (sortType === FESortType.DATE_DESC) {
+        return -1;
+      }
+
+      const aFile = localStorage.getItem(`file-${a.id}`)!;
+      const bFile = localStorage.getItem(`file-${b.id}`)!;
+
+      if (sortType === FESortType.SIZE_ASC) {
+        if (a.type === FileType.Directory && b.type === FileType.Directory) {
+          return (
+            (a as IDirectory).children.length -
+            (b as IDirectory).children.length
+          );
+        }
+
+        if (a.type === FileType.Directory) {
+          return -1;
+        }
+
+        if (b.type === FileType.Directory) {
+          return 1;
+        }
+
+        return aFile.length - bFile.length;
+      }
+
+      if (sortType === FESortType.SIZE_DESC) {
+        if (a.type === FileType.Directory && b.type === FileType.Directory) {
+          return (
+            (b as IDirectory).children.length -
+            (a as IDirectory).children.length
+          );
+        }
+
+        if (a.type === FileType.Directory) {
+          return 1;
+        }
+
+        if (b.type === FileType.Directory) {
+          return -1;
+        }
+
+        return bFile.length - aFile.length;
+      }
+
+      return 0;
+    });
+  }, [sortType, nodes]);
+
   return (
     <div>
       <div
@@ -130,7 +193,7 @@ const ListView: React.FC<Props> = ({ nodes }) => {
         </div>
         <div className="h-[1px] -ml-4 -mr-1 bg-gray-300 dark:bg-gray-700" />
         <div className="flex flex-col gap-1">
-          {nodes.map((node) => {
+          {sortedNodes.map((node) => {
             return <ListViewItem key={node.id} node={node} />;
           })}
         </div>

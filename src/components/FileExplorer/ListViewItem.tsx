@@ -30,7 +30,6 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
       e.preventDefault();
 
       if (node.type === FileType.File) {
-        console.log(node.id);
         const editorModal: ModalProps = {
           id: node.id,
           title: node.name,
@@ -91,10 +90,8 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
 
     // ds.subscribe("DS:end", (e) => {});
     return () => {
-      console.log("remove selectables");
       ds.removeSelectables(item);
       ds.SelectedSet.clear();
-      console.log(ds.SelectableSet.size);
     };
   }, [ds]);
 
