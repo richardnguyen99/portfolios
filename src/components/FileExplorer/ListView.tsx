@@ -91,11 +91,27 @@ const ListView: React.FC<Props> = ({ nodes }) => {
       }
 
       if (sortType === FESortType.DATE_ASC) {
-        return -1;
+        if (
+          typeof a.lastModified !== "object" ||
+          typeof b.lastModified !== "object"
+        ) {
+          console.warn("lastModified is not a Date object");
+          return -1;
+        }
+
+        return a.lastModified.getTime() - b.lastModified.getTime();
       }
 
       if (sortType === FESortType.DATE_DESC) {
-        return -1;
+        if (
+          typeof a.lastModified !== "object" ||
+          typeof b.lastModified !== "object"
+        ) {
+          console.warn("lastModified is not a Date object");
+          return 1;
+        }
+
+        return b.lastModified.getTime() - a.lastModified.getTime();
       }
 
       const aFile = localStorage.getItem(`file-${a.id}`)!;

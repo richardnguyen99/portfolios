@@ -46,6 +46,22 @@ const fileTreeReviver = () => {
       return value;
     }
 
+    if (key === "lastModified" && value !== null) {
+      return new Date(value as string);
+    }
+
+    if (key === "lastAccessed" && value !== null) {
+      return new Date(value as string);
+    }
+
+    if (key === "lastChanged" && value !== null) {
+      return new Date(value as string);
+    }
+
+    if (key === "lastCreated" && value !== null) {
+      return new Date(value as string);
+    }
+
     return value;
   };
 };
