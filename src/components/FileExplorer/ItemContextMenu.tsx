@@ -4,12 +4,34 @@ import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 import { CheckBadgeIcon } from "@heroicons/react/16/solid";
 
 import { INode } from "@util/fs/type";
+import { ModalProps } from "@contexts/Modal/type";
+import useModal from "@contexts/Modal/useModal";
+import { Terminal } from "@components";
 
 type Props = {
   node: INode;
 };
 
 const ItemContextMenu: React.FC<Props> = ({ node }) => {
+  const { addModal } = useModal();
+
+  const handleOpenTerminalClick = React.useCallback(() => {
+    const newTerminal: ModalProps = {
+      id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
+      title: node.name,
+      active: true,
+      isFullScreen: false,
+      isFullScreenAllowed: true,
+      type: "terminal",
+      component: Terminal,
+      componentProps: {
+        initialDir: node,
+      },
+    };
+
+    addModal(newTerminal);
+  }, [addModal, node]);
+
   return (
     <ContextMenuPrimitive.Content
       className={clsx(
@@ -39,6 +61,7 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
         <div className="ml-auto font-mono font-light text-xs">something</div>
       </ContextMenuPrimitive.Item>
       <ContextMenuPrimitive.Item
+        onClick={handleOpenTerminalClick}
         className={clsx(
           "flex items-center",
           "px-3 py-2 rounded-md",
@@ -48,9 +71,8 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
       >
         <div className="flex items-center gap-2">
           <div className="w-4 h-4"></div>
-          <div>Delete</div>
+          <div>Open in Temrinal</div>
         </div>
-        <div className="ml-auto font-mono font-light text-xs">something</div>
       </ContextMenuPrimitive.Item>
       <ContextMenuPrimitive.Item
         className={clsx(
