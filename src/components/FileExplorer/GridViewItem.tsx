@@ -1,7 +1,6 @@
 import * as React from "react";
 import clsx from "classnames";
 import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
-import { CheckBadgeIcon } from "@heroicons/react/16/solid";
 
 import { FileType, IFile, INode } from "@util/fs/type";
 import useDragSelect from "./DragSelect/hook";
