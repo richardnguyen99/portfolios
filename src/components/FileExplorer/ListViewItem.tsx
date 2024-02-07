@@ -1,6 +1,7 @@
 import * as React from "react";
 import clsx from "classnames";
 import { StarFillIcon, StarIcon } from "@primer/octicons-react";
+import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 
 import { FileType, IDirectory, IFile, INode } from "@util/fs/type";
 import useDragSelect from "./DragSelect/hook";
@@ -8,6 +9,7 @@ import { Editor, Icon } from "@components";
 import useFileExplorer from "./hook";
 import useModal from "@contexts/Modal/useModal";
 import { ModalProps } from "@contexts/Modal/type";
+import ItemContextMenu from "./ItemContextMenu";
 
 type Props = {
   node: INode;
@@ -104,66 +106,82 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
   }, [ds]);
 
   return (
-    <div
-      ref={itemRef}
-      key={node.name}
-      onDoubleClick={handleDoubleClick}
-      className={clsx(
-        "selectable",
-        "flex items-center",
-        "rounded-md",
-        "hover:bg-gray-300/60 dark:hover:bg-gray-600/40",
-        "[&.selected]:bg-sky-300/40 dark:[&.selected]:bg-sky-400/40",
-        "[&.selected]:hover:bg-sky-300/60 dark:[&.selected]:hover:bg-sky-400/60",
-      )}
-      data-node-id={node.id}
-    >
-      <div
-        className={clsx(
-          "flex-grow flex-shrink basis-20 min-w-32",
-          "flex items-center gap-2",
-          "overflow-hidden",
-          "px-2 py-1",
-        )}
-      >
-        {node.type === 1 ? (
-          <Icon.Folder className="w-8 h-8 flex-grow-0 flex-shrink-0" />
-        ) : (
-          <Icon.PlainText className="w-8 h-8 flex-grow-0 flex-shrink-0" />
-        )}
-        <span className="flex-grow flex-shrink basis-auto text-ellipsis overflow-hidden whitespace-nowrap">
-          {node.name}
-        </span>
-      </div>
-      <div className="flex-grow-0 flex-shrink-0 basis-20 px-2 py-1">
-        {getNodeSize()}
-      </div>
-      <div className="flex-grow-0 flex-shrink-0 basis-44 px-2 py-1">
-        {new Date(node.lastModified).toLocaleString()}
-      </div>
-      <div
-        className={clsx(
-          "flex-grow-0 flex-shrink-0 basis-20",
-          "flex flex-col items-center",
-          "px-2 py-1",
-        )}
+    <ContextMenuPrimitive.Root>
+      <ContextMenuPrimitive.Trigger
+        asChild
+        onContextMenuCapture={(e) => {
+          console.log(e);
+
+          if (!ds) return;
+
+          ds.SelectedSet.clear();
+        }}
       >
         <div
-          onClick={handleStarClick}
+          ref={itemRef}
+          key={node.name}
+          onDoubleClick={handleDoubleClick}
           className={clsx(
-            "p-1 rounded-md",
-            "hover:bg-gray-400/25 dark:hover:bg-gray-500/45",
-            "[.selected_&]:hover:bg-sky-300/40 dark:[.selected_&]:hover:bg-sky-400/40",
+            "selectable",
+            "flex items-center border border-transparent",
+            "rounded-md",
+            "hover:bg-gray-300/60 dark:hover:bg-gray-600/40",
+            "[&.selected]:bg-sky-300/40 dark:[&.selected]:bg-sky-400/40",
+            "[&.selected]:hover:bg-sky-300/60 dark:[&.selected]:hover:bg-sky-400/60",
+            '[&[data-state="open"]]:border-sky-500 dark:[&[data-state="open"]]:border-sky-400',
+            '[&[data-state="open"]]:bg-sky-300/30 dark:[&[data-state="open"]]:bg-sky-400/30',
           )}
+          data-node-id={node.id}
         >
-          {starred ? (
-            <StarFillIcon className="fill-amber-500 dark:fill-yellow-500" />
-          ) : (
-            <StarIcon />
-          )}
+          <div
+            className={clsx(
+              "flex-grow flex-shrink basis-20 min-w-32",
+              "flex items-center gap-2",
+              "overflow-hidden",
+              "px-2 py-1",
+            )}
+          >
+            {node.type === 1 ? (
+              <Icon.Folder className="w-8 h-8 flex-grow-0 flex-shrink-0" />
+            ) : (
+              <Icon.PlainText className="w-8 h-8 flex-grow-0 flex-shrink-0" />
+            )}
+            <span className="flex-grow flex-shrink basis-auto text-ellipsis overflow-hidden whitespace-nowrap">
+              {node.name}
+            </span>
+          </div>
+          <div className="flex-grow-0 flex-shrink-0 basis-20 px-2 py-1">
+            {getNodeSize()}
+          </div>
+          <div className="flex-grow-0 flex-shrink-0 basis-44 px-2 py-1">
+            {new Date(node.lastModified).toLocaleString()}
+          </div>
+          <div
+            className={clsx(
+              "flex-grow-0 flex-shrink-0 basis-20",
+              "flex flex-col items-center",
+              "px-2 py-1",
+            )}
+          >
+            <div
+              onClick={handleStarClick}
+              className={clsx(
+                "p-1 rounded-md",
+                "hover:bg-gray-400/25 dark:hover:bg-gray-500/45",
+                "[.selected_&]:hover:bg-sky-300/40 dark:[.selected_&]:hover:bg-sky-400/40",
+              )}
+            >
+              {starred ? (
+                <StarFillIcon className="fill-amber-500 dark:fill-yellow-500" />
+              ) : (
+                <StarIcon />
+              )}
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </ContextMenuPrimitive.Trigger>
+      <ItemContextMenu node={node} />
+    </ContextMenuPrimitive.Root>
   );
 };
 
