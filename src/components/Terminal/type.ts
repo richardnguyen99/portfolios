@@ -34,5 +34,10 @@ export type TerminalContextType = {
 };
 
 export type TerminalProviderProps = {
+  initialDir?: IDirectory;
   children: React.ReactNode;
+};
+
+export type TerminalProps = {
+  initialDir?: IDirectory;
 };

@@ -13,7 +13,10 @@ import { compareDirectories } from "@util/fs/compare";
 import useSystemCall from "@contexts/SystemCall/useSystemCall";
 import { generateFileId } from "@util/fs/id";
 
-const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
+const TerminalProvider: React.FC<TerminalProviderProps> = ({
+  children,
+  initialDir,
+}) => {
   const { getId, getSize } = useWindow();
   const { closeModal, addModal } = useModal();
   const { getHomeFolder, getRootFolder } = useFileTree();
@@ -21,10 +24,10 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
     useSystemCall();
 
   const [currentFolder, setCurrentFolder] = React.useState({
-    previous: getHomeFolder(),
-    current: getHomeFolder(),
+    previous: initialDir || getHomeFolder(),
+    current: initialDir || getHomeFolder(),
   });
-  const [prompt, setPrompt] = React.useState("[richard@portlios ~]$ ");
+  const [prompt, setPrompt] = React.useState("");
   const [buffer, setBuffer] = React.useState<string[]>([
     "Welcome to Portli-OS!",
     "(Hint): Use `pwd` and start it from there.",
@@ -355,6 +358,22 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({ children }) => {
       getWindowSize,
     ],
   );
+
+  React.useEffect(() => {
+    if (!initialDir) {
+      setPrompt("[richard@portlios ~]$ ");
+      return;
+    }
+
+    const homeFolder = getHomeFolder();
+
+    if (homeFolder.id === initialDir?.id) {
+      setPrompt("[richard@portlios ~]$ ");
+      return;
+    }
+
+    setPrompt(`[richard@portlios ${initialDir.name}]$ `);
+  }, [getHomeFolder, initialDir]);
 
   return (
     <TerminalContext.Provider value={contextValue}>

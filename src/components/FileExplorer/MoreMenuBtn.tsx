@@ -5,6 +5,9 @@ import { ThreeBarsIcon } from "@primer/octicons-react";
 
 import IconBtn from "./IconBtn";
 import useFileExplorer from "./hook";
+import useModal from "@contexts/Modal/useModal";
+import { ModalProps } from "@contexts/Modal/type";
+import { Terminal } from "@components";
 
 type MoreMenuItemProps = {
   active: boolean;
@@ -40,11 +43,29 @@ const MoreMenuItemComponent = (
 const ForwardedMoreMenuItem = React.forwardRef(MoreMenuItemComponent);
 
 const MoreMenuBtn: React.FC = () => {
-  const { doesShowHidden, setShowHidden } = useFileExplorer();
+  const { doesShowHidden, setShowHidden, currDir } = useFileExplorer();
+  const { addModal } = useModal();
 
   const handleSetHiddenClick = React.useCallback(() => {
     setShowHidden((prev) => !prev);
   }, [setShowHidden]);
+
+  const handleOpenTerminalClick = React.useCallback(() => {
+    const newTerminal: ModalProps = {
+      id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
+      title: currDir.name,
+      active: true,
+      isFullScreen: false,
+      isFullScreenAllowed: true,
+      type: "terminal",
+      component: Terminal,
+      componentProps: {
+        initialDir: currDir,
+      },
+    };
+
+    addModal(newTerminal);
+  }, [addModal, currDir]);
 
   return (
     <div>
@@ -96,9 +117,7 @@ const MoreMenuBtn: React.FC = () => {
                 {({ active }) => (
                   <ForwardedMoreMenuItem
                     active={active}
-                    onClick={() => {
-                      console.log("open terminal");
-                    }}
+                    onClick={handleOpenTerminalClick}
                   >
                     Open Terminal
                   </ForwardedMoreMenuItem>
