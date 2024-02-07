@@ -21,6 +21,10 @@ const WindowProvider: React.FC<Props> = ({
     width: DEFAULT_WIDTH,
     height: DEFAULT_HEIGHT,
   },
+  minimumSize = {
+    width: DEFAULT_WIDTH,
+    height: DEFAULT_HEIGHT,
+  },
   initialPosition = {
     x: DEFAULT_X,
     y: DEFAULT_Y,
@@ -52,6 +56,21 @@ const WindowProvider: React.FC<Props> = ({
       return { x: pos.x, y: pos.y };
     }, [pos]);
 
+  const getDefaultPosition: WindowContextType["getDefaultPosition"] =
+    React.useCallback(() => {
+      return initialPosition;
+    }, [initialPosition]);
+
+  const getDefaultSize: WindowContextType["getDefaultSize"] =
+    React.useCallback(() => {
+      return initialSize;
+    }, [initialSize]);
+
+  const getMinimumSize: WindowContextType["getMinimumSize"] =
+    React.useCallback(() => {
+      return minimumSize;
+    }, [minimumSize]);
+
   const getSize: WindowContextType["getSize"] = React.useCallback(() => {
     return { width: size.width, height: size.height };
   }, [size]);
@@ -73,12 +92,25 @@ const WindowProvider: React.FC<Props> = ({
       getFullScreenState,
       getTitle,
       getPosition,
+      getDefaultPosition,
+      getMinimumSize,
+      getDefaultSize,
       getSize,
       setPosition: setPos,
       setSize,
       setTitle,
     }),
-    [getActiveState, getFullScreenState, getId, getPosition, getSize, getTitle],
+    [
+      getActiveState,
+      getDefaultPosition,
+      getDefaultSize,
+      getFullScreenState,
+      getId,
+      getMinimumSize,
+      getPosition,
+      getSize,
+      getTitle,
+    ],
   );
 
   return (

@@ -67,7 +67,7 @@ const guess: IDirectory = {
 
 const documents: IDirectory = {
   id: await generateDirectoryId("documents", guess),
-  name: "documents",
+  name: "Documents",
   type: FileType.Directory,
   children: [],
   parent: guess,
@@ -85,7 +85,61 @@ const documents: IDirectory = {
 
 const publics: IDirectory = {
   id: await generateDirectoryId("public", guess),
-  name: "public",
+  name: "Public",
+  type: FileType.Directory,
+  children: [],
+  parent: guess,
+  owner: "guess",
+
+  readPermission: true,
+  writePermission: true,
+  executePermission: true,
+
+  lastAccessed: date,
+  lastChanged: date,
+  lastCreated: date,
+  lastModified: date,
+};
+
+const desktop: IDirectory = {
+  id: await generateDirectoryId("desktop", guess),
+  name: "Desktop",
+  type: FileType.Directory,
+  children: [],
+  parent: guess,
+  owner: "guess",
+
+  readPermission: true,
+  writePermission: true,
+  executePermission: true,
+
+  lastAccessed: date,
+  lastChanged: date,
+  lastCreated: date,
+  lastModified: date,
+};
+
+const videos: IDirectory = {
+  id: await generateDirectoryId("videos", guess),
+  name: "Videos",
+  type: FileType.Directory,
+  children: [],
+  parent: guess,
+  owner: "guess",
+
+  readPermission: true,
+  writePermission: true,
+  executePermission: true,
+
+  lastAccessed: date,
+  lastChanged: date,
+  lastCreated: date,
+  lastModified: date,
+};
+
+const pictures: IDirectory = {
+  id: await generateDirectoryId("pictures", guess),
+  name: "Pictures",
   type: FileType.Directory,
   children: [],
   parent: guess,
@@ -139,7 +193,7 @@ const readmd: IFile = {
 };
 
 author.children.push(readmd);
-guess.children.push(documents, publics);
+guess.children.push(documents, publics, desktop, videos, pictures);
 home.children.push(author);
 root.children.push(home);
 
@@ -167,9 +221,16 @@ const FileTreeProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
     [getHomeFolder, getRootFolder, homeFolder, setHomeFolder],
   );
 
-  // Side effect to update the home folder when the home folder is changed
+  // Side effect to update the home folder to local storage when the home
+  // folder is changed
   React.useEffect(() => {
     if (homeFolder.parent === null) {
+      console.log("file system remounted");
+
+      home.children = home.children.filter(
+        (children) => children.name !== "guess",
+      );
+
       homeFolder.parent = home;
       home.children.push(homeFolder);
     }

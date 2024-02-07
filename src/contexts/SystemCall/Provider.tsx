@@ -58,6 +58,14 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
       };
 
       addINode(parentNode, newFile as INode);
+      window.localStorage.setItem(`file-${newFile.id}`, content);
+      window.dispatchEvent(
+        new StorageEvent("storage", {
+          key: newFile.id,
+          oldValue: null,
+          newValue: content,
+        }),
+      );
     },
     [addINode],
   );
@@ -150,6 +158,41 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
     [],
   );
 
+  const searchNodeFromRoot = React.useCallback(
+    (nodeId: string) => {
+      const root = getHomeFolder();
+      const stack = [root];
+      const visited = new Set<IDirectory>();
+      let foundNode: INode | null = null;
+
+      while (stack.length > 0) {
+        const node = stack.pop() as IDirectory;
+
+        if (node.id === nodeId) {
+          foundNode = node;
+          break;
+        }
+
+        if (visited.has(node)) {
+          continue;
+        }
+
+        visited.add(node);
+
+        for (let i = node.children.length - 1; i >= 0; i--) {
+          const child = node.children[i];
+
+          if (child.type === FileType.Directory) {
+            stack.push(child as IDirectory);
+          }
+        }
+      }
+
+      return foundNode;
+    },
+    [getHomeFolder],
+  );
+
   const readDir = React.useCallback(_readDir, []);
 
   const contextValue = React.useMemo(() => {
@@ -161,6 +204,7 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
       removeINode,
       walkNode,
       readDir,
+      searchNodeFromRoot,
     };
   }, [
     addDirectory,
@@ -170,6 +214,7 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
     removeINode,
     updateFile,
     walkNode,
+    searchNodeFromRoot,
   ]);
 
   return (

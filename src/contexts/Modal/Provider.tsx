@@ -36,12 +36,16 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
         return;
       }
 
-      const filteredModal = modals.map((modal) => ({
-        ...modal,
-        active: false,
-      }));
+      setModals((_modals) => {
+        const filteredModal = _modals.map((modal) => ({
+          ...modal,
+          active: false,
+        }));
 
-      setModals(() => [...filteredModal, modal]);
+        const newModals = [...filteredModal, modal];
+
+        return newModals;
+      });
     },
     [modals, selectModal],
   );
@@ -90,6 +94,7 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
           fullscreen={modal.isFullScreen}
           initialPosition={modal.initialPosition}
           initialSize={modal.initialSize}
+          minimumSize={modal.minimumSize}
         >
           <Component {...props} />
         </Window>

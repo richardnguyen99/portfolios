@@ -176,6 +176,7 @@ const Editor: React.FC<Props> = ({
             if (file) {
               file.content = model?.getValue() ?? "";
               file.lastChanged = new Date();
+              file.size = file.content.length;
 
               setText(model?.getValue() ?? "");
             }

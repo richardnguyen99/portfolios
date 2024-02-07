@@ -38,7 +38,7 @@ const exec = async (
     return "";
   }
 
-  const cmd = cmdStr.toLowerCase().trim().split(" ");
+  const cmd = cmdStr.trim().split(" ");
   const command = cmd[0];
   const args = cmd.slice(1);
 

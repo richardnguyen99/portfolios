@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import ReactDOM from "react-dom/client";
 import { HotkeysProvider } from "react-hotkeys-hook";
 

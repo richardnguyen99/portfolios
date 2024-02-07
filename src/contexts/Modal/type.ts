@@ -13,6 +13,7 @@ export type ModalProps = {
 
   initialSize?: WindowSize;
   initialPosition?: WindowPosition;
+  minimumSize?: WindowSize;
 
   /**
    * File Object referenced

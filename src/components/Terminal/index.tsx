@@ -1,4 +1,5 @@
 import * as React from "react";
+import clsx from "classnames";
 
 import useModal from "@contexts/Modal/useModal";
 import useWindow from "@components/Window/useWindow";
@@ -126,8 +127,13 @@ const InternalTerminal: React.FC = () => {
   }, [handleKeyPress, handleKeyDown, active, handleKeyUp]);
 
   return (
-    <>
-      <div className="break-words whitespace-pre-wrap">
+    <div
+      className={clsx("window-scrollbar h-full relative ", {
+        "select-text": active,
+        "select-none": !active,
+      })}
+    >
+      <div className={clsx("break-words whitespace-pre-wrap")}>
         {renderedBuffer}
         <div>
           <span>{displayPrompt()}</span>
@@ -149,7 +155,7 @@ const InternalTerminal: React.FC = () => {
         className="bg-transparent w-full outline-none text-transparent select-none cursor-default selection:bg-transparent h-0"
         value={text}
       />
-    </>
+    </div>
   );
 };
 
