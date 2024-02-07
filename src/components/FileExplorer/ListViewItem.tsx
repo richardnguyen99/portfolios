@@ -109,9 +109,7 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
     <ContextMenuPrimitive.Root>
       <ContextMenuPrimitive.Trigger
         asChild
-        onContextMenuCapture={(e) => {
-          console.log(e);
-
+        onContextMenuCapture={() => {
           if (!ds) return;
 
           ds.SelectedSet.clear();
