@@ -22,6 +22,7 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
 
   const itemRef = React.useRef<HTMLDivElement>(null);
   const [starred, setStarred] = React.useState(false);
+  const [nodeSize, setNodeSize] = React.useState("");
 
   const handleStarClick = React.useCallback(() => {
     setStarred((prev) => !prev);
@@ -86,8 +87,18 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
     }
 
     const file = localStorage.getItem(`file-${node.id}`)!;
+
     return `${file.length} B`;
   }, [node]);
+
+  const itemStorageListener = React.useCallback(
+    (e: StorageEvent) => {
+      if (e.key === `file-${node.id}`) {
+        setNodeSize(getNodeSize());
+      }
+    },
+    [getNodeSize, node.id],
+  );
 
   React.useEffect(() => {
     if (!itemRef.current || !ds) return;
@@ -98,12 +109,20 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
       ds.addSelectables(itemRef.current);
     }
 
+    if (nodeSize === "") {
+      setNodeSize(getNodeSize());
+    }
+
+    window.addEventListener("storage", itemStorageListener);
+
     // ds.subscribe("DS:end", (e) => {});
     return () => {
       ds.removeSelectables(item);
       ds.SelectedSet.clear();
+
+      window.removeEventListener("storage", itemStorageListener);
     };
-  }, [ds]);
+  }, [ds, getNodeSize, itemStorageListener, nodeSize]);
 
   return (
     <ContextMenuPrimitive.Root>
@@ -149,7 +168,7 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
             </span>
           </div>
           <div className="flex-grow-0 flex-shrink-0 basis-20 px-2 py-1">
-            {getNodeSize()}
+            {nodeSize}
           </div>
           <div className="flex-grow-0 flex-shrink-0 basis-44 px-2 py-1">
             {new Date(node.lastModified).toLocaleString()}
