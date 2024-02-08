@@ -81,9 +81,7 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
 
   const getNodeSize = React.useCallback(() => {
     if (node.type === FileType.Directory) {
-      const numChild = (node as IDirectory).children.length;
-
-      return `${numChild} item${numChild > 1 ? "s" : ""}`;
+      return "";
     }
 
     const file = localStorage.getItem(`file-${node.id}`)!;
@@ -97,7 +95,7 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
         setNodeSize(getNodeSize());
       }
     },
-    [getNodeSize, node.id],
+    [getNodeSize, node],
   );
 
   React.useEffect(() => {
@@ -110,7 +108,20 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
     }
 
     if (nodeSize === "") {
-      setNodeSize(getNodeSize());
+      setNodeSize((prev) => {
+        const newNodeSize = getNodeSize();
+
+        if (nodeSize === newNodeSize) return prev;
+
+        return newNodeSize;
+      });
+    }
+
+    if (node.type === FileType.Directory) {
+      const numChild = (node as IDirectory).children.length;
+      console.log(node.name, numChild);
+
+      setNodeSize(`${numChild} item${numChild > 1 ? "s" : ""}`);
     }
 
     window.addEventListener("storage", itemStorageListener);
@@ -122,7 +133,7 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
 
       window.removeEventListener("storage", itemStorageListener);
     };
-  }, [ds, getNodeSize, itemStorageListener, nodeSize]);
+  }, [ds, getNodeSize, itemStorageListener, node, nodeSize]);
 
   return (
     <ContextMenuPrimitive.Root>

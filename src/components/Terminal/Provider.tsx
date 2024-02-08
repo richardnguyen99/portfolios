@@ -360,6 +360,10 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
   );
 
   React.useEffect(() => {
+    if (prompt !== "") {
+      return;
+    }
+
     if (!initialDir) {
       setPrompt("[richard@portlios ~]$ ");
       return;
@@ -372,8 +376,9 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
       return;
     }
 
+    console.log("set initial prompt");
     setPrompt(`[richard@portlios ${initialDir.name}]$ `);
-  }, [getHomeFolder, initialDir]);
+  }, [getHomeFolder, initialDir, prompt]);
 
   return (
     <TerminalContext.Provider value={contextValue}>
