@@ -22,6 +22,7 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
 
   const itemRef = React.useRef<HTMLDivElement>(null);
   const [starred, setStarred] = React.useState(false);
+  const [nodeSize, setNodeSize] = React.useState("");
 
   const handleStarClick = React.useCallback(() => {
     setStarred((prev) => !prev);
@@ -80,14 +81,22 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
 
   const getNodeSize = React.useCallback(() => {
     if (node.type === FileType.Directory) {
-      const numChild = (node as IDirectory).children.length;
-
-      return `${numChild} item${numChild > 1 ? "s" : ""}`;
+      return "";
     }
 
     const file = localStorage.getItem(`file-${node.id}`)!;
+
     return `${file.length} B`;
   }, [node]);
+
+  const itemStorageListener = React.useCallback(
+    (e: StorageEvent) => {
+      if (e.key === `file-${node.id}`) {
+        setNodeSize(getNodeSize());
+      }
+    },
+    [getNodeSize, node],
+  );
 
   React.useEffect(() => {
     if (!itemRef.current || !ds) return;
@@ -98,20 +107,39 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
       ds.addSelectables(itemRef.current);
     }
 
+    if (nodeSize === "") {
+      setNodeSize((prev) => {
+        const newNodeSize = getNodeSize();
+
+        if (nodeSize === newNodeSize) return prev;
+
+        return newNodeSize;
+      });
+    }
+
+    if (node.type === FileType.Directory) {
+      const numChild = (node as IDirectory).children.length;
+      console.log(node.name, numChild);
+
+      setNodeSize(`${numChild} item${numChild > 1 ? "s" : ""}`);
+    }
+
+    window.addEventListener("storage", itemStorageListener);
+
     // ds.subscribe("DS:end", (e) => {});
     return () => {
       ds.removeSelectables(item);
       ds.SelectedSet.clear();
+
+      window.removeEventListener("storage", itemStorageListener);
     };
-  }, [ds]);
+  }, [ds, getNodeSize, itemStorageListener, node, nodeSize]);
 
   return (
     <ContextMenuPrimitive.Root>
       <ContextMenuPrimitive.Trigger
         asChild
-        onContextMenuCapture={(e) => {
-          console.log(e);
-
+        onContextMenuCapture={() => {
           if (!ds) return;
 
           ds.SelectedSet.clear();
@@ -151,7 +179,7 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
             </span>
           </div>
           <div className="flex-grow-0 flex-shrink-0 basis-20 px-2 py-1">
-            {getNodeSize()}
+            {nodeSize}
           </div>
           <div className="flex-grow-0 flex-shrink-0 basis-44 px-2 py-1">
             {new Date(node.lastModified).toLocaleString()}

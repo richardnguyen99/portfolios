@@ -19,6 +19,7 @@ const FSViewItems: React.FC = () => {
   const [, setItemCount] = React.useState(0);
 
   const nodes = React.useMemo(() => {
+    console.log("nodes updated");
     return (currDir as IDirectory).children;
   }, [currDir]);
 
@@ -56,6 +57,8 @@ const FSViewItems: React.FC = () => {
   );
 
   const filterNodes = React.useMemo(() => {
+    console.log("filterNodes updated");
+
     return nodes.filter((node) => {
       if (node.name.startsWith(".") && !doesShowHidden) return false;
 

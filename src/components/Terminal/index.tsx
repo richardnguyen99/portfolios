@@ -6,6 +6,7 @@ import useWindow from "@components/Window/useWindow";
 import TerminalProvider from "./Provider";
 import useTerminal from "./useTerminal";
 import Caret from "./Caret";
+import { TerminalProps } from "./type";
 
 const InternalTerminal: React.FC = () => {
   const { getActiveState } = useWindow();
@@ -159,9 +160,9 @@ const InternalTerminal: React.FC = () => {
   );
 };
 
-const Terminal: React.FC = () => {
+const Terminal: React.FC<TerminalProps> = ({ initialDir }) => {
   return (
-    <TerminalProvider>
+    <TerminalProvider initialDir={initialDir}>
       <InternalTerminal />
     </TerminalProvider>
   );

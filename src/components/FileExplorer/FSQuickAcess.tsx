@@ -164,31 +164,31 @@ const FSQuickAccess: React.FC = () => {
             </>
           </FSQuickAccessItem>
           <div className="flex flex-col gap-2 ml-[26px] mt-1">
-            <FSQuickAccessSubItem onDoubleClick={handleTabClick("Documents")}>
+            <FSQuickAccessSubItem onClick={handleTabClick("Documents")}>
               <>
                 <FileIcon />
                 <span>Documents</span>
               </>
             </FSQuickAccessSubItem>
-            <FSQuickAccessSubItem onDoubleClick={handleTabClick("Downloads")}>
+            <FSQuickAccessSubItem onClick={handleTabClick("Downloads")}>
               <>
                 <MoveToBottomIcon />
                 <span>Downloads</span>
               </>
             </FSQuickAccessSubItem>
-            <FSQuickAccessSubItem onDoubleClick={handleTabClick("Music")}>
+            <FSQuickAccessSubItem onClick={handleTabClick("Music")}>
               <>
                 <MusicalNoteIcon className="w-4 h-4" />
                 <span>Music</span>
               </>
             </FSQuickAccessSubItem>
-            <FSQuickAccessSubItem onDoubleClick={handleTabClick("Videos")}>
+            <FSQuickAccessSubItem onClick={handleTabClick("Videos")}>
               <>
                 <VideoCameraIcon className="w-4 h-4" />
                 <span>Videos</span>
               </>
             </FSQuickAccessSubItem>
-            <FSQuickAccessSubItem onDoubleClick={handleTabClick("Desktop")}>
+            <FSQuickAccessSubItem onClick={handleTabClick("Desktop")}>
               <>
                 <ComputerDesktopIcon className="w-4 h-4" />
                 <span>Desktop</span>

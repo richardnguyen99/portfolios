@@ -131,20 +131,18 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
         homeFolder = homeFolder.parent as IDirectory;
       }
 
-      setHomeFolder({ ...homeFolder, parent: null });
-
       // Only files with content are stored in localStorage
-      if (node.type === FileType.Directory) {
-        return;
+      if (node.type === FileType.File) {
+        window.localStorage.removeItem(`file-${fileId}`);
+        window.dispatchEvent(
+          new StorageEvent("storage", {
+            key: fileId,
+            newValue: null,
+          }),
+        );
       }
 
-      window.localStorage.removeItem(`file-${fileId}`);
-      window.dispatchEvent(
-        new StorageEvent("storage", {
-          key: fileId,
-          newValue: null,
-        }),
-      );
+      setHomeFolder({ ...homeFolder, parent: null });
     },
     [getHomeFolder, setHomeFolder],
   );
