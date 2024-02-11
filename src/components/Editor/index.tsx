@@ -9,7 +9,6 @@ import useLocalStorage from "@hooks/useLocalStorage";
 import useTheme from "@contexts/Theme/useTheme";
 import useWindow from "@components/Window/useWindow";
 import useSystemCall from "@contexts/SystemCall/useSystemCall";
-import { IDirectory } from "@util/fs/type";
 
 type Props = EditorProps & React.HTMLAttributes<HTMLDivElement>;
 
@@ -45,11 +44,6 @@ const Editor: React.FC<Props> = ({
 
     return defaultFileName;
   }, [file?.writePermission, readOnly, title]);
-
-  React.useEffect(() => {
-    if (file) {
-    }
-  }, [updateFile]);
 
   return (
     <MonacoEditor.Editor
