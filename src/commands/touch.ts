@@ -125,7 +125,8 @@ Try 'touch --help' for more information.\n";
     }
 
     // Update the file
-    _sysCall.updateFile(child as IFile, {
+    console.log("touch: update file");
+    _sysCall.updateFile(currentDir, child as IFile, {
       lastAccessed: new Date(),
     });
   } else {

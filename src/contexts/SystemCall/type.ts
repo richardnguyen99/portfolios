@@ -1,4 +1,4 @@
-import { type INode, type IDirectory, type IFile } from "@util/fs/type";
+import { type INode, type IDirectory, IFile, INodeOption } from "@util/fs/type";
 import * as React from "react";
 
 export type SystemCallContextType = {
@@ -33,7 +33,7 @@ export type SystemCallContextType = {
     initalContent?: string,
   ) => Promise<void>;
   addDirectory: (parent: IDirectory, name: string) => Promise<void>;
-  updateFile: (fileNode: IFile, fileMeta: Partial<IFile>) => void;
+  updateFile: (file: IFile, option: INodeOption) => void;
 
   removeINode: (parent: IDirectory, node: INode) => void;
   walkNode: (currentDir: IDirectory, pathList: string[]) => IDirectory;

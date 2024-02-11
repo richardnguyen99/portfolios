@@ -1,11 +1,11 @@
 import * as React from "react";
 
-import type { IDirectory, IFile, INode } from "@util/fs/type";
+import type { IDirectory, IFile, INode, INodeOption } from "@util/fs/type";
 
 export type SystemCommand = {
   addFile: (path: IDirectory, name: string) => Promise<void>;
   addDirectory: (path: IDirectory, name: string) => Promise<void>;
-  updateFile: (path: IFile, file: Partial<IFile>) => void;
+  updateFile: (currNode: IFile, option: INodeOption) => void;
   removeINode: (path: IDirectory, name: INode) => void;
   walkNode: (currentDir: IDirectory, pathList: string[]) => IDirectory;
 

@@ -1,7 +1,13 @@
 import * as React from "react";
 
 import useFileTree from "@contexts/FileTree/useFileTree";
-import { FileType, IFile, type IDirectory, type INode } from "@util/fs/type";
+import {
+  FileType,
+  IFile,
+  INodeOption,
+  type IDirectory,
+  type INode,
+} from "@util/fs/type";
 import { generateDirectoryId, generateFileId } from "@util/fs/id";
 
 import { SystemCallProviderProps as Props } from "./type";
@@ -10,6 +16,7 @@ import _readDir from "./calls/_readDir";
 import _addNode from "./calls/_addNode";
 import _removeNode from "./calls/_removeNode";
 import _walkNode from "./calls/_walkNode";
+import _updateNode from "./calls/_updateNode";
 
 const SystemCallProvider: React.FC<Props> = ({ children }) => {
   const { getHomeFolder, setHomeFolder } = useFileTree();
@@ -26,6 +33,22 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
       }
 
       setHomeFolder({ ...homeFolder, parent: null });
+    },
+    [getHomeFolder, setHomeFolder],
+  );
+
+  const updateINode = React.useCallback(
+    (node: INode, option: INodeOption) => {
+      _updateNode(node, option);
+
+      const home = getHomeFolder();
+      let currNode = node as IDirectory;
+
+      while (currNode !== null && currNode.parent !== home.parent) {
+        currNode = currNode.parent as IDirectory;
+      }
+
+      setHomeFolder({ ...currNode, parent: null });
     },
     [getHomeFolder, setHomeFolder],
   );
@@ -101,21 +124,11 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
   );
 
   const updateFile = React.useCallback(
-    (fileNode: IFile, fileMeta: Partial<IFile>) => {
-      const updateMeta = Object.keys(fileMeta).filter(Boolean);
-
-      updateMeta.forEach((key) => {
-        const fileKey = key as keyof IFile;
-        const value = fileMeta[fileKey];
-
-        fileNode[fileKey] = value as never;
-      });
-
-      fileNode.lastModified = new Date();
-
-      setHomeFolder({ ...getHomeFolder(), parent: null });
+    (currNode: IFile, option: INodeOption) => {
+      console.log("system call update file");
+      updateINode(currNode, option);
     },
-    [getHomeFolder, setHomeFolder],
+    [updateINode],
   );
 
   const removeINode = React.useCallback(
