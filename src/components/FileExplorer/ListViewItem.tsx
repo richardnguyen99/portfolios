@@ -84,9 +84,9 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
       return "";
     }
 
-    const file = localStorage.getItem(`file-${node.id}`)!;
+    const size = (node as IFile).size;
 
-    return `${file.length} B`;
+    return `${size} B`;
   }, [node]);
 
   const itemStorageListener = React.useCallback(
@@ -99,6 +99,7 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
   );
 
   React.useEffect(() => {
+    console.log("ListViewItem mounted");
     if (!itemRef.current || !ds) return;
 
     const item = itemRef.current;
@@ -107,20 +108,12 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
       ds.addSelectables(itemRef.current);
     }
 
-    if (nodeSize === "") {
-      setNodeSize((prev) => {
-        const newNodeSize = getNodeSize();
-
-        if (nodeSize === newNodeSize) return prev;
-
-        return newNodeSize;
-      });
-    }
-
     if (node.type === FileType.Directory) {
       const numChild = (node as IDirectory).children.length;
 
       setNodeSize(`${numChild} item${numChild > 1 ? "s" : ""}`);
+    } else {
+      setNodeSize(getNodeSize());
     }
 
     window.addEventListener("storage", itemStorageListener);

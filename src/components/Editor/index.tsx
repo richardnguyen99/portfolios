@@ -171,7 +171,7 @@ const Editor: React.FC<Props> = ({
             // Save the file
             if (file) {
               updateFile(file, {
-                size: model?.getValueLength() ?? 0,
+                size: model?.getValue(0, true).length ?? 0,
                 lastModified: new Date(),
               });
 

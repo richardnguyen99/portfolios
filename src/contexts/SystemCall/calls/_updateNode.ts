@@ -38,7 +38,8 @@ const _updateNode = (currNode: INode, option: INodeOption): void => {
     currNode.name = option.name;
   }
 
-  if (option.size) {
+  if (typeof option.size !== "undefined") {
+    console.log("option.size");
     if (currNode.type !== FileType.File) {
       throw new Error(`'${currNode.name}': Not a file`);
     }
@@ -47,6 +48,7 @@ const _updateNode = (currNode: INode, option: INodeOption): void => {
       throw new Error(`'${currNode.name}': Invalid size`);
     }
 
+    console.log("size", option.size);
     (currNode as IFile).size = option.size;
     currNode.lastModified = new Date();
   }
