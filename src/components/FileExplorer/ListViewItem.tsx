@@ -119,7 +119,6 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
 
     if (node.type === FileType.Directory) {
       const numChild = (node as IDirectory).children.length;
-      console.log(node.name, numChild);
 
       setNodeSize(`${numChild} item${numChild > 1 ? "s" : ""}`);
     }

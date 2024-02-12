@@ -23,39 +23,6 @@ const FSViewItems: React.FC = () => {
     return (currDir as IDirectory).children;
   }, [currDir]);
 
-  const updateSelectorArea = React.useCallback(
-    (
-      rect: DOMRect,
-      selectorArea: HTMLElement,
-      windowContainer: HTMLElement,
-    ) => {
-      selectorArea.style.width = `${rect.width}px`;
-      selectorArea.style.left = `${rect.left}px`;
-
-      if (viewType === FEViewType.Grid) {
-        selectorArea.style.height = `${rect.height}px`;
-        selectorArea.style.top = `${rect.y}px`;
-      } else {
-        const fsListViewSortPanel = windowContainer.querySelector(
-          "#fe-listView-sort-panel",
-        );
-
-        if (!fsListViewSortPanel) {
-          selectorArea.style.height = `${rect.height}px`;
-          selectorArea.style.top = `${rect.y}px`;
-
-          return;
-        }
-
-        const panelRect = fsListViewSortPanel.getBoundingClientRect();
-
-        selectorArea.style.height = `${rect.height - panelRect.height}px`;
-        selectorArea.style.top = `${rect.y}px`;
-      }
-    },
-    [viewType],
-  );
-
   const filterNodes = React.useMemo(() => {
     console.log("filterNodes updated");
 
@@ -82,15 +49,8 @@ const FSViewItems: React.FC = () => {
       ".ds-selector-area",
     ) as HTMLElement;
 
-    if (!containerRefCurrent || !windowContainer || !selectorArea) return;
-
-    const resizeObserver = new ResizeObserver((entries) => {
-      if (!entries[0]) return;
-
-      const fsContentRect = entries[0].target.getBoundingClientRect();
-
-      updateSelectorArea(fsContentRect, selectorArea, windowContainer);
-    });
+    if (!containerRefCurrent || !windowContainer || !selectorArea || !ds)
+      return;
 
     const mutationObserver = new MutationObserver((entries) => {
       if (!entries[0]) return;
@@ -101,27 +61,28 @@ const FSViewItems: React.FC = () => {
 
       if (!fsContent) return;
 
-      const fsContentRect = fsContent.getBoundingClientRect();
-
-      updateSelectorArea(fsContentRect, selectorArea, windowContainer);
+      console.log("DS area updated on mutation");
+      ds.setSettings({
+        area: containerRef.current!,
+        draggability: false,
+        selectableClass: "selectable",
+        selectorClass: "selector",
+        selectedClass: "selected",
+      });
     });
 
     if (containerRefCurrent) {
-      resizeObserver.observe(containerRefCurrent);
       mutationObserver.observe(windowContainer as Node, {
         attributes: true,
-        childList: true,
-        subtree: true,
       });
     }
 
     return () => {
       if (containerRefCurrent) {
-        resizeObserver.unobserve(containerRefCurrent);
         mutationObserver.disconnect();
       }
     };
-  }, [getId, updateSelectorArea]);
+  }, [ds, containerRef, getId]);
 
   React.useEffect(() => {
     if (!containerRef.current || !ds) return;
@@ -133,6 +94,8 @@ const FSViewItems: React.FC = () => {
       selectorClass: "selector",
       selectedClass: "selected",
     });
+
+    console.log("DS settings updated");
 
     const dsCallback = ({
       items,
