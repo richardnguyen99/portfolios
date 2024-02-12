@@ -18,6 +18,7 @@ const _addNode = (parentNode: IDirectory, newNode: INode): void => {
   }
 
   parentNode.children.push(newNode);
+  parentNode.lastModified = new Date();
 };
 
 export default _addNode;

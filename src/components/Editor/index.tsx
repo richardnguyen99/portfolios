@@ -8,6 +8,7 @@ import parseLanguageId from "./parseLanguageId";
 import useLocalStorage from "@hooks/useLocalStorage";
 import useTheme from "@contexts/Theme/useTheme";
 import useWindow from "@components/Window/useWindow";
+import useSystemCall from "@contexts/SystemCall/useSystemCall";
 
 type Props = EditorProps & React.HTMLAttributes<HTMLDivElement>;
 
@@ -18,6 +19,7 @@ const Editor: React.FC<Props> = ({
 }) => {
   const { theme } = useTheme();
   const { getTitle, setTitle, getId } = useWindow();
+  const { updateFile } = useSystemCall();
   const [text, setText] = useLocalStorage<string>(
     `file-${getId()}`,
     initialText,
@@ -42,12 +44,6 @@ const Editor: React.FC<Props> = ({
 
     return defaultFileName;
   }, [file?.writePermission, readOnly, title]);
-
-  React.useEffect(() => {
-    if (file) {
-      file.lastAccessed = new Date();
-    }
-  }, [file]);
 
   return (
     <MonacoEditor.Editor
@@ -174,9 +170,10 @@ const Editor: React.FC<Props> = ({
 
             // Save the file
             if (file) {
-              file.content = model?.getValue() ?? "";
-              file.lastChanged = new Date();
-              file.size = file.content.length;
+              updateFile(file, {
+                size: model?.getValueLength() ?? 0,
+                lastModified: new Date(),
+              });
 
               setText(model?.getValue() ?? "");
             }
