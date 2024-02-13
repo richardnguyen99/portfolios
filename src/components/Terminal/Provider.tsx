@@ -8,10 +8,12 @@ import useFileTree from "@contexts/FileTree/useFileTree";
 import { IFile, IDirectory, FileType } from "@util/fs/type";
 import { ModalProps } from "@contexts/Modal/type";
 import useWindow from "@components/Window/useWindow";
-import { Editor, Remark } from "@components";
+import { Remark } from "@components";
 import { compareDirectories } from "@util/fs/compare";
 import useSystemCall from "@contexts/SystemCall/useSystemCall";
 import { generateFileId } from "@util/fs/id";
+
+const Editor = React.lazy(() => import("@components/Editor"));
 
 const TerminalProvider: React.FC<TerminalProviderProps> = ({
   children,

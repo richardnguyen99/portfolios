@@ -3,8 +3,11 @@ import clsx from "classnames";
 import { Menu, Transition } from "@headlessui/react";
 
 import IconHolder from "./IconHolder";
-import { HotKey, Terminal, FileExplorer } from "@components";
+import { HotKey } from "@components";
 import useModal from "@contexts/Modal/useModal";
+
+const Terminal = React.lazy(() => import("@components/Terminal"));
+const FileExplorer = React.lazy(() => import("@components/FileExplorer"));
 
 const LogoIcon: React.FC = () => {
   return (

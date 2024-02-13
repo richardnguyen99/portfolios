@@ -6,7 +6,8 @@ import { CheckBadgeIcon } from "@heroicons/react/16/solid";
 import { INode } from "@util/fs/type";
 import { ModalProps } from "@contexts/Modal/type";
 import useModal from "@contexts/Modal/useModal";
-import { Terminal } from "@components";
+
+const Terminal = React.lazy(() => import("@components/Terminal"));
 
 type Props = {
   node: INode;

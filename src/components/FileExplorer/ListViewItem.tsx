@@ -5,11 +5,13 @@ import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 
 import { FileType, IDirectory, IFile, INode } from "@util/fs/type";
 import useDragSelect from "./DragSelect/hook";
-import { Editor, Icon } from "@components";
+import { Icon } from "@components";
 import useFileExplorer from "./hook";
 import useModal from "@contexts/Modal/useModal";
 import { ModalProps } from "@contexts/Modal/type";
 import ItemContextMenu from "./ItemContextMenu";
+
+const Editor = React.lazy(() => import("@components/Editor"));
 
 type Props = {
   node: INode;

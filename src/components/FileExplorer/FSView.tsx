@@ -9,12 +9,13 @@ import DragSelect from "./DragSelect";
 import FSViewItems from "./FSViewItems";
 import FSFooter from "./FSFooter";
 import { ModalProps } from "@contexts/Modal/type";
-import { Terminal } from "@components";
 import useFileExplorer from "./hook";
 import useModal from "@contexts/Modal/useModal";
 import useWindow from "@components/Window/useWindow";
 import AddNewFileDialog from "./Dialog/AddNewFile";
 import AddNewFolderDialog from "./Dialog/AddNewFolder";
+
+const Terminal = React.lazy(() => import("@components/Terminal"));
 
 const FSView: React.FC = () => {
   const { currDir } = useFileExplorer();
