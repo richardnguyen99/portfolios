@@ -84,6 +84,7 @@ const FSView: React.FC = () => {
           console.log("new file saved");
           handleCloseDialog();
         },
+        initialName: "new file.txt",
       },
     });
   }, [handleCloseDialog]);
