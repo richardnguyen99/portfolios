@@ -2,14 +2,14 @@ import * as React from "react";
 import clsx from "classnames";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 
-type Props = AlertDialog.AlertDialogContentProps & {
+export type AddNewFolderModalProps = AlertDialog.AlertDialogContentProps & {
   onCanceled?: () => void;
   onSaved?: () => void;
 };
 
 const AddNewFileDialogRenderer: React.ForwardRefRenderFunction<
   HTMLDivElement,
-  Props
+  AddNewFolderModalProps
 > = (props, ref) => {
   const { onCanceled, onSaved, ...rest } = props;
 
@@ -40,7 +40,7 @@ const AddNewFileDialogRenderer: React.ForwardRefRenderFunction<
   );
 };
 
-const AddNewFileDialog = React.forwardRef(AddNewFileDialogRenderer);
-AddNewFileDialog.displayName = "AddNewFileDialog";
+const AddNewFileDialogModal = React.forwardRef(AddNewFileDialogRenderer);
+AddNewFileDialogModal.displayName = "AddNewFileDialog";
 
-export default AddNewFileDialog;
+export default AddNewFileDialogModal;

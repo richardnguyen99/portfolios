@@ -2,14 +2,14 @@ import * as React from "react";
 import clsx from "classnames";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 
-export type AddNewFileModalProps = AlertDialog.AlertDialogContentProps & {
+export type DeleteFileModalProps = AlertDialog.AlertDialogContentProps & {
   onCanceled?: () => void;
   onSaved?: () => void;
 };
 
-const AddNewFileDialogRenderer: React.ForwardRefRenderFunction<
+const DeleteFileDialogRenderer: React.ForwardRefRenderFunction<
   HTMLDivElement,
-  AddNewFileModalProps
+  DeleteFileModalProps
 > = (props, ref) => {
   const { onCanceled, onSaved, ...rest } = props;
 
@@ -26,7 +26,9 @@ const AddNewFileDialogRenderer: React.ForwardRefRenderFunction<
         "border border-gray-300 dark:border-gray-700",
       )}
     >
-      <AlertDialog.Title className="text-lg font-extrabold mb-4 px-4"></AlertDialog.Title>
+      <AlertDialog.Title className="text-lg font-extrabold mb-4 px-4">
+        Delete file?
+      </AlertDialog.Title>
       <AlertDialog.Description className="text-base mb-6 px-4">
         This action is irreversible. Make sure this is not an accident.
       </AlertDialog.Description>
@@ -67,7 +69,7 @@ const AddNewFileDialogRenderer: React.ForwardRefRenderFunction<
   );
 };
 
-const AddNewFileDialogModal = React.forwardRef(AddNewFileDialogRenderer);
-AddNewFileDialogModal.displayName = "AddNewFileDialog";
+const DeleteFileDialogModal = React.forwardRef(DeleteFileDialogRenderer);
+DeleteFileDialogModal.displayName = "DeleteFileDialog";
 
-export default AddNewFileDialogModal;
+export default DeleteFileDialogModal;
