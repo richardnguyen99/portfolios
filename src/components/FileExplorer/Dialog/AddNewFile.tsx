@@ -48,6 +48,15 @@ const AddNewFileDialogRenderer: React.ForwardRefRenderFunction<
     }
   }, [addFile, currDir, name, onSaved]);
 
+  const handleKeyDown = React.useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter") {
+        handleSaveClick();
+      }
+    },
+    [handleSaveClick],
+  );
+
   React.useEffect(() => {
     if (nameList.includes(name)) {
       setError("File already exists");
@@ -80,23 +89,26 @@ const AddNewFileDialogRenderer: React.ForwardRefRenderFunction<
       <AlertDialog.Title className="text-lg font-extrabold mb-4 px-4">
         New File
       </AlertDialog.Title>
-      <AlertDialog.Description className="text-base mb-2 px-4">
-        <input
-          type="text"
-          value={name}
-          onChange={handleNameChange}
-          className={clsx(
-            "w-full px-2 py-1",
-            "rounded-md focus:ring-1 border",
-            "bg-slate-100/30 dark:bg-gray-700/30",
-            "hover:bg-slate-100/50 dark:hover:bg-gray-700/50",
-            "hover:bg-slate-100/100 dark:focus:bg-gray-700/75",
-            "border-gray-300 dark:border-gray-700",
-            "hover:border-gray-400/50 dark:border-gray-600/50",
-            "focus:outline-none focus:ring-gray-500 dark:focus:ring-gray-400",
-          )}
-          placeholder="Enter file name"
-        />
+      <AlertDialog.Description asChild>
+        <div className="w-full px-4 mb-2">
+          <input
+            type="text"
+            value={name}
+            onChange={handleNameChange}
+            onKeyDown={handleKeyDown}
+            className={clsx(
+              "w-full px-2 py-1",
+              "rounded-md focus:ring-1 border",
+              "bg-slate-100/30 dark:bg-gray-700/30",
+              "hover:bg-slate-100/50 dark:hover:bg-gray-700/50",
+              "hover:bg-slate-100/100 dark:focus:bg-gray-700/75",
+              "border-gray-300 dark:border-gray-700",
+              "hover:border-gray-400/50 dark:border-gray-600/50",
+              "focus:outline-none focus:ring-gray-500 dark:focus:ring-gray-400",
+            )}
+            placeholder="Enter file name"
+          />
+        </div>
       </AlertDialog.Description>
       <AlertDialog.Description className="text-sm text-red-500 dark:text-red-400 px-4 mb-2 h-5">
         {error}
