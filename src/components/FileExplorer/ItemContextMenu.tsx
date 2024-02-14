@@ -1,7 +1,6 @@
 import * as React from "react";
 import clsx from "clsx";
 import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
-import { CheckBadgeIcon } from "@heroicons/react/16/solid";
 
 import { FileType, INode } from "@util/fs/type";
 import { ModalProps } from "@contexts/Modal/type";
@@ -108,20 +107,6 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
           </div>
         </ContextMenuPrimitive.Item>
       )}
-      <ContextMenuPrimitive.Item
-        className={clsx(
-          "flex items-center",
-          "px-3 py-2 rounded-md",
-          "hover:bg-gray-400 dark:hover:bg-gray-600",
-          "outline-none focus:outline-none border-none",
-        )}
-      >
-        <div className="flex items-center gap-2">
-          <CheckBadgeIcon className="w-4 h-4" />
-          <div>Open</div>
-        </div>
-        <div className="ml-auto font-mono font-light text-xs">something</div>
-      </ContextMenuPrimitive.Item>
 
       <ContextMenuPrimitive.Separator className="my-2 dark:bg-gray-600 h-[1px]" />
 
