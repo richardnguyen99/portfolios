@@ -135,11 +135,6 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
     (parentNode: IDirectory, node: INode) => {
       _removeNode(parentNode, node);
 
-      // Only files with content are stored in localStorage
-      if (node.type === FileType.Directory) {
-        return;
-      }
-
       const fileId = node.id;
       const home = getHomeFolder();
       let homeFolder = parentNode;
@@ -150,6 +145,9 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
       }
 
       setHomeFolder({ ...homeFolder, parent: null });
+
+      // Only files with content are stored in localStorage
+      if (node.type === FileType.Directory) return;
 
       // Remove file content from local storage
       window.localStorage.removeItem(`file-${fileId}`);

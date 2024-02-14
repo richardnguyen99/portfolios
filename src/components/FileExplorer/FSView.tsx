@@ -18,16 +18,11 @@ import AddNewFolderDialog from "./Dialog/AddNewFolder";
 const Terminal = React.lazy(() => import("@components/Terminal"));
 
 const FSView: React.FC = () => {
-  const { currDir } = useFileExplorer();
+  const { currDir, dialog, setDialog } = useFileExplorer();
   const { addModal } = useModal();
   const { getId } = useWindow();
 
   const windowRef = React.useRef<HTMLElement | null>(null);
-  const [dialog, setDialog] = React.useState({
-    open: false,
-    dialog: null as React.FC | null,
-    props: null as object | null,
-  });
 
   const handleOpenTerminalClick = React.useCallback(() => {
     const newTerminal: ModalProps = {
@@ -52,7 +47,7 @@ const FSView: React.FC = () => {
       dialog: null,
       props: null,
     });
-  }, []);
+  }, [setDialog]);
 
   const handleNewFolderClick = React.useCallback(() => {
     setDialog({
@@ -69,7 +64,7 @@ const FSView: React.FC = () => {
         },
       },
     });
-  }, [handleCloseDialog]);
+  }, [handleCloseDialog, setDialog]);
 
   const handleNewFileClick = React.useCallback(() => {
     setDialog({
@@ -87,7 +82,7 @@ const FSView: React.FC = () => {
         initialName: "new file.txt",
       },
     });
-  }, [handleCloseDialog]);
+  }, [handleCloseDialog, setDialog]);
 
   React.useEffect(() => {
     const windowContainer = document.querySelector(

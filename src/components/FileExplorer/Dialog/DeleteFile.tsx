@@ -2,16 +2,43 @@ import * as React from "react";
 import clsx from "classnames";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 
+import { FileType, IDirectory, INode } from "@util/fs/type";
+import useSystemCall from "@contexts/SystemCall/useSystemCall";
+import useFileExplorer from "../hook";
+
 export type DeleteFileModalProps = AlertDialog.AlertDialogContentProps & {
   onCanceled?: () => void;
   onSaved?: () => void;
+  node?: INode;
 };
 
 const DeleteFileDialogRenderer: React.ForwardRefRenderFunction<
   HTMLDivElement,
   DeleteFileModalProps
 > = (props, ref) => {
-  const { onCanceled, onSaved, ...rest } = props;
+  const { onCanceled, onSaved, node, ...rest } = props;
+
+  if (node === undefined) {
+    throw new Error("node is required");
+  }
+
+  const { removeINode } = useSystemCall();
+  const { currDir } = useFileExplorer();
+
+  const [error, setError] = React.useState<string | null>(null);
+
+  const handleDeleteClick = React.useCallback(() => {
+    try {
+      removeINode(currDir as IDirectory, node);
+    } catch (err) {
+      setError((err as Error).message);
+      return;
+    }
+
+    if (onSaved) {
+      onSaved();
+    }
+  }, [currDir, node, onSaved, removeINode]);
 
   return (
     <AlertDialog.Content
@@ -30,7 +57,9 @@ const DeleteFileDialogRenderer: React.ForwardRefRenderFunction<
         Delete file?
       </AlertDialog.Title>
       <AlertDialog.Description className="text-base mb-6 px-4">
-        This action is irreversible. Make sure this is not an accident.
+        This action is irreversible.{" "}
+        {node.type === FileType.Directory && "All the content will be lost. "}
+        Make sure this is not an accident.
       </AlertDialog.Description>
       <div className="flex items-center border-t border-gray-300 dark:border-gray-700">
         <AlertDialog.Cancel
@@ -50,10 +79,9 @@ const DeleteFileDialogRenderer: React.ForwardRefRenderFunction<
         </AlertDialog.Cancel>
         <AlertDialog.Action
           asChild
-          onClick={onSaved}
+          onClick={handleDeleteClick}
           className={clsx(
             "w-1/2 py-2",
-            "hover:bg-gray-100 dark:hover:bg-gray-700",
             "rounded-br-lg",
             "font-bold text-red-500 dark:text-red-400",
             "hover:bg-red-50 dark:hover:bg-red-900/30",

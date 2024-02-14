@@ -42,6 +42,12 @@ export type FEHistoryAction =
   | { type: "next" }
   | { type: "manual"; payload: FEHistoryState };
 
+export type FEDialog = {
+  open: boolean;
+  dialog: React.FC | null;
+  props: object | null;
+};
+
 export type FileExplorerContextType = {
   currDir: INode;
   dragging: boolean;
@@ -49,12 +55,14 @@ export type FileExplorerContextType = {
   viewSize: FEViewSize;
   doesShowHidden: boolean;
   historyState: FEHistoryState;
+  dialog: FEDialog;
 
   setViewSize: React.Dispatch<React.SetStateAction<FEViewSize>>;
   setViewType: React.Dispatch<React.SetStateAction<FEViewType>>;
   setDragging: React.Dispatch<React.SetStateAction<boolean>>;
   setCurrDir: React.Dispatch<React.SetStateAction<INode>>;
   setShowHidden: React.Dispatch<React.SetStateAction<boolean>>;
+  setDialog: React.Dispatch<React.SetStateAction<FEDialog>>;
   dispatchHistoryState: React.Dispatch<FEHistoryAction>;
 };
 
