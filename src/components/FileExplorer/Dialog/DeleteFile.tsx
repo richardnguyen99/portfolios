@@ -61,6 +61,10 @@ const DeleteFileDialogRenderer: React.ForwardRefRenderFunction<
         {node.type === FileType.Directory && "All the content will be lost. "}
         Make sure this is not an accident.
       </AlertDialog.Description>
+      <AlertDialog.Description className="text-sm text-red-500 dark:text-red-400 px-4 mb-2 h-5">
+        {error}
+      </AlertDialog.Description>
+
       <div className="flex items-center border-t border-gray-300 dark:border-gray-700">
         <AlertDialog.Cancel
           asChild
