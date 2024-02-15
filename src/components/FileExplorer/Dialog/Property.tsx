@@ -72,7 +72,7 @@ const PropertyDialogRenderer: React.ForwardRefRenderFunction<
         </div>
       </AlertDialog.Title>
       <AlertDialog.Description asChild>
-        <div className={clsx("flex flex-col items-center", "px-2 pb-2")}>
+        <div className={clsx("flex flex-col items-center gap-2", "px-4 pb-4")}>
           <div
             className={clsx(
               "flex items-center justify-center",
@@ -84,6 +84,34 @@ const PropertyDialogRenderer: React.ForwardRefRenderFunction<
           <div className="text-lg font-bold">{node.name}</div>
           <div className="text-sm text-gray-500 dark:text-gray-400">
             {getContent(node)}
+          </div>
+          <div className="flex flex-col just w-full">
+            <div
+              className={clsx(
+                "w-full p-2",
+                "bg-gray-200/30 dark:bg-gray-600/30",
+                "hover:bg-gray-200/50 dark:hover:bg-gray-600/50",
+                "active:bg-gray-200/70 dark:active:bg-gray-600/70",
+                "rounded-t-md border",
+                "border-gray-300 dark:border-gray-600",
+              )}
+            >
+              <h3 className="text-sm font-extrabold mb-1">Last Modified</h3>
+              <div>{node.lastModified.toLocaleString()}</div>
+            </div>
+            <div
+              className={clsx(
+                "w-full p-2",
+                "bg-gray-200/30 dark:bg-gray-600/30",
+                "hover:bg-gray-200/50 dark:hover:bg-gray-600/50",
+                "active:bg-gray-200/70 dark:active:bg-gray-600/70",
+                "rounded-b-md border border-t-0",
+                "border-gray-300 dark:border-gray-600",
+              )}
+            >
+              <h3 className="text-sm font-extrabold mb-1">Created</h3>
+              <div>{node.lastCreated.toLocaleString()}</div>
+            </div>
           </div>
         </div>
       </AlertDialog.Description>
