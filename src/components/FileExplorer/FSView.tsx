@@ -13,6 +13,7 @@ import useModal from "@contexts/Modal/useModal";
 import useWindow from "@components/Window/useWindow";
 import AddNewFileDialog from "./Dialog/AddNewFile";
 import AddNewFolderDialog from "./Dialog/AddNewFolder";
+import PropertyDialog, { PropertyDialogProps } from "./Dialog/Property";
 
 const Terminal = React.lazy(() => import("@components/Terminal"));
 
@@ -79,6 +80,19 @@ const FSView: React.FC = () => {
       },
     });
   }, [handleCloseDialog, setDialog]);
+
+  const handlePropertyClick = React.useCallback(() => {
+    setDialog({
+      open: true,
+      dialog: PropertyDialog,
+      props: {
+        onClose: () => {
+          handleCloseDialog();
+        },
+        node: currDir,
+      } as PropertyDialogProps,
+    });
+  }, [currDir, handleCloseDialog, setDialog]);
 
   React.useEffect(() => {
     const windowContainer = document.querySelector(
@@ -158,6 +172,23 @@ const FSView: React.FC = () => {
             <div className="flex items-center gap-2">
               <div className="w-4 h-4"></div>
               <div>Open in Terminal</div>
+            </div>
+          </ContextMenuPrimitive.Item>
+
+          <ContextMenuPrimitive.Separator className="my-2 dark:bg-gray-600 h-[1px]" />
+
+          <ContextMenuPrimitive.Item
+            onClick={handlePropertyClick}
+            className={clsx(
+              "flex items-center",
+              "px-3 py-2 rounded-md",
+              "hover:bg-gray-400 dark:hover:bg-gray-600",
+              "outline-none focus:outline-none border-none",
+            )}
+          >
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4"></div>
+              <div>Properties</div>
             </div>
           </ContextMenuPrimitive.Item>
         </ContextMenuPrimitive.Content>
