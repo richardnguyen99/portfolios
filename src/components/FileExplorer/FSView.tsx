@@ -2,7 +2,6 @@ import * as React from "react";
 import clsx from "classnames";
 import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
-import { CheckBadgeIcon } from "@heroicons/react/16/solid";
 import { Transition } from "@headlessui/react";
 
 import DragSelect from "./DragSelect";
@@ -55,13 +54,12 @@ const FSView: React.FC = () => {
       dialog: AddNewFolderDialog,
       props: {
         onCanceled: () => {
-          console.log("new folder canceled");
           handleCloseDialog();
         },
         onSaved: () => {
-          console.log("new folder saved");
           handleCloseDialog();
         },
+        initialName: "new_folder",
       },
     });
   }, [handleCloseDialog, setDialog]);
@@ -72,14 +70,12 @@ const FSView: React.FC = () => {
       dialog: AddNewFileDialog,
       props: {
         onCanceled: () => {
-          console.log("new file canceled");
           handleCloseDialog();
         },
         onSaved: () => {
-          console.log("new file saved");
           handleCloseDialog();
         },
-        initialName: "new file.txt",
+        initialName: "new_file.txt",
       },
     });
   }, [handleCloseDialog, setDialog]);
@@ -162,22 +158,6 @@ const FSView: React.FC = () => {
             <div className="flex items-center gap-2">
               <div className="w-4 h-4"></div>
               <div>Open in Terminal</div>
-            </div>
-          </ContextMenuPrimitive.Item>
-          <ContextMenuPrimitive.Item
-            className={clsx(
-              "flex items-center",
-              "px-3 py-2 rounded-md",
-              "hover:bg-gray-400 dark:hover:bg-gray-600",
-              "outline-none focus:outline-none border-none",
-            )}
-          >
-            <div className="flex items-center gap-2">
-              <CheckBadgeIcon className="w-4 h-4" />
-              <div>Open</div>
-            </div>
-            <div className="ml-auto font-mono font-light text-xs">
-              something
             </div>
           </ContextMenuPrimitive.Item>
         </ContextMenuPrimitive.Content>

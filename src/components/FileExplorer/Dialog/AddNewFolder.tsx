@@ -47,6 +47,15 @@ const AddNewFileDialogRenderer: React.ForwardRefRenderFunction<
     }
   }, [addDirectory, currDir, name, onSaved]);
 
+  const handleKeyDown = React.useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter") {
+        handleSaveClick();
+      }
+    },
+    [handleSaveClick],
+  );
+
   React.useEffect(() => {
     if (nameList.includes(name)) {
       setError("File already exists");
@@ -84,6 +93,8 @@ const AddNewFileDialogRenderer: React.ForwardRefRenderFunction<
           type="text"
           value={name}
           onChange={handleNameChange}
+          onKeyDown={handleKeyDown}
+          autoFocus
           className={clsx(
             "w-full px-2 py-1",
             "rounded-md focus:ring-1 border",

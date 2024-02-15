@@ -96,6 +96,7 @@ const AddNewFileDialogRenderer: React.ForwardRefRenderFunction<
             value={name}
             onChange={handleNameChange}
             onKeyDown={handleKeyDown}
+            autoFocus
             className={clsx(
               "w-full px-2 py-1",
               "rounded-md focus:ring-1 border",
