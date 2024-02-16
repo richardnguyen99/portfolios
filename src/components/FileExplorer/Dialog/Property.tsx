@@ -130,6 +130,7 @@ const PropertyDialogRenderer: React.ForwardRefRenderFunction<
               {getContent(node)}
             </div>
           </div>
+
           <div
             className={clsx(
               "relative flex w-full p-2",
@@ -156,6 +157,7 @@ const PropertyDialogRenderer: React.ForwardRefRenderFunction<
               </button>
             </div>
           </div>
+
           <div className="flex flex-col just w-full">
             <div
               className={clsx(
@@ -180,6 +182,25 @@ const PropertyDialogRenderer: React.ForwardRefRenderFunction<
             >
               <h3 className="text-sm font-extrabold mb-1">Created</h3>
               <div>{node.lastCreated.toLocaleString()}</div>
+            </div>
+          </div>
+
+          <div
+            className={clsx(
+              "relative flex w-full p-2",
+              "bg-gray-200/30 dark:bg-gray-600/30",
+              "hover:bg-gray-200/50 dark:hover:bg-gray-600/50",
+              "rounded-md border",
+              "border-gray-300 dark:border-gray-600",
+            )}
+          >
+            <div className={clsx("flex-auto")}>
+              <h3 className="text-sm font-extrabold mb-1">Permissions</h3>
+              <div className="flex items-center gap-3">
+                {node.readPermission && <code>Read</code>}
+                {node.readPermission && node.writePermission && <code>/</code>}
+                {node.writePermission && <code>Write</code>}
+              </div>
             </div>
           </div>
         </div>
