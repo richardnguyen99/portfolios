@@ -131,6 +131,14 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
     [updateINode],
   );
 
+  const updateDirectory = React.useCallback(
+    (currNode: IDirectory, option: INodeOption) => {
+      console.log("system call update directory");
+      updateINode(currNode, option);
+    },
+    [updateINode],
+  );
+
   const removeINode = React.useCallback(
     (parentNode: IDirectory, node: INode) => {
       _removeNode(parentNode, node);
@@ -213,6 +221,7 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
       addFile,
       addDirectory,
       updateFile,
+      updateDirectory,
       removeINode,
       walkNode,
       readDir,
@@ -225,6 +234,7 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
     readDir,
     removeINode,
     updateFile,
+    updateDirectory,
     walkNode,
     searchNodeFromRoot,
   ]);

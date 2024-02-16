@@ -34,6 +34,7 @@ export type SystemCallContextType = {
   ) => Promise<void>;
   addDirectory: (parent: IDirectory, name: string) => Promise<void>;
   updateFile: (file: IFile, option: INodeOption) => void;
+  updateDirectory: (dir: IDirectory, option: INodeOption) => void;
 
   removeINode: (parent: IDirectory, node: INode) => void;
   walkNode: (currentDir: IDirectory, pathList: string[]) => IDirectory;

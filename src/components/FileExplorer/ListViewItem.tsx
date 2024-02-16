@@ -10,6 +10,7 @@ import useFileExplorer from "./hook";
 import useModal from "@contexts/Modal/useModal";
 import { ModalProps } from "@contexts/Modal/type";
 import ItemContextMenu from "./ItemContextMenu";
+import useSystemCall from "@contexts/SystemCall/useSystemCall";
 
 const Editor = React.lazy(() => import("@components/Editor"));
 
@@ -21,6 +22,7 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
   const { ds } = useDragSelect();
   const { addModal } = useModal();
   const { setCurrDir, dispatchHistoryState, setDragging } = useFileExplorer();
+  const { updateDirectory, updateFile } = useSystemCall();
 
   const itemRef = React.useRef<HTMLDivElement>(null);
   const [starred, setStarred] = React.useState(false);
@@ -54,6 +56,7 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
 
         ds?.SelectedSet.clear();
         addModal(editorModal);
+        updateFile(node as IFile, { lastAccessed: new Date() });
 
         return;
       }
@@ -70,6 +73,7 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
       setCurrDir(node);
       ds?.SelectedSet.clear();
       setDragging(false);
+      updateDirectory(node as IDirectory, { lastAccessed: new Date() });
     },
     [
       addModal,
@@ -78,6 +82,8 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
       node,
       setCurrDir,
       setDragging,
+      updateFile,
+      updateDirectory,
     ],
   );
 
@@ -101,7 +107,6 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
   );
 
   React.useEffect(() => {
-    console.log("ListViewItem mounted");
     if (!itemRef.current || !ds) return;
 
     const item = itemRef.current;

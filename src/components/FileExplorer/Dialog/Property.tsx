@@ -19,6 +19,29 @@ export type PropertyDialogProps = AlertDialog.AlertDialogContentProps & {
   node?: INode;
 };
 
+type PropertyFieldProps = {
+  label: string;
+  value: string;
+};
+
+const PropertyField: React.FC<PropertyFieldProps> = ({ label, value }) => {
+  return (
+    <div
+      className={clsx(
+        "w-full p-2",
+        "bg-gray-200/30 dark:bg-gray-600/30",
+        "hover:bg-gray-200/50 dark:hover:bg-gray-600/50",
+        "border-gray-300 dark:border-gray-600",
+        "first:rounded-t-md last:rounded-b-md",
+        "border first:border-b-0 last:border-t-0",
+      )}
+    >
+      <h3 className="text-sm font-extrabold mb-1">{label}</h3>
+      <div>{value}</div>
+    </div>
+  );
+};
+
 const PropertyDialogRenderer: React.ForwardRefRenderFunction<
   HTMLDivElement,
   PropertyDialogProps
@@ -158,31 +181,21 @@ const PropertyDialogRenderer: React.ForwardRefRenderFunction<
             </div>
           </div>
 
-          <div className="flex flex-col just w-full">
-            <div
-              className={clsx(
-                "w-full p-2",
-                "bg-gray-200/30 dark:bg-gray-600/30",
-                "hover:bg-gray-200/50 dark:hover:bg-gray-600/50",
-                "rounded-t-md border",
-                "border-gray-300 dark:border-gray-600",
-              )}
-            >
-              <h3 className="text-sm font-extrabold mb-1">Last Modified</h3>
-              <div>{node.lastModified.toLocaleString()}</div>
-            </div>
-            <div
-              className={clsx(
-                "w-full p-2",
-                "bg-gray-200/30 dark:bg-gray-600/30",
-                "hover:bg-gray-200/50 dark:hover:bg-gray-600/50",
-                "rounded-b-md border border-t-0",
-                "border-gray-300 dark:border-gray-600",
-              )}
-            >
-              <h3 className="text-sm font-extrabold mb-1">Created</h3>
-              <div>{node.lastCreated.toLocaleString()}</div>
-            </div>
+          <div className={clsx("flex flex-col just w-full", "")}>
+            {node.type === FileType.File && (
+              <PropertyField
+                label="Last Accessed"
+                value={node.lastAccessed.toLocaleString()}
+              />
+            )}
+            <PropertyField
+              label="Last Modified"
+              value={node.lastModified.toLocaleString()}
+            />
+            <PropertyField
+              label="Last Created"
+              value={node.lastCreated.toLocaleString()}
+            />
           </div>
 
           <div
