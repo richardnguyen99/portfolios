@@ -55,18 +55,60 @@ const PropertyDialogRenderer: React.ForwardRefRenderFunction<
 
   const { addModal } = useModal();
 
-  const getContent = React.useCallback((node: INode) => {
-    if (node.type === FileType.Directory) {
-      return "Folder";
+  const getDirectoryContent = React.useCallback((node: IDirectory) => {
+    let size = 0;
+    let items = -1;
+
+    if (node.children.length === 0) {
+      return "Empty Folder";
     }
 
-    const fileContent =
-      localStorage.getItem(`file-${node.id}`) ?? (node as IFile).content;
+    const stack: INode[] = [node];
 
-    const [fileSize, fileUnit] = formatBytesSigFig(fileContent.length, 1);
+    while (stack.length) {
+      const current = stack.pop();
+
+      if (!current) {
+        break;
+      }
+
+      items++;
+
+      if (current.type === FileType.Directory) {
+        const dir = current as IDirectory;
+        for (const child of dir.children) {
+          stack.push(child);
+        }
+      }
+
+      if (current.type === FileType.File) {
+        size += (current as IFile).size;
+      }
+    }
+
+    const [fileSize, fileUnit] = formatBytesSigFig(size, 1);
+
+    return `${items} item${
+      items > 1 ? "s" : ""
+    }, with total size ${fileSize} ${fileUnit}`;
+  }, []);
+
+  const getFileContent = React.useCallback((file: IFile) => {
+    const [fileSize, fileUnit] = formatBytesSigFig(file.size, 1);
 
     return `${fileSize} ${fileUnit}`;
   }, []);
+
+  const getContent = React.useCallback(
+    (node: INode) => {
+      if (node.type === FileType.Directory) {
+        return getDirectoryContent(node as IDirectory);
+      }
+
+      return getFileContent(node as IFile);
+    },
+    [getDirectoryContent, getFileContent],
+  );
 
   const getParentNodePath = React.useCallback((node: INode) => {
     const pathNameList = [];
