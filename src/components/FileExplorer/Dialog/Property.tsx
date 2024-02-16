@@ -7,12 +7,13 @@ import {
   XCircleFillIcon,
 } from "@primer/octicons-react";
 
-import { FileType, IDirectory, INode } from "@util/fs/type";
+import { FileType, IDirectory, IFile, INode } from "@util/fs/type";
 import Folder from "@components/Icon/Folder";
 import PlainText from "@components/Icon/PlainText";
 import { ModalProps } from "@contexts/Modal/type";
 import Terminal from "@components/Terminal";
 import useModal from "@contexts/Modal/useModal";
+import formatBytesSigFig from "@util/formatBytesSigFig";
 
 export type PropertyDialogProps = AlertDialog.AlertDialogContentProps & {
   onClose?: () => void;
@@ -59,7 +60,12 @@ const PropertyDialogRenderer: React.ForwardRefRenderFunction<
       return "Folder";
     }
 
-    return "Plain Text";
+    const fileContent =
+      localStorage.getItem(`file-${node.id}`) ?? (node as IFile).content;
+
+    const [fileSize, fileUnit] = formatBytesSigFig(fileContent.length, 1);
+
+    return `${fileSize} ${fileUnit}`;
   }, []);
 
   const getParentNodePath = React.useCallback((node: INode) => {
