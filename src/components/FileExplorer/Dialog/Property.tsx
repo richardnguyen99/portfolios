@@ -33,7 +33,7 @@ const PropertyField: React.FC<PropertyFieldProps> = ({ label, value }) => {
         "hover:bg-gray-200/50 dark:hover:bg-gray-600/50",
         "border-gray-300 dark:border-gray-600",
         "first:rounded-t-md last:rounded-b-md",
-        "border first:border-b-0 last:border-t-0",
+        "border [&:not(:first-child)]:border-t-0",
       )}
     >
       <h3 className="text-sm font-extrabold mb-1">{label}</h3>
