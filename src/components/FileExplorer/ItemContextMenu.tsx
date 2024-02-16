@@ -9,6 +9,7 @@ import useFileExplorer from "./hook";
 import DeleteFileDialogModal, {
   DeleteFileModalProps,
 } from "./Dialog/DeleteFile";
+import PropertyDialog, { PropertyDialogProps } from "./Dialog/Property";
 
 const Terminal = React.lazy(() => import("@components/Terminal"));
 
@@ -19,6 +20,14 @@ type Props = {
 const ItemContextMenu: React.FC<Props> = ({ node }) => {
   const { addModal } = useModal();
   const { setDialog } = useFileExplorer();
+
+  const handleCloseDialog = React.useCallback(() => {
+    setDialog({
+      open: false,
+      dialog: null,
+      props: null,
+    });
+  }, [setDialog]);
 
   const handleOpenTerminalClick = React.useCallback(() => {
     const newTerminal: ModalProps = {
@@ -43,25 +52,30 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
       dialog: DeleteFileDialogModal,
       props: {
         onCanceled: () => {
-          setDialog({
-            open: false,
-            dialog: null,
-            props: null,
-          });
+          handleCloseDialog();
         },
 
         onSaved: () => {
-          setDialog({
-            open: false,
-            dialog: null,
-            props: null,
-          });
+          handleCloseDialog();
         },
 
         node,
       } as DeleteFileModalProps,
     });
-  }, [node, setDialog]);
+  }, [handleCloseDialog, node, setDialog]);
+
+  const handlePropertyClick = React.useCallback(() => {
+    setDialog({
+      open: true,
+      dialog: PropertyDialog,
+      props: {
+        onClose: () => {
+          handleCloseDialog();
+        },
+        node,
+      } as PropertyDialogProps,
+    });
+  }, [handleCloseDialog, node, setDialog]);
 
   return (
     <ContextMenuPrimitive.Content
@@ -157,6 +171,7 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
       <ContextMenuPrimitive.Separator className="my-2 dark:bg-gray-600 h-[1px]" />
 
       <ContextMenuPrimitive.Item
+        onClick={handlePropertyClick}
         className={clsx(
           "flex items-center",
           "px-3 py-2 rounded-md",
@@ -166,7 +181,7 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
       >
         <div className="flex items-center gap-2">
           <div className="w-4 h-4"></div>
-          <div>Property</div>
+          <div>Properties</div>
         </div>
         <div className="ml-auto font-mono font-light text-xs">something</div>
       </ContextMenuPrimitive.Item>
