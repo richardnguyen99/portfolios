@@ -1,12 +1,17 @@
 import * as React from "react";
 import clsx from "clsx";
 import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
-import { CheckBadgeIcon } from "@heroicons/react/16/solid";
 
-import { INode } from "@util/fs/type";
+import { FileType, INode } from "@util/fs/type";
 import { ModalProps } from "@contexts/Modal/type";
 import useModal from "@contexts/Modal/useModal";
-import { Terminal } from "@components";
+import useFileExplorer from "./hook";
+import DeleteFileDialogModal, {
+  DeleteFileModalProps,
+} from "./Dialog/DeleteFile";
+import PropertyDialog, { PropertyDialogProps } from "./Dialog/Property";
+
+const Terminal = React.lazy(() => import("@components/Terminal"));
 
 type Props = {
   node: INode;
@@ -14,6 +19,15 @@ type Props = {
 
 const ItemContextMenu: React.FC<Props> = ({ node }) => {
   const { addModal } = useModal();
+  const { setDialog } = useFileExplorer();
+
+  const handleCloseDialog = React.useCallback(() => {
+    setDialog({
+      open: false,
+      dialog: null,
+      props: null,
+    });
+  }, [setDialog]);
 
   const handleOpenTerminalClick = React.useCallback(() => {
     const newTerminal: ModalProps = {
@@ -31,6 +45,37 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
 
     addModal(newTerminal);
   }, [addModal, node]);
+
+  const handleDeleteClick = React.useCallback(() => {
+    setDialog({
+      open: true,
+      dialog: DeleteFileDialogModal,
+      props: {
+        onCanceled: () => {
+          handleCloseDialog();
+        },
+
+        onSaved: () => {
+          handleCloseDialog();
+        },
+
+        node,
+      } as DeleteFileModalProps,
+    });
+  }, [handleCloseDialog, node, setDialog]);
+
+  const handlePropertyClick = React.useCallback(() => {
+    setDialog({
+      open: true,
+      dialog: PropertyDialog,
+      props: {
+        onClose: () => {
+          handleCloseDialog();
+        },
+        node,
+      } as PropertyDialogProps,
+    });
+  }, [handleCloseDialog, node, setDialog]);
 
   return (
     <ContextMenuPrimitive.Content
@@ -60,8 +105,26 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
         </div>
         <div className="ml-auto font-mono font-light text-xs">something</div>
       </ContextMenuPrimitive.Item>
+      {node.type === FileType.Directory && (
+        <ContextMenuPrimitive.Item
+          onClick={handleOpenTerminalClick}
+          className={clsx(
+            "flex items-center",
+            "px-3 py-2 rounded-md",
+            "hover:bg-gray-400 dark:hover:bg-gray-600",
+            "outline-none focus:outline-none border-none",
+          )}
+        >
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4"></div>
+            <div>Open in Temrinal</div>
+          </div>
+        </ContextMenuPrimitive.Item>
+      )}
+
+      <ContextMenuPrimitive.Separator className="my-2 dark:bg-gray-600 h-[1px]" />
+
       <ContextMenuPrimitive.Item
-        onClick={handleOpenTerminalClick}
         className={clsx(
           "flex items-center",
           "px-3 py-2 rounded-md",
@@ -71,8 +134,9 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
       >
         <div className="flex items-center gap-2">
           <div className="w-4 h-4"></div>
-          <div>Open in Temrinal</div>
+          <div>Copy</div>
         </div>
+        <div className="ml-auto font-mono font-light text-xs">something</div>
       </ContextMenuPrimitive.Item>
       <ContextMenuPrimitive.Item
         className={clsx(
@@ -83,8 +147,41 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
         )}
       >
         <div className="flex items-center gap-2">
-          <CheckBadgeIcon className="w-4 h-4" />
-          <div>Open</div>
+          <div className="w-4 h-4"></div>
+          <div>Move</div>
+        </div>
+        <div className="ml-auto font-mono font-light text-xs">something</div>
+      </ContextMenuPrimitive.Item>
+      <ContextMenuPrimitive.Item
+        onClick={handleDeleteClick}
+        className={clsx(
+          "flex items-center",
+          "px-3 py-2 rounded-md",
+          "hover:bg-gray-400 dark:hover:bg-gray-600",
+          "outline-none focus:outline-none border-none",
+        )}
+      >
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4"></div>
+          <div>Delete</div>
+        </div>
+        <div className="ml-auto font-mono font-light text-xs">something</div>
+      </ContextMenuPrimitive.Item>
+
+      <ContextMenuPrimitive.Separator className="my-2 dark:bg-gray-600 h-[1px]" />
+
+      <ContextMenuPrimitive.Item
+        onClick={handlePropertyClick}
+        className={clsx(
+          "flex items-center",
+          "px-3 py-2 rounded-md",
+          "hover:bg-gray-400 dark:hover:bg-gray-600",
+          "outline-none focus:outline-none border-none",
+        )}
+      >
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4"></div>
+          <div>Properties</div>
         </div>
         <div className="ml-auto font-mono font-light text-xs">something</div>
       </ContextMenuPrimitive.Item>

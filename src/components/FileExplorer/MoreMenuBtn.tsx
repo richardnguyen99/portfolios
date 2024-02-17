@@ -7,7 +7,8 @@ import IconBtn from "./IconBtn";
 import useFileExplorer from "./hook";
 import useModal from "@contexts/Modal/useModal";
 import { ModalProps } from "@contexts/Modal/type";
-import { Terminal } from "@components";
+
+const Terminal = React.lazy(() => import("@components/Terminal"));
 
 type MoreMenuItemProps = {
   active: boolean;

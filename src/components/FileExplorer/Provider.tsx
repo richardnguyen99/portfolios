@@ -26,6 +26,13 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
   const [view, setView] = React.useState<FEViewType>(FEViewType.List);
   const [doesShowHidden, setShowHidden] = React.useState<boolean>(false);
   const [currDir, setCurrDir] = React.useState<INode>(initialDirectory);
+  const [dialog, setDialog] = React.useState<FileExplorerContextType["dialog"]>(
+    {
+      open: false,
+      dialog: null,
+      props: null,
+    },
+  );
 
   const [historyState, setHistoryState] = React.useReducer(
     (state: FEHistoryState, action: FEHistoryAction) => {
@@ -82,15 +89,17 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
       viewSize: size,
       doesShowHidden,
       historyState,
+      dialog,
 
       setDragging: setDragging,
       setViewSize: setSize,
       setViewType: setView,
       setCurrDir,
       setShowHidden,
+      setDialog,
       dispatchHistoryState: setHistoryState,
     };
-  }, [currDir, doesShowHidden, dragging, historyState, size, view]);
+  }, [currDir, dialog, doesShowHidden, dragging, historyState, size, view]);
 
   const updateNode = React.useCallback(
     (startNode: IDirectory, searchNode: IDirectory) => {

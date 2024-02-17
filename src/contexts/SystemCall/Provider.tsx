@@ -131,14 +131,17 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
     [updateINode],
   );
 
+  const updateDirectory = React.useCallback(
+    (currNode: IDirectory, option: INodeOption) => {
+      console.log("system call update directory");
+      updateINode(currNode, option);
+    },
+    [updateINode],
+  );
+
   const removeINode = React.useCallback(
     (parentNode: IDirectory, node: INode) => {
       _removeNode(parentNode, node);
-
-      // Only files with content are stored in localStorage
-      if (node.type === FileType.Directory) {
-        return;
-      }
 
       const fileId = node.id;
       const home = getHomeFolder();
@@ -150,6 +153,9 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
       }
 
       setHomeFolder({ ...homeFolder, parent: null });
+
+      // Only files with content are stored in localStorage
+      if (node.type === FileType.Directory) return;
 
       // Remove file content from local storage
       window.localStorage.removeItem(`file-${fileId}`);
@@ -215,6 +221,7 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
       addFile,
       addDirectory,
       updateFile,
+      updateDirectory,
       removeINode,
       walkNode,
       readDir,
@@ -227,6 +234,7 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
     readDir,
     removeINode,
     updateFile,
+    updateDirectory,
     walkNode,
     searchNodeFromRoot,
   ]);

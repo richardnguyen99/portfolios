@@ -1,8 +1,12 @@
 import * as React from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
-import { FileExplorer, Screen, Terminal } from "@components";
+// import { FileExplorer, Screen, Terminal } from "@components";
 import useModal from "@contexts/Modal/useModal";
+
+const FileExplorer = React.lazy(() => import("@components/FileExplorer"));
+const Screen = React.lazy(() => import("@components/Screen"));
+const Terminal = React.lazy(() => import("@components/Terminal"));
 
 import "./index.css";
 

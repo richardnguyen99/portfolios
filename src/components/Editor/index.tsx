@@ -114,12 +114,7 @@ const Editor: React.FC<Props> = ({
               theme === "dark" ? "#374151ff" : twColors.gray[400],
           },
           inherit: true,
-          rules: [
-            { token: "comment", foreground: "ffa500", fontStyle: "italic" },
-            { token: "comment.js", foreground: "008800", fontStyle: "bold" },
-            { token: "comment.css", foreground: "0000ff" }, // will inherit fontStyle from `comment` above
-            { token: "comment.scss", foreground: "0000ff" }, // will inherit fontStyle from `comment` above
-          ],
+          rules: [],
         });
       }}
       value={text}

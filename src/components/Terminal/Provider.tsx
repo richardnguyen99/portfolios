@@ -8,10 +8,12 @@ import useFileTree from "@contexts/FileTree/useFileTree";
 import { IFile, IDirectory, FileType } from "@util/fs/type";
 import { ModalProps } from "@contexts/Modal/type";
 import useWindow from "@components/Window/useWindow";
-import { Editor, Remark } from "@components";
+import { Remark } from "@components";
 import { compareDirectories } from "@util/fs/compare";
 import useSystemCall from "@contexts/SystemCall/useSystemCall";
 import { generateFileId } from "@util/fs/id";
+
+const Editor = React.lazy(() => import("@components/Editor"));
 
 const TerminalProvider: React.FC<TerminalProviderProps> = ({
   children,
@@ -19,7 +21,7 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
 }) => {
   const { getId, getSize } = useWindow();
   const { closeModal, addModal } = useModal();
-  const { getHomeFolder, getRootFolder } = useFileTree();
+  const { home, getHomeFolder, getRootFolder } = useFileTree();
   const { addINode, addFile, addDirectory, updateFile, walkNode, removeINode } =
     useSystemCall();
 
@@ -268,6 +270,40 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
     // convert px to ch units
   }, [getCharacterSize, getWindowSize]);
 
+  const updateNode = React.useCallback(
+    (startNode: IDirectory, searchNode: IDirectory) => {
+      const stack = [startNode];
+      const visited = new Set<IDirectory>();
+      let foundNode: IDirectory | null = null;
+
+      while (stack.length > 0) {
+        const node = stack.pop() as IDirectory;
+
+        if (node.id === searchNode.id) {
+          foundNode = node;
+          break;
+        }
+
+        if (visited.has(node)) {
+          continue;
+        }
+
+        visited.add(node);
+
+        for (let i = node.children.length - 1; i >= 0; i--) {
+          const child = node.children[i];
+
+          if (child.type === FileType.Directory) {
+            stack.push(child as IDirectory);
+          }
+        }
+      }
+
+      return foundNode;
+    },
+    [],
+  );
+
   const systemCalls = React.useMemo<SystemCommand>(
     () => ({
       addFile,
@@ -379,6 +415,17 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
     console.log("set initial prompt");
     setPrompt(`[richard@portlios ${initialDir.name}]$ `);
   }, [getHomeFolder, initialDir, prompt]);
+
+  React.useEffect(() => {
+    console.log("update terminal currDir", home);
+    const newNode = updateNode(home, currentFolder.current as IDirectory);
+
+    setCurrentFolder((prev) => ({
+      previous: prev.current as IDirectory,
+      current: newNode || prev.current,
+    }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [home, updateNode]);
 
   return (
     <TerminalContext.Provider value={contextValue}>
