@@ -11,6 +11,7 @@ import useModal from "@contexts/Modal/useModal";
 import { ModalProps } from "@contexts/Modal/type";
 import ItemContextMenu from "./ItemContextMenu";
 import useSystemCall from "@contexts/SystemCall/useSystemCall";
+import useRecentFiles from "@contexts/RecentFiles/hook";
 
 const Editor = React.lazy(() => import("@components/Editor"));
 
@@ -23,6 +24,7 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
   const { addModal } = useModal();
   const { setCurrDir, dispatchHistoryState, setDragging } = useFileExplorer();
   const { updateDirectory, updateFile } = useSystemCall();
+  const { addRecentFile } = useRecentFiles();
 
   const itemRef = React.useRef<HTMLDivElement>(null);
   const [starred, setStarred] = React.useState(false);
@@ -57,6 +59,7 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
         ds?.SelectedSet.clear();
         addModal(editorModal);
         updateFile(node as IFile, { lastAccessed: new Date() });
+        addRecentFile(node as IFile);
 
         return;
       }
