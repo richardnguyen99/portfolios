@@ -12,9 +12,11 @@ import {
   MusicalNoteIcon,
   VideoCameraIcon,
 } from "@heroicons/react/16/solid";
+
 import useFileTree from "@contexts/FileTree/useFileTree";
 import useFileExplorer from "./hook";
 import { FileType, IDirectory } from "@util/fs/type";
+import { FEDirectoryType } from "./type";
 
 interface QuickAccessFolders {
   [key: string]: IDirectory;
@@ -72,7 +74,8 @@ const FSQuickAccessSubItem: React.FC<
 
 const FSQuickAccess: React.FC = () => {
   const { home } = useFileTree();
-  const { currDir, setCurrDir, dispatchHistoryState } = useFileExplorer();
+  const { currDir, setCurrDir, dispatchHistoryState, setDirectoryType } =
+    useFileExplorer();
 
   const quickAccessFolders = React.useMemo(() => {
     const children = (home as IDirectory).children;
@@ -126,10 +129,23 @@ const FSQuickAccess: React.FC = () => {
         });
 
         setCurrDir(dir);
+        setDirectoryType(FEDirectoryType.File);
       };
     },
-    [currDir.name, dispatchHistoryState, quickAccessFolders, setCurrDir],
+    [
+      currDir.name,
+      dispatchHistoryState,
+      quickAccessFolders,
+      setCurrDir,
+      setDirectoryType,
+    ],
   );
+
+  const handleRecentClick = React.useCallback(() => {
+    console.log("Recent Clicked");
+
+    setDirectoryType(FEDirectoryType.Recent);
+  }, [setDirectoryType]);
 
   return (
     <div
@@ -145,7 +161,7 @@ const FSQuickAccess: React.FC = () => {
       <h1 className="text-lg font-extrabold">Quick Access</h1>
       <div className="flex flex-col gap-3 mt-3">
         <div className="flex flex-col gap-1">
-          <FSQuickAccessItem>
+          <FSQuickAccessItem onClick={handleRecentClick}>
             <>
               <ClockIcon />
               <span>Recent</span>

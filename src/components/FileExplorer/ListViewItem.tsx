@@ -79,14 +79,15 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
       updateDirectory(node as IDirectory, { lastAccessed: new Date() });
     },
     [
-      addModal,
-      dispatchHistoryState,
-      ds?.SelectedSet,
       node,
+      dispatchHistoryState,
       setCurrDir,
+      ds?.SelectedSet,
       setDragging,
-      updateFile,
       updateDirectory,
+      addModal,
+      updateFile,
+      addRecentFile,
     ],
   );
 

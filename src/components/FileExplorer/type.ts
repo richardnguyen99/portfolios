@@ -16,6 +16,12 @@ export enum FEViewType {
   Grid = 1,
 }
 
+export enum FEDirectoryType {
+  File = 0,
+  Recent = 1,
+  Starred = 2,
+}
+
 export enum FEViewSize {
   Tiny = 0,
   Small = 1,
@@ -56,6 +62,7 @@ export type FileExplorerContextType = {
   doesShowHidden: boolean;
   historyState: FEHistoryState;
   dialog: FEDialog;
+  directoryType: FEDirectoryType;
 
   setViewSize: React.Dispatch<React.SetStateAction<FEViewSize>>;
   setViewType: React.Dispatch<React.SetStateAction<FEViewType>>;
@@ -63,6 +70,7 @@ export type FileExplorerContextType = {
   setCurrDir: React.Dispatch<React.SetStateAction<INode>>;
   setShowHidden: React.Dispatch<React.SetStateAction<boolean>>;
   setDialog: React.Dispatch<React.SetStateAction<FEDialog>>;
+  setDirectoryType: React.Dispatch<React.SetStateAction<FEDirectoryType>>;
   dispatchHistoryState: React.Dispatch<FEHistoryAction>;
 };
 

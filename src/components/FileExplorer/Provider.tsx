@@ -9,6 +9,7 @@ import {
   type FEHistory,
   FEHistoryState,
   FEHistoryAction,
+  FEDirectoryType,
 } from "./type";
 import { FileType, IDirectory, INode } from "@util/fs/type";
 import useFileTree from "@contexts/FileTree/useFileTree";
@@ -26,6 +27,9 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
   const [view, setView] = React.useState<FEViewType>(FEViewType.List);
   const [doesShowHidden, setShowHidden] = React.useState<boolean>(false);
   const [currDir, setCurrDir] = React.useState<INode>(initialDirectory);
+  const [directoryType, setDirectoryType] = React.useState<FEDirectoryType>(
+    FEDirectoryType.File,
+  );
   const [dialog, setDialog] = React.useState<FileExplorerContextType["dialog"]>(
     {
       open: false,
@@ -89,6 +93,7 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
       viewSize: size,
       doesShowHidden,
       historyState,
+      directoryType,
       dialog,
 
       setDragging: setDragging,
@@ -97,9 +102,19 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
       setCurrDir,
       setShowHidden,
       setDialog,
+      setDirectoryType,
       dispatchHistoryState: setHistoryState,
     };
-  }, [currDir, dialog, doesShowHidden, dragging, historyState, size, view]);
+  }, [
+    currDir,
+    dialog,
+    directoryType,
+    doesShowHidden,
+    dragging,
+    historyState,
+    size,
+    view,
+  ]);
 
   const updateNode = React.useCallback(
     (startNode: IDirectory, searchNode: IDirectory) => {
