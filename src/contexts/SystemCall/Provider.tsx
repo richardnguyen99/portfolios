@@ -19,7 +19,7 @@ import _walkNode from "./calls/_walkNode";
 import _updateNode from "./calls/_updateNode";
 
 const SystemCallProvider: React.FC<Props> = ({ children }) => {
-  const { getHomeFolder, setHomeFolder } = useFileTree();
+  const { getHomeFolder, getRootFolder, setHomeFolder } = useFileTree();
 
   const addINode = React.useCallback(
     (parentNode: IDirectory, newNode: INode) => {
@@ -213,6 +213,38 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
     [getHomeFolder],
   );
 
+  const searchNodeWithPath = React.useCallback(
+    (from: IDirectory | null, path: string) => {
+      const startNode = from ?? getRootFolder();
+      const pathList = path.split("/").filter((p) => p.length > 0);
+
+      if (pathList.length === 0) {
+        return null;
+      }
+
+      let currNode: INode = startNode;
+
+      for (const p of pathList) {
+        if (startNode.type !== FileType.Directory) {
+          return null;
+        }
+
+        const index = (currNode as IDirectory).children.findIndex(
+          (child) => child.name === p,
+        );
+
+        if (index === -1) {
+          return null;
+        }
+
+        currNode = (currNode as IDirectory).children[index];
+      }
+
+      return currNode;
+    },
+    [getRootFolder],
+  );
+
   const readDir = React.useCallback(_readDir, []);
 
   const contextValue = React.useMemo(() => {
@@ -226,6 +258,7 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
       walkNode,
       readDir,
       searchNodeFromRoot,
+      searchNodeWithPath,
     };
   }, [
     addDirectory,
@@ -237,6 +270,7 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
     updateDirectory,
     walkNode,
     searchNodeFromRoot,
+    searchNodeWithPath,
   ]);
 
   return (

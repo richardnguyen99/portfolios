@@ -1,6 +1,7 @@
 export enum FileType {
   File,
   Directory,
+  Link,
 }
 
 export interface INode {
@@ -29,6 +30,11 @@ export interface IFile extends INode {
 export interface IDirectory extends INode {
   type: FileType.Directory;
   children: INode[];
+}
+
+export interface ILink extends INode {
+  type: FileType.Link;
+  target: string;
 }
 
 export type INodeOption = Partial<{

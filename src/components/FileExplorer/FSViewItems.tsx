@@ -2,17 +2,22 @@ import * as React from "react";
 import { type DSCallbackObject, type DSInputElement } from "dragselect";
 
 import useWindow from "@components/Window/useWindow";
-import { IDirectory } from "@util/fs/type";
+import { IDirectory, INode } from "@util/fs/type";
 import useDragSelect from "./DragSelect/hook";
 import GridView from "./GridView";
 import useFileExplorer from "./hook";
-import { FEViewType } from "./type";
+import { FEDirectoryType, FEViewType } from "./type";
 import ListView from "./ListView";
+import useRecentFiles from "@contexts/RecentFiles/hook";
+import useSystemCall from "@contexts/SystemCall/useSystemCall";
 
 const FSViewItems: React.FC = () => {
   const { getId } = useWindow();
-  const { currDir, viewType, setDragging, doesShowHidden } = useFileExplorer();
+  const { currDir, viewType, directoryType, setDragging, doesShowHidden } =
+    useFileExplorer();
   const { ds } = useDragSelect();
+  const { searchNodeWithPath } = useSystemCall();
+  const { recentFiles } = useRecentFiles();
 
   const containerRef = React.useRef<HTMLDivElement>(null);
 
@@ -20,8 +25,21 @@ const FSViewItems: React.FC = () => {
 
   const nodes = React.useMemo(() => {
     console.log("nodes updated");
+
+    if (directoryType === FEDirectoryType.Recent) {
+      const recentNodes = recentFiles.map((recentFile) => {
+        const node = searchNodeWithPath(null, recentFile.path);
+
+        if (!node) return null;
+
+        return node;
+      });
+
+      return recentNodes.filter((node) => node !== null) as INode[];
+    }
+
     return (currDir as IDirectory).children;
-  }, [currDir]);
+  }, [currDir, directoryType, recentFiles, searchNodeWithPath]);
 
   const filterNodes = React.useMemo(() => {
     console.log("filterNodes updated");

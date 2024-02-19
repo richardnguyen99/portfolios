@@ -94,20 +94,25 @@ const FSQuickAccess: React.FC = () => {
     return obj;
   }, [home]);
 
-  const handleHomeClick = React.useCallback(() => {
-    if (currDir.id === home.id) return;
+  const handleHomeClick = React.useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      e.preventDefault();
+      if (currDir.id === home.id) return;
 
-    dispatchHistoryState({
-      type: "push",
-      payload: {
-        id: home.id,
-        name: home.name,
-        parentId: home.parent?.id ?? "",
-      },
-    });
+      dispatchHistoryState({
+        type: "push",
+        payload: {
+          id: home.id,
+          name: home.name,
+          parentId: home.parent?.id ?? "",
+        },
+      });
 
-    setCurrDir(home);
-  }, [currDir.id, dispatchHistoryState, home, setCurrDir]);
+      setCurrDir(home);
+      setDirectoryType(FEDirectoryType.File);
+    },
+    [currDir.id, dispatchHistoryState, home, setCurrDir, setDirectoryType],
+  );
 
   const handleTabClick = React.useCallback(
     (dirName: string) => {
@@ -144,8 +149,23 @@ const FSQuickAccess: React.FC = () => {
   const handleRecentClick = React.useCallback(() => {
     console.log("Recent Clicked");
 
+    setCurrDir({
+      id: "recent",
+      name: "Recent",
+      type: FileType.Directory,
+      children: [],
+      parent: null,
+      owner: "richard",
+      readPermission: true,
+      writePermission: true,
+      executePermission: true,
+      lastAccessed: new Date(),
+      lastChanged: new Date(),
+      lastCreated: new Date(),
+      lastModified: new Date(),
+    } as IDirectory);
     setDirectoryType(FEDirectoryType.Recent);
-  }, [setDirectoryType]);
+  }, [setCurrDir, setDirectoryType]);
 
   return (
     <div

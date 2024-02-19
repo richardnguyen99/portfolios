@@ -28,7 +28,6 @@ const RecentFilesProvider: React.FC<RecentFilesProviderProps> = ({
 
   const addRecentFile = React.useCallback(
     (file: IFile) => {
-      console.log("addRecentFile", file);
       const fileIndex = recentFiles.findIndex(
         (recentFile) => recentFile.id === file.id,
       );

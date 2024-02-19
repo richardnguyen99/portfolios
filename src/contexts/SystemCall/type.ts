@@ -41,6 +41,7 @@ export type SystemCallContextType = {
   readDir: (fileTree: IDirectory) => INode[];
 
   searchNodeFromRoot: (nodeId: string) => INode | null;
+  searchNodeWithPath: (from: IDirectory | null, path: string) => INode | null;
 };
 
 export type SystemCallProviderProps = {
