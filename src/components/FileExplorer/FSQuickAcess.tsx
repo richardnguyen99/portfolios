@@ -149,6 +149,8 @@ const FSQuickAccess: React.FC = () => {
   const handleRecentClick = React.useCallback(() => {
     console.log("Recent Clicked");
 
+    if (currDir.name === "Recent") return;
+
     setCurrDir({
       id: "recent",
       name: "Recent",
@@ -165,7 +167,16 @@ const FSQuickAccess: React.FC = () => {
       lastModified: new Date(),
     } as IDirectory);
     setDirectoryType(FEDirectoryType.Recent);
-  }, [setCurrDir, setDirectoryType]);
+
+    dispatchHistoryState({
+      type: "push",
+      payload: {
+        id: "recent",
+        name: "Recent",
+        parentId: "",
+      },
+    });
+  }, [currDir.name, dispatchHistoryState, setCurrDir, setDirectoryType]);
 
   return (
     <div

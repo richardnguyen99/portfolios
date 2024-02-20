@@ -153,6 +153,13 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
   React.useEffect(() => {
     console.log("update currDir", home);
     const newNode = updateNode(home, currDir as IDirectory);
+
+    if (!newNode) {
+      setCurrDir((prev) => ({ ...prev }));
+
+      return;
+    }
+
     setCurrDir(newNode as INode);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [home, updateNode]);

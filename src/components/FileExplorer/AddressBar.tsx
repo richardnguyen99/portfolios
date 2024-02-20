@@ -5,8 +5,9 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@primer/octicons-react";
 import IconBtn from "./IconBtn";
 import useFileExplorer from "./hook";
 import useFileTree from "@contexts/FileTree/useFileTree";
-import { INode, type IDirectory } from "@util/fs/type";
+import { FileType, INode, type IDirectory } from "@util/fs/type";
 import useSystemCall from "@contexts/SystemCall/useSystemCall";
+import { FEDirectoryType } from "./type";
 
 const AddressBtn: React.FC<
   React.PropsWithChildren<
@@ -66,9 +67,16 @@ const AddressBtn: React.FC<
 
 const AddressBar: React.FC = () => {
   const { home } = useFileTree();
-  const { dragging, currDir, historyState, setCurrDir, dispatchHistoryState } =
-    useFileExplorer();
+  const {
+    dragging,
+    currDir,
+    historyState,
+    setCurrDir,
+    setDirectoryType,
+    dispatchHistoryState,
+  } = useFileExplorer();
   const { searchNodeFromRoot } = useSystemCall();
+  const { directoryType } = useFileExplorer();
 
   const addressList = React.useMemo(() => {
     const pathList = [];
@@ -97,9 +105,34 @@ const AddressBar: React.FC = () => {
 
       if (newNode) {
         setCurrDir(newNode);
+        setDirectoryType(FEDirectoryType.File);
+
         dispatchHistoryState({
           type: "previous",
         });
+      } else {
+        if (currTab.name === "Recent") {
+          setDirectoryType(FEDirectoryType.Recent);
+          setCurrDir({
+            id: "recent",
+            name: "Recent",
+            type: FileType.Directory,
+            children: [],
+            parent: null,
+            owner: "richard",
+            readPermission: true,
+            writePermission: true,
+            executePermission: true,
+            lastAccessed: new Date(),
+            lastChanged: new Date(),
+            lastCreated: new Date(),
+            lastModified: new Date(),
+          } as IDirectory);
+
+          dispatchHistoryState({
+            type: "previous",
+          });
+        }
       }
     },
     [
@@ -108,6 +141,7 @@ const AddressBar: React.FC = () => {
       historyState.index,
       searchNodeFromRoot,
       setCurrDir,
+      setDirectoryType,
     ],
   );
 
@@ -124,12 +158,43 @@ const AddressBar: React.FC = () => {
 
       if (newNode) {
         setCurrDir(newNode);
+        setDirectoryType(FEDirectoryType.File);
         dispatchHistoryState({
           type: "next",
         });
+      } else {
+        if (currTab.name === "Recent") {
+          setDirectoryType(FEDirectoryType.Recent);
+          setCurrDir({
+            id: "recent",
+            name: "Recent",
+            type: FileType.Directory,
+            children: [],
+            parent: null,
+            owner: "richard",
+            readPermission: true,
+            writePermission: true,
+            executePermission: true,
+            lastAccessed: new Date(),
+            lastChanged: new Date(),
+            lastCreated: new Date(),
+            lastModified: new Date(),
+          } as IDirectory);
+
+          dispatchHistoryState({
+            type: "next",
+          });
+        }
       }
     },
-    [dispatchHistoryState, historyState, searchNodeFromRoot, setCurrDir],
+    [
+      dispatchHistoryState,
+      historyState.history,
+      historyState.index,
+      searchNodeFromRoot,
+      setCurrDir,
+      setDirectoryType,
+    ],
   );
 
   React.useEffect(() => {
@@ -173,12 +238,35 @@ const AddressBar: React.FC = () => {
           },
         )}
       >
-        {addressList.map((address, i) => (
-          <div key={i} className="flex items-center gap-3">
-            <AddressBtn key={i} nodeIdx={i} node={address} />
-            <p key={`p-${i}`}>/</p>
-          </div>
-        ))}
+        {directoryType === FEDirectoryType.Recent ? (
+          <AddressBtn
+            node={
+              {
+                id: "recent",
+                name: "Recent",
+                type: FileType.Directory,
+                children: [],
+                parent: null,
+                owner: "richard",
+                readPermission: true,
+                writePermission: true,
+                executePermission: true,
+                lastAccessed: new Date(),
+                lastChanged: new Date(),
+                lastCreated: new Date(),
+                lastModified: new Date(),
+              } as IDirectory
+            }
+            nodeIdx={-1}
+          />
+        ) : (
+          addressList.map((address, i) => (
+            <div key={i} className="flex items-center gap-3">
+              <AddressBtn key={i} nodeIdx={i} node={address} />
+              <p key={`p-${i}`}>/</p>
+            </div>
+          ))
+        )}
         <div
           className={clsx(
             "absolute w-10 h-full right-0",
