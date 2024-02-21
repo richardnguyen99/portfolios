@@ -2,7 +2,7 @@ import * as React from "react";
 import clsx from "clsx";
 import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 
-import { FileType, INode } from "@util/fs/type";
+import { FileType, IDirectory, INode } from "@util/fs/type";
 import { ModalProps } from "@contexts/Modal/type";
 import useModal from "@contexts/Modal/useModal";
 import useFileExplorer from "./hook";
@@ -10,6 +10,7 @@ import DeleteFileDialogModal, {
   DeleteFileModalProps,
 } from "./Dialog/DeleteFile";
 import PropertyDialog, { PropertyDialogProps } from "./Dialog/Property";
+import { FEDirectoryType } from "./type";
 
 const Terminal = React.lazy(() => import("@components/Terminal"));
 
@@ -19,7 +20,13 @@ type Props = {
 
 const ItemContextMenu: React.FC<Props> = ({ node }) => {
   const { addModal } = useModal();
-  const { setDialog } = useFileExplorer();
+  const {
+    directoryType,
+    setDialog,
+    setCurrDir,
+    setDirectoryType,
+    dispatchHistoryState,
+  } = useFileExplorer();
 
   const handleCloseDialog = React.useCallback(() => {
     setDialog({
@@ -45,6 +52,22 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
 
     addModal(newTerminal);
   }, [addModal, node]);
+
+  const handleOpenItemLocationClick = React.useCallback(() => {
+    console.log("Open Item Location", node);
+    const nodeParent = node.parent as IDirectory;
+    setCurrDir(nodeParent);
+    setDirectoryType(FEDirectoryType.File);
+
+    dispatchHistoryState({
+      type: "push",
+      payload: {
+        id: nodeParent.id,
+        name: nodeParent.name,
+        parentId: nodeParent.parent?.id ?? "",
+      },
+    });
+  }, [dispatchHistoryState, node, setCurrDir, setDirectoryType]);
 
   const handleDeleteClick = React.useCallback(() => {
     setDialog({
@@ -105,6 +128,22 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
         </div>
         <div className="ml-auto font-mono font-light text-xs">something</div>
       </ContextMenuPrimitive.Item>
+      {directoryType === FEDirectoryType.Recent && (
+        <ContextMenuPrimitive.Item
+          onClick={handleOpenItemLocationClick}
+          className={clsx(
+            "flex items-center",
+            "px-3 py-2 rounded-md",
+            "hover:bg-gray-400 dark:hover:bg-gray-600",
+            "outline-none focus:outline-none border-none",
+          )}
+        >
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4"></div>
+            <div>Open Item Location</div>
+          </div>
+        </ContextMenuPrimitive.Item>
+      )}
       {node.type === FileType.Directory && (
         <ContextMenuPrimitive.Item
           onClick={handleOpenTerminalClick}

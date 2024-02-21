@@ -38,6 +38,8 @@ const FSViewItems: React.FC = () => {
       return recentNodes.filter((node) => node !== null) as INode[];
     }
 
+    console.log(currDir);
+
     return (currDir as IDirectory).children;
   }, [currDir, directoryType, recentFiles, searchNodeWithPath]);
 
