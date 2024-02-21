@@ -154,7 +154,7 @@ const FSViewItems: React.FC = () => {
       {viewType === FEViewType.Grid ? (
         <GridView nodes={filterNodes} />
       ) : (
-        <ListView nodes={filterNodes} />
+        <ListView key={directoryType} nodes={filterNodes} />
       )}
     </div>
   );

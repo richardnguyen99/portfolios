@@ -3,10 +3,10 @@ import clsx from "classnames";
 import { ChevronDownIcon, ChevronUpIcon } from "@primer/octicons-react";
 import { FolderIcon } from "@heroicons/react/24/outline";
 
-import { FileType, IDirectory, type INode } from "@util/fs/type";
+import { FileType, IDirectory, IFile, type INode } from "@util/fs/type";
 import ListViewItem from "./ListViewItem";
 import useFileExplorer from "./hook";
-import { FESortType } from "./type";
+import { FEDirectoryType, FESortType } from "./type";
 
 type Props = {
   nodes: INode[];
@@ -49,9 +49,14 @@ const ListViewSortAction: React.FC<
 };
 
 const ListView: React.FC<Props> = ({ nodes }) => {
-  const { setDragging } = useFileExplorer();
+  const { directoryType, setDragging } = useFileExplorer();
 
-  const [sortType, setSortType] = React.useState(FESortType.NAME_ASC);
+  // Default sort type based on the current directory type
+  const [sortType, setSortType] = React.useState(() => {
+    return directoryType === FEDirectoryType.Recent
+      ? FESortType.DATE_DESC
+      : FESortType.NAME_ASC;
+  });
 
   const handleNameClick = React.useCallback(() => {
     if (sortType === FESortType.NAME_ASC) {
@@ -85,6 +90,8 @@ const ListView: React.FC<Props> = ({ nodes }) => {
 
   const sortedNodes = React.useMemo(() => {
     console.log("sortedNodes updated");
+    console.log("sortType", sortType);
+    console.log("directoryType", directoryType);
 
     return nodes.slice().sort((a, b) => {
       if (sortType === FESortType.NAME_ASC) {
@@ -96,6 +103,23 @@ const ListView: React.FC<Props> = ({ nodes }) => {
       }
 
       if (sortType === FESortType.DATE_ASC) {
+        // Check if lastModified and lastAccessed is a Date object.
+        // This property is parsed from the localStorage, so if it is not a
+        // Date object (most likely a string), the parser is broken
+        // see src/hooks/useLocalStorage.ts
+
+        if (directoryType === FEDirectoryType.Recent) {
+          if (
+            typeof a.lastAccessed !== "object" ||
+            typeof b.lastAccessed !== "object"
+          ) {
+            console.warn("lastAccessed is not a Date object");
+            return -1;
+          }
+
+          return a.lastAccessed.getTime() - b.lastAccessed.getTime();
+        }
+
         if (
           typeof a.lastModified !== "object" ||
           typeof b.lastModified !== "object"
@@ -108,6 +132,23 @@ const ListView: React.FC<Props> = ({ nodes }) => {
       }
 
       if (sortType === FESortType.DATE_DESC) {
+        // Check if lastModified and lastAccessed is a Date object.
+        // This property is parsed from the localStorage, so if it is not a
+        // Date object (most likely a string), the parser is broken
+        // see src/hooks/useLocalStorage.ts
+
+        if (directoryType === FEDirectoryType.Recent) {
+          if (
+            typeof a.lastAccessed !== "object" ||
+            typeof b.lastAccessed !== "object"
+          ) {
+            console.warn("lastAccessed is not a Date object");
+            return 1;
+          }
+
+          return b.lastAccessed.getTime() - a.lastAccessed.getTime();
+        }
+
         if (
           typeof a.lastModified !== "object" ||
           typeof b.lastModified !== "object"
@@ -118,9 +159,6 @@ const ListView: React.FC<Props> = ({ nodes }) => {
 
         return b.lastModified.getTime() - a.lastModified.getTime();
       }
-
-      const aFile = localStorage.getItem(`file-${a.id}`)!;
-      const bFile = localStorage.getItem(`file-${b.id}`)!;
 
       if (sortType === FESortType.SIZE_ASC) {
         if (a.type === FileType.Directory && b.type === FileType.Directory) {
@@ -138,7 +176,10 @@ const ListView: React.FC<Props> = ({ nodes }) => {
           return 1;
         }
 
-        return aFile.length - bFile.length;
+        const aFileSize = (a as IFile).size;
+        const bFileSize = (b as IFile).size;
+
+        return aFileSize - bFileSize;
       }
 
       if (sortType === FESortType.SIZE_DESC) {
@@ -157,18 +198,21 @@ const ListView: React.FC<Props> = ({ nodes }) => {
           return -1;
         }
 
-        return bFile.length - aFile.length;
+        const aFileSize = (a as IFile).size;
+        const bFileSize = (b as IFile).size;
+
+        return bFileSize - aFileSize;
       }
 
       return 0;
     });
-  }, [sortType, nodes]);
+  }, [nodes, sortType, directoryType]);
 
   React.useEffect(() => {
     return () => {
       setDragging(false);
     };
-  }, [setDragging]);
+  }, [directoryType, setDragging]);
 
   return (
     <div className="h-full">
@@ -215,7 +259,9 @@ const ListView: React.FC<Props> = ({ nodes }) => {
                     : "unset"
               }
             >
-              Modifed
+              {directoryType === FEDirectoryType.Recent
+                ? "Accessed"
+                : "Modified"}
             </ListViewSortAction>
             <ListViewSortAction type="unset">Starred</ListViewSortAction>
           </div>

@@ -151,6 +151,7 @@ const FSQuickAccess: React.FC = () => {
 
     if (currDir.name === "Recent") return;
 
+    setDirectoryType(FEDirectoryType.Recent);
     setCurrDir({
       id: "recent",
       name: "Recent",
@@ -166,7 +167,6 @@ const FSQuickAccess: React.FC = () => {
       lastCreated: new Date(),
       lastModified: new Date(),
     } as IDirectory);
-    setDirectoryType(FEDirectoryType.Recent);
 
     dispatchHistoryState({
       type: "push",
