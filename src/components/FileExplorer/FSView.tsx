@@ -14,11 +14,12 @@ import useWindow from "@components/Window/useWindow";
 import AddNewFileDialog from "./Dialog/AddNewFile";
 import AddNewFolderDialog from "./Dialog/AddNewFolder";
 import PropertyDialog, { PropertyDialogProps } from "./Dialog/Property";
+import { FEDirectoryType } from "./type";
 
 const Terminal = React.lazy(() => import("@components/Terminal"));
 
 const FSView: React.FC = () => {
-  const { currDir, dialog, setDialog } = useFileExplorer();
+  const { currDir, dialog, directoryType, setDialog } = useFileExplorer();
   const { addModal } = useModal();
   const { getId } = useWindow();
 
@@ -126,71 +127,103 @@ const FSView: React.FC = () => {
             "shadow-gray-400 dark:shadow-gray-900",
           )}
         >
-          <ContextMenuPrimitive.Item
-            onClick={handleNewFolderClick}
-            className={clsx(
-              "flex items-center",
-              "px-3 py-2 rounded-md",
-              "hover:bg-gray-400 dark:hover:bg-gray-600",
-              "outline-none focus:outline-none border-none",
-            )}
-          >
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4"></div>
-              <div>New Folder</div>
-            </div>
-            <div className="ml-auto font-mono font-light text-xs">
-              something
-            </div>
-          </ContextMenuPrimitive.Item>
-          <ContextMenuPrimitive.Item
-            onClick={handleNewFileClick}
-            className={clsx(
-              "flex items-center",
-              "px-3 py-2 rounded-md",
-              "hover:bg-gray-400 dark:hover:bg-gray-600",
-              "outline-none focus:outline-none border-none",
-            )}
-          >
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4"></div>
-              <div>New File</div>
-            </div>
-            <div className="ml-auto font-mono font-light text-xs">
-              something
-            </div>
-          </ContextMenuPrimitive.Item>
-          <ContextMenuPrimitive.Item
-            onClick={handleOpenTerminalClick}
-            className={clsx(
-              "flex items-center",
-              "px-3 py-2 rounded-md",
-              "hover:bg-gray-400 dark:hover:bg-gray-600",
-              "outline-none focus:outline-none border-none",
-            )}
-          >
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4"></div>
-              <div>Open in Terminal</div>
-            </div>
-          </ContextMenuPrimitive.Item>
+          {directoryType === FEDirectoryType.File && (
+            <>
+              <ContextMenuPrimitive.Item
+                onClick={handleNewFolderClick}
+                className={clsx(
+                  "flex items-center",
+                  "px-3 py-2 rounded-md",
+                  "hover:bg-gray-400 dark:hover:bg-gray-600",
+                  "outline-none focus:outline-none border-none",
+                )}
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4"></div>
+                  <div>New Folder</div>
+                </div>
+                <div className="ml-auto font-mono font-light text-xs">
+                  something
+                </div>
+              </ContextMenuPrimitive.Item>
+              <ContextMenuPrimitive.Item
+                onClick={handleNewFileClick}
+                className={clsx(
+                  "flex items-center",
+                  "px-3 py-2 rounded-md",
+                  "hover:bg-gray-400 dark:hover:bg-gray-600",
+                  "outline-none focus:outline-none border-none",
+                )}
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4"></div>
+                  <div>New File</div>
+                </div>
+                <div className="ml-auto font-mono font-light text-xs">
+                  something
+                </div>
+              </ContextMenuPrimitive.Item>
+              <ContextMenuPrimitive.Item
+                onClick={handleOpenTerminalClick}
+                className={clsx(
+                  "flex items-center",
+                  "px-3 py-2 rounded-md",
+                  "hover:bg-gray-400 dark:hover:bg-gray-600",
+                  "outline-none focus:outline-none border-none",
+                )}
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4"></div>
+                  <div>Open in Terminal</div>
+                </div>
+              </ContextMenuPrimitive.Item>
 
-          <ContextMenuPrimitive.Separator className="my-2 dark:bg-gray-600 h-[1px]" />
+              <ContextMenuPrimitive.Separator className="my-2 dark:bg-gray-600 h-[1px]" />
 
-          <ContextMenuPrimitive.Item
-            onClick={handlePropertyClick}
-            className={clsx(
-              "flex items-center",
-              "px-3 py-2 rounded-md",
-              "hover:bg-gray-400 dark:hover:bg-gray-600",
-              "outline-none focus:outline-none border-none",
-            )}
-          >
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-4"></div>
-              <div>Properties</div>
-            </div>
-          </ContextMenuPrimitive.Item>
+              <ContextMenuPrimitive.Item
+                onClick={handlePropertyClick}
+                className={clsx(
+                  "flex items-center",
+                  "px-3 py-2 rounded-md",
+                  "hover:bg-gray-400 dark:hover:bg-gray-600",
+                  "outline-none focus:outline-none border-none",
+                )}
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4"></div>
+                  <div>Properties</div>
+                </div>
+              </ContextMenuPrimitive.Item>
+            </>
+          )}
+          {directoryType === FEDirectoryType.Recent && (
+            <>
+              <ContextMenuPrimitive.Item
+                className={clsx(
+                  "flex items-center",
+                  "px-3 py-2 rounded-md",
+                  "hover:bg-gray-400 dark:hover:bg-gray-600",
+                  "outline-none focus:outline-none border-none",
+                )}
+              >
+                <div className="flex items-center gap-2">
+                  <div>Clear all items</div>
+                </div>
+              </ContextMenuPrimitive.Item>
+              <ContextMenuPrimitive.Item
+                className={clsx(
+                  "flex items-center",
+                  "px-3 py-2 rounded-md",
+                  "hover:bg-gray-400 dark:hover:bg-gray-600",
+                  "outline-none focus:outline-none border-none",
+                )}
+              >
+                <div className="flex items-center gap-2">
+                  <div>Select all items</div>
+                </div>
+              </ContextMenuPrimitive.Item>
+            </>
+          )}
         </ContextMenuPrimitive.Content>
       </ContextMenuPrimitive.Root>
       {windowRef.current ? (
