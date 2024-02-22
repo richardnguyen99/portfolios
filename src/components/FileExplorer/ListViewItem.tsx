@@ -9,7 +9,7 @@ import { Icon } from "@components";
 import useFileExplorer from "./hook";
 import useModal from "@contexts/Modal/useModal";
 import { ModalProps } from "@contexts/Modal/type";
-import ItemContextMenu from "./ItemContextMenu";
+import ItemContextMenu from "./ContextMenu/ItemContextMenu";
 import useSystemCall from "@contexts/SystemCall/useSystemCall";
 import useRecentFiles from "@contexts/RecentFiles/hook";
 import { FEDirectoryType } from "./type";

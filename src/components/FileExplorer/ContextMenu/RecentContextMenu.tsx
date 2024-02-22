@@ -3,6 +3,7 @@ import clsx from "classnames";
 import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 
 import useRecentFiles from "@contexts/RecentFiles/hook";
+import ContextMenuItem from "./ContextMenuItem";
 
 const RecentContextMenuRenderer: React.ForwardRefRenderFunction<
   HTMLDivElement,
@@ -34,32 +35,16 @@ const RecentContextMenuRenderer: React.ForwardRefRenderFunction<
         "shadow-gray-400 dark:shadow-gray-900",
       )}
     >
-      <ContextMenuPrimitive.Item
-        onClick={handleClearAllItemsClick}
-        className={clsx(
-          "flex items-center",
-          "px-3 py-2 rounded-md",
-          "hover:bg-gray-400 dark:hover:bg-gray-600",
-          "outline-none focus:outline-none border-none",
-        )}
-      >
+      <ContextMenuItem onClick={handleClearAllItemsClick}>
         <div className="flex items-center gap-2">
           <div>Clear all items</div>
         </div>
-      </ContextMenuPrimitive.Item>
-      <ContextMenuPrimitive.Item
-        onClick={handleSelectAllItemsClick}
-        className={clsx(
-          "flex items-center",
-          "px-3 py-2 rounded-md",
-          "hover:bg-gray-400 dark:hover:bg-gray-600",
-          "outline-none focus:outline-none border-none",
-        )}
-      >
+      </ContextMenuItem>
+      <ContextMenuItem onClick={handleSelectAllItemsClick}>
         <div className="flex items-center gap-2">
           <div>Select all items</div>
         </div>
-      </ContextMenuPrimitive.Item>
+      </ContextMenuItem>
     </ContextMenuPrimitive.Content>
   );
 };

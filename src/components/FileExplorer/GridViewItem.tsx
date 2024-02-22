@@ -8,7 +8,7 @@ import { Icon } from "@components";
 import useFileExplorer from "./hook";
 import useModal from "@contexts/Modal/useModal";
 import { ModalProps } from "@contexts/Modal/type";
-import ItemContextMenu from "./ItemContextMenu";
+import ItemContextMenu from "./ContextMenu/ItemContextMenu";
 
 const Editor = React.lazy(() => import("@components/Editor"));
 
