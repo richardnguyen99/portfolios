@@ -2,10 +2,22 @@ import * as React from "react";
 import clsx from "classnames";
 import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 
+import useRecentFiles from "@contexts/RecentFiles/hook";
+
 const RecentContextMenuRenderer: React.ForwardRefRenderFunction<
   HTMLDivElement,
   ContextMenuPrimitive.ContextMenuContentProps
 > = (props, ref) => {
+  const { clearRecentFiles } = useRecentFiles();
+
+  const handleClearAllItemsClick = React.useCallback(() => {
+    clearRecentFiles();
+  }, [clearRecentFiles]);
+
+  const handleSelectAllItemsClick = React.useCallback(() => {
+    console.log("Select all items");
+  }, []);
+
   return (
     <ContextMenuPrimitive.Content
       ref={ref}
@@ -23,6 +35,7 @@ const RecentContextMenuRenderer: React.ForwardRefRenderFunction<
       )}
     >
       <ContextMenuPrimitive.Item
+        onClick={handleClearAllItemsClick}
         className={clsx(
           "flex items-center",
           "px-3 py-2 rounded-md",
@@ -35,6 +48,7 @@ const RecentContextMenuRenderer: React.ForwardRefRenderFunction<
         </div>
       </ContextMenuPrimitive.Item>
       <ContextMenuPrimitive.Item
+        onClick={handleSelectAllItemsClick}
         className={clsx(
           "flex items-center",
           "px-3 py-2 rounded-md",

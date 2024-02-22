@@ -65,13 +65,19 @@ const RecentFilesProvider: React.FC<RecentFilesProviderProps> = ({
     [getFilePath, recentFiles, setRecentFiles],
   );
 
-  const removeRecentFile = React.useCallback((id: string) => {
-    console.log("removeRecentFile", id);
-  }, []);
+  const removeRecentFile = React.useCallback(
+    (id: string) => {
+      const newRecentFiles = recentFiles.filter(
+        (recentFile) => recentFile.id !== id,
+      );
+      setRecentFiles(newRecentFiles);
+    },
+    [recentFiles, setRecentFiles],
+  );
 
   const clearRecentFiles = React.useCallback(() => {
-    console.log("clearRecentFiles");
-  }, []);
+    setRecentFiles([]);
+  }, [setRecentFiles]);
 
   const value = React.useMemo(() => {
     return {
