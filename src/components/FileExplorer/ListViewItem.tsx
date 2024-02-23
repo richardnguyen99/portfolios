@@ -9,8 +9,10 @@ import { Icon } from "@components";
 import useFileExplorer from "./hook";
 import useModal from "@contexts/Modal/useModal";
 import { ModalProps } from "@contexts/Modal/type";
-import ItemContextMenu from "./ItemContextMenu";
+import ItemContextMenu from "./ContextMenu/ItemContextMenu";
 import useSystemCall from "@contexts/SystemCall/useSystemCall";
+import useRecentFiles from "@contexts/RecentFiles/hook";
+import { FEDirectoryType } from "./type";
 
 const Editor = React.lazy(() => import("@components/Editor"));
 
@@ -21,8 +23,10 @@ type Props = {
 const ListViewItem: React.FC<Props> = ({ node }) => {
   const { ds } = useDragSelect();
   const { addModal } = useModal();
-  const { setCurrDir, dispatchHistoryState, setDragging } = useFileExplorer();
+  const { directoryType, setCurrDir, dispatchHistoryState, setDragging } =
+    useFileExplorer();
   const { updateDirectory, updateFile } = useSystemCall();
+  const { addRecentFile } = useRecentFiles();
 
   const itemRef = React.useRef<HTMLDivElement>(null);
   const [starred, setStarred] = React.useState(false);
@@ -57,6 +61,7 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
         ds?.SelectedSet.clear();
         addModal(editorModal);
         updateFile(node as IFile, { lastAccessed: new Date() });
+        addRecentFile(node as IFile);
 
         return;
       }
@@ -76,14 +81,15 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
       updateDirectory(node as IDirectory, { lastAccessed: new Date() });
     },
     [
-      addModal,
-      dispatchHistoryState,
-      ds?.SelectedSet,
       node,
+      dispatchHistoryState,
       setCurrDir,
+      ds?.SelectedSet,
       setDragging,
-      updateFile,
       updateDirectory,
+      addModal,
+      updateFile,
+      addRecentFile,
     ],
   );
 
@@ -181,7 +187,11 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
             {nodeSize}
           </div>
           <div className="flex-grow-0 flex-shrink-0 basis-44 px-2 py-1">
-            {new Date(node.lastModified).toLocaleString()}
+            {new Date(
+              directoryType === FEDirectoryType.Recent
+                ? node.lastAccessed
+                : node.lastModified,
+            ).toLocaleString()}
           </div>
           <div
             className={clsx(
