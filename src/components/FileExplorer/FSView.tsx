@@ -33,51 +33,51 @@ const FSView: React.FC = () => {
   const Dialog = dialog.dialog;
 
   return (
-    <AlertDialog.Root open={dialog.open}>
-      <ContextMenuPrimitive.Root>
-        <ContextMenuPrimitive.Trigger
-          className={clsx(
-            "relative flex flex-col justify-between",
-            "w-full select-none overflow-x-hidden",
-          )}
-        >
-          <DragSelect.Provider initialSettings={{ selectedClass: "selector" }}>
+    <DragSelect.Provider initialSettings={{ selectedClass: "selector" }}>
+      <AlertDialog.Root open={dialog.open}>
+        <ContextMenuPrimitive.Root>
+          <ContextMenuPrimitive.Trigger
+            className={clsx(
+              "relative flex flex-col justify-between",
+              "w-full select-none overflow-x-hidden",
+            )}
+          >
             <FSViewItems />
             <FSFooter />
-          </DragSelect.Provider>
-        </ContextMenuPrimitive.Trigger>
-        {directoryType === FEDirectoryType.File ? (
-          <MemoFileContextMenu />
-        ) : (
-          <MemoRecentContextMenu />
-        )}
-      </ContextMenuPrimitive.Root>
-      {windowRef.current ? (
-        <AlertDialog.Portal container={windowRef.current} forceMount>
-          <Transition.Root show={dialog.open}>
-            <Transition.Child as={React.Fragment} leave="delay-100">
-              <AlertDialog.Overlay
-                className="fixed inset-0 bg-black bg-opacity-50 z-[999]"
-                forceMount
-              />
-            </Transition.Child>
-            {Dialog && (
-              <Transition.Child
-                as={React.Fragment}
-                enter="transition ease-out duration-100 delay-0"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
-              >
-                <Dialog {...dialog.props} />
+          </ContextMenuPrimitive.Trigger>
+          {directoryType === FEDirectoryType.File ? (
+            <MemoFileContextMenu />
+          ) : (
+            <MemoRecentContextMenu />
+          )}
+        </ContextMenuPrimitive.Root>
+        {windowRef.current ? (
+          <AlertDialog.Portal container={windowRef.current} forceMount>
+            <Transition.Root show={dialog.open}>
+              <Transition.Child as={React.Fragment} leave="delay-100">
+                <AlertDialog.Overlay
+                  className="fixed inset-0 bg-black bg-opacity-50 z-[999]"
+                  forceMount
+                />
               </Transition.Child>
-            )}
-          </Transition.Root>
-        </AlertDialog.Portal>
-      ) : null}
-    </AlertDialog.Root>
+              {Dialog && (
+                <Transition.Child
+                  as={React.Fragment}
+                  enter="transition ease-out duration-100 delay-0"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Dialog {...dialog.props} />
+                </Transition.Child>
+              )}
+            </Transition.Root>
+          </AlertDialog.Portal>
+        ) : null}
+      </AlertDialog.Root>
+    </DragSelect.Provider>
   );
 };
 

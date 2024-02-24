@@ -4,12 +4,14 @@ import * as ContextMenuPrimitive from "@radix-ui/react-context-menu";
 
 import useRecentFiles from "@contexts/RecentFiles/hook";
 import ContextMenuItem from "./ContextMenuItem";
+import useDragSelect from "../DragSelect/hook";
 
 const RecentContextMenuRenderer: React.ForwardRefRenderFunction<
   HTMLDivElement,
   ContextMenuPrimitive.ContextMenuContentProps
 > = (props, ref) => {
-  const { clearRecentFiles } = useRecentFiles();
+  const { recentFiles, clearRecentFiles } = useRecentFiles();
+  const { ds } = useDragSelect();
 
   const handleClearAllItemsClick = React.useCallback(() => {
     clearRecentFiles();
@@ -17,7 +19,18 @@ const RecentContextMenuRenderer: React.ForwardRefRenderFunction<
 
   const handleSelectAllItemsClick = React.useCallback(() => {
     console.log("Select all items");
-  }, []);
+
+    if (!ds) return;
+
+    recentFiles.forEach((file) => {
+      const item = document.querySelector(`[data-node-id="${file.id}"]`);
+
+      if (!item) return;
+
+      console.log(item);
+      ds.SelectedSet.add(item as HTMLElement);
+    });
+  }, [ds, recentFiles]);
 
   return (
     <ContextMenuPrimitive.Content
@@ -37,12 +50,12 @@ const RecentContextMenuRenderer: React.ForwardRefRenderFunction<
     >
       <ContextMenuItem onClick={handleClearAllItemsClick}>
         <div className="flex items-center gap-2">
-          <div>Clear all items</div>
+          <div>Clear &quot;Recent&quot;</div>
         </div>
       </ContextMenuItem>
       <ContextMenuItem onClick={handleSelectAllItemsClick}>
         <div className="flex items-center gap-2">
-          <div>Select all items</div>
+          <div>Select all</div>
         </div>
       </ContextMenuItem>
     </ContextMenuPrimitive.Content>
