@@ -4,12 +4,32 @@ import clsx from "classnames";
 import useDragSelect from "./DragSelect/hook";
 import useFileExplorer from "./hook";
 import { FileType, IDirectory } from "@util/fs/type";
+import { FEDirectoryType } from "./type";
+import useRecentFiles from "@contexts/RecentFiles/hook";
+import useSystemCall from "@contexts/SystemCall/useSystemCall";
 
 const FSFooter: React.FC = () => {
   const { ds } = useDragSelect();
-  const { currDir } = useFileExplorer();
+  const { recentFiles } = useRecentFiles();
+  const { searchNodeWithPath } = useSystemCall();
+  const { currDir, directoryType } = useFileExplorer();
 
   const [text, setText] = React.useState("");
+
+  const findNode = React.useCallback(
+    (itemId: string) => {
+      if (directoryType === FEDirectoryType.Recent) {
+        const nodeMetadata = recentFiles.find((file) => file.id === itemId);
+
+        if (!nodeMetadata) return undefined;
+
+        return searchNodeWithPath(null, nodeMetadata.path);
+      }
+
+      return (currDir as IDirectory).children.find((n) => n.id === itemId);
+    },
+    [currDir, directoryType, recentFiles, searchNodeWithPath],
+  );
 
   React.useEffect(() => {
     if (!ds) return;
@@ -31,9 +51,7 @@ const FSFooter: React.FC = () => {
 
         if (!itemId) continue;
 
-        const node = (currDir as IDirectory).children.find(
-          (n) => n.id === itemId,
-        );
+        const node = findNode(itemId);
 
         if (!node) continue;
 
@@ -75,7 +93,7 @@ const FSFooter: React.FC = () => {
       ds.unsubscribe("DS:end");
       ds.unsubscribe("DS:start");
     };
-  }, [currDir, ds]);
+  }, [currDir, ds, findNode]);
 
   return (
     <div className="flex fixed bottom-0 right-0 z-10">
