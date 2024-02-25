@@ -147,8 +147,6 @@ const FSQuickAccess: React.FC = () => {
   );
 
   const handleRecentClick = React.useCallback(() => {
-    console.log("Recent Clicked");
-
     if (currDir.name === "Recent") return;
 
     setDirectoryType(FEDirectoryType.Recent);

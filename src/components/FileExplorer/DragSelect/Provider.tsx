@@ -15,14 +15,11 @@ const DragSelectProvider: React.FC<DragSelectProviderProps> = ({
   const [settings, setSettings] = React.useState({ id: 0, ...initialSettings });
 
   React.useEffect(() => {
-    console.log("DSProvider mounting ...");
     setDS((prev) => {
       if (prev) {
-        console.log("Already mounted");
         return prev;
       }
 
-      console.log("Mounted DS");
       return new DragSelect({});
     });
 
@@ -30,7 +27,6 @@ const DragSelectProvider: React.FC<DragSelectProviderProps> = ({
       if (ds) {
         ds.stop();
         setDS(undefined);
-        console.log("Unmounted DS");
       }
     };
   }, [ds]);

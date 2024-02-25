@@ -125,7 +125,6 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
 
   const updateFile = React.useCallback(
     (currNode: IFile, option: INodeOption) => {
-      console.log("system call update file");
       updateINode(currNode, option);
     },
     [updateINode],
@@ -133,7 +132,6 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
 
   const updateDirectory = React.useCallback(
     (currNode: IDirectory, option: INodeOption) => {
-      console.log("system call update directory");
       updateINode(currNode, option);
     },
     [updateINode],

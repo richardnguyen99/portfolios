@@ -89,10 +89,6 @@ const ListView: React.FC<Props> = ({ nodes }) => {
   }, [sortType]);
 
   const sortedNodes = React.useMemo(() => {
-    console.log("sortedNodes updated");
-    console.log("sortType", sortType);
-    console.log("directoryType", directoryType);
-
     return nodes.slice().sort((a, b) => {
       if (sortType === FESortType.NAME_ASC) {
         return a.name.localeCompare(b.name);

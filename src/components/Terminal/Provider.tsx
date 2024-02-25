@@ -412,12 +412,10 @@ const TerminalProvider: React.FC<TerminalProviderProps> = ({
       return;
     }
 
-    console.log("set initial prompt");
     setPrompt(`[richard@portlios ${initialDir.name}]$ `);
   }, [getHomeFolder, initialDir, prompt]);
 
   React.useEffect(() => {
-    console.log("update terminal currDir", home);
     const newNode = updateNode(home, currentFolder.current as IDirectory);
 
     setCurrentFolder((prev) => ({

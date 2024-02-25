@@ -225,8 +225,6 @@ const FileTreeProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   // folder is changed
   React.useEffect(() => {
     if (homeFolder.parent === null) {
-      console.log("file system remounted");
-
       home.children = home.children.filter(
         (children) => children.name !== "guess",
       );

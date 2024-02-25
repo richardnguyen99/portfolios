@@ -24,8 +24,6 @@ const FSViewItems: React.FC = () => {
   const [, setItemCount] = React.useState(0);
 
   const nodes = React.useMemo(() => {
-    console.log("nodes updated");
-
     if (directoryType === FEDirectoryType.Recent) {
       const recentNodes = recentFiles.map((recentFile) => {
         const node = searchNodeWithPath(null, recentFile.path);
@@ -38,14 +36,10 @@ const FSViewItems: React.FC = () => {
       return recentNodes.filter((node) => node !== null) as INode[];
     }
 
-    console.log(currDir);
-
     return (currDir as IDirectory).children;
   }, [currDir, directoryType, recentFiles, searchNodeWithPath]);
 
   const filterNodes = React.useMemo(() => {
-    console.log("filterNodes updated");
-
     return nodes.filter((node) => {
       if (node.name.startsWith(".") && !doesShowHidden) return false;
 
@@ -81,7 +75,6 @@ const FSViewItems: React.FC = () => {
 
       if (!fsContent) return;
 
-      console.log("DS area updated on mutation");
       ds.setSettings({
         area: containerRef.current!,
         draggability: false,
@@ -114,8 +107,6 @@ const FSViewItems: React.FC = () => {
       selectorClass: "selector",
       selectedClass: "selected",
     });
-
-    console.log("DS settings updated");
 
     const dsCallback = ({
       items,
