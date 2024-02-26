@@ -11,7 +11,7 @@ const formatBytesSigFig = (
     unitIndex++;
   }
 
-  return [Number(value.toFixed(sigFigs)), units[unitIndex]];
+  return [Number(value.toPrecision(sigFigs)), units[unitIndex]];
 };
 
 export default formatBytesSigFig;

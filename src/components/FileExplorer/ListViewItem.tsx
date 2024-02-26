@@ -13,6 +13,7 @@ import ItemContextMenu from "./ContextMenu/ItemContextMenu";
 import useSystemCall from "@contexts/SystemCall/useSystemCall";
 import useRecentFiles from "@contexts/RecentFiles/hook";
 import { FEDirectoryType } from "./type";
+import formatBytesSigFig from "@util/formatBytesSigFig";
 
 const Editor = React.lazy(() => import("@components/Editor"));
 
@@ -100,17 +101,10 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
 
     const size = (node as IFile).size;
 
-    return `${size} B`;
-  }, [node]);
+    const [num, unit] = formatBytesSigFig(size, 3);
 
-  const itemStorageListener = React.useCallback(
-    (e: StorageEvent) => {
-      if (e.key === `file-${node.id}`) {
-        setNodeSize(getNodeSize());
-      }
-    },
-    [getNodeSize, node],
-  );
+    return `${num} ${unit}`;
+  }, [node]);
 
   React.useEffect(() => {
     if (!itemRef.current || !ds) return;
@@ -129,16 +123,12 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
       setNodeSize(getNodeSize());
     }
 
-    window.addEventListener("storage", itemStorageListener);
-
     // ds.subscribe("DS:end", (e) => {});
     return () => {
       ds.removeSelectables(item);
       ds.SelectedSet.clear();
-
-      window.removeEventListener("storage", itemStorageListener);
     };
-  }, [ds, getNodeSize, itemStorageListener, node, nodeSize]);
+  }, [ds, getNodeSize, node, nodeSize]);
 
   return (
     <ContextMenuPrimitive.Root>
