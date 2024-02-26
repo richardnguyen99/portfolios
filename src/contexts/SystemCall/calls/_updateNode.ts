@@ -1,7 +1,6 @@
 import { FileType, IDirectory, IFile, INode, INodeOption } from "@util/fs/type";
 
 const _updateNode = (currNode: INode, option: INodeOption): void => {
-  console.log("_updateNode", option);
   const parentNode = currNode.parent as IDirectory;
 
   if (!parentNode.writePermission) {
@@ -39,7 +38,6 @@ const _updateNode = (currNode: INode, option: INodeOption): void => {
   }
 
   if (typeof option.size !== "undefined") {
-    console.log("option.size");
     if (currNode.type !== FileType.File) {
       throw new Error(`'${currNode.name}': Not a file`);
     }
@@ -48,7 +46,6 @@ const _updateNode = (currNode: INode, option: INodeOption): void => {
       throw new Error(`'${currNode.name}': Invalid size`);
     }
 
-    console.log("size", option.size);
     (currNode as IFile).size = option.size;
     currNode.lastModified = new Date();
   }
@@ -58,7 +55,6 @@ const _updateNode = (currNode: INode, option: INodeOption): void => {
       throw new Error(`'${currNode.name}': Invalid date`);
     }
 
-    console.log("lastModified", option.lastModified);
     currNode.lastModified = option.lastModified;
   }
 
@@ -67,7 +63,6 @@ const _updateNode = (currNode: INode, option: INodeOption): void => {
       throw new Error(`'${currNode.name}': Invalid date`);
     }
 
-    console.log("lastAccessed", option.lastAccessed);
     currNode.lastAccessed = option.lastAccessed;
   }
 };
