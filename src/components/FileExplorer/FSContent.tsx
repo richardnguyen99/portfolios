@@ -3,6 +3,7 @@ import clsx from "classnames";
 
 import FSQuickAccess from "./FSQuickAcess";
 import FSView from "./FSView";
+import DragSelect from "./DragSelect";
 
 const FSContent: React.FC = () => {
   return (
@@ -11,7 +12,9 @@ const FSContent: React.FC = () => {
       className={clsx("flex flex-grow", "h-[calc(100%_-_100px)]")}
     >
       <FSQuickAccess />
-      <FSView />
+      <DragSelect.Provider initialSettings={{ selectedClass: "selector" }}>
+        <FSView />
+      </DragSelect.Provider>
     </div>
   );
 };
