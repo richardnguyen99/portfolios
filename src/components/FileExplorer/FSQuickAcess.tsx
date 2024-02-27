@@ -183,7 +183,7 @@ const FSQuickAccess: React.FC = () => {
         "flex-grow-0 flex-shrink-0 basis-48 p-3",
         "flex flex-col",
         "bg-gray-100/40 dark:bg-gray-700/60",
-        "h-full overflow-y-scroll overflow-x-hidden",
+        "h-full overflow-y-hidden overflow-x-hidden",
         "select-none",
       )}
     >

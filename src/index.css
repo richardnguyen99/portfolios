@@ -3,40 +3,15 @@
 @tailwind utilities;
 
 .window-scrollbar {
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
-  padding-right: 4px;
 
   @apply [scrollbar-color:_theme("colors.slate.200")_theme("colors.slate.100")];
   @apply dark:[scrollbar-color:_theme("colors.slate.700")_theme("colors.slate.800")];
-}
-
-.window-scrollbar::-webkit-scrollbar {
-  width: 8px;
-  opacity: 0;
-
-  @apply bg-slate-200;
-  @apply dark:bg-slate-800;
 }
 
 /* Hide native scrollbar when on monaco editor */
 #window-content:has(.monaco-editor).window-scrollbar {
   overflow-y: hidden;
   padding-right: 0;
-}
-
-.window-scrollbar:hover::-webkit-scrollbar {
-  opacity: 1;
-}
-
-.window-scrollbar::-webkit-scrollbar-thumb {
-  border-radius: 8px;
-
-  @apply bg-slate-300;
-  @apply dark:bg-slate-700;
-}
-
-.window-scrollbar::-webkit-scrollbar-corner {
-  @apply bg-slate-200;
-  @apply dark:bg-slate-800;
 }

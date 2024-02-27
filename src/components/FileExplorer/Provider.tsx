@@ -7,6 +7,7 @@ import {
   FileExplorerContextType,
   type FileExplorerProviderProps,
   type FEHistory,
+  FESortType,
   FEHistoryState,
   FEHistoryAction,
   FEDirectoryType,
@@ -37,6 +38,11 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
       props: null,
     },
   );
+  const [sortType, setSortType] = React.useState(() => {
+    return directoryType === FEDirectoryType.Recent
+      ? FESortType.DATE_DESC
+      : FESortType.NAME_ASC;
+  });
 
   const [historyState, setHistoryState] = React.useReducer(
     (state: FEHistoryState, action: FEHistoryAction) => {
@@ -94,6 +100,7 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
       doesShowHidden,
       historyState,
       directoryType,
+      sortType,
       dialog,
 
       setDragging: setDragging,
@@ -103,6 +110,7 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
       setShowHidden,
       setDialog,
       setDirectoryType,
+      setSortType,
       dispatchHistoryState: setHistoryState,
     };
   }, [
@@ -113,6 +121,7 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
     dragging,
     historyState,
     size,
+    sortType,
     view,
   ]);
 

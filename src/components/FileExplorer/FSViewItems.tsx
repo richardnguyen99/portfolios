@@ -142,7 +142,7 @@ const FSViewItems: React.FC = () => {
   return (
     <div
       ref={containerRef}
-      className="flex flex-col justify-between m-0 h-full"
+      className="flex flex-col justify-between m-0 top-0 left-0 h-full"
     >
       {viewType === FEViewType.Grid ? (
         <GridView nodes={filterNodes} />

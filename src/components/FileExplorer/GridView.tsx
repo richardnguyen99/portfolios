@@ -22,7 +22,7 @@ const GridView: React.FC<Props> = ({ nodes }) => {
   return nodes.length > 0 ? (
     <div
       className={clsx(
-        "grid grid-cols-[repeat(auto-fill,_minmax(96px,_0fr))]",
+        "grid grid-cols-[repeat(auto-fill,_minmax(88px,_0fr))]",
         "[grid-gap:_1.5rem]",
         "window-scrollbar",
         "w-full p-4",

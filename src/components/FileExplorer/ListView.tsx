@@ -1,6 +1,5 @@
 import * as React from "react";
 import clsx from "classnames";
-import { ChevronDownIcon, ChevronUpIcon } from "@primer/octicons-react";
 import { FolderIcon } from "@heroicons/react/24/outline";
 
 import { FileType, IDirectory, IFile, type INode } from "@util/fs/type";
@@ -12,82 +11,10 @@ type Props = {
   nodes: INode[];
 };
 
-type SortType = {
-  type: "asc" | "desc" | "unset";
-};
-
-const ListViewSortAction: React.FC<
-  React.PropsWithChildren<SortType> & React.HTMLAttributes<HTMLButtonElement>
-> = ({ children, type, ...rest }) => {
-  const { dragging } = useFileExplorer();
-
-  return (
-    <button
-      {...rest}
-      type="button"
-      className={clsx(
-        "first:flex-grow first:flex-shrink first:min-w-32",
-        "basis-20 [&:nth-child(3)]:basis-44",
-        "[&:not(:first-child)]:flex-grow-0 [&:not(:first-child)]:flex-shrink-0",
-        "flex items-center gap-2",
-        "px-2 py-1",
-        "text-left last:text-center",
-        {
-          "cursor-default": dragging,
-          "hover:bg-gray-300/60 dark:hover:bg-gray-600/40": !dragging,
-        },
-      )}
-    >
-      {children}
-      {type === "unset" ? null : type === "asc" ? (
-        <ChevronUpIcon />
-      ) : (
-        <ChevronDownIcon />
-      )}
-    </button>
-  );
-};
-
 const ListView: React.FC<Props> = ({ nodes }) => {
-  const { directoryType, setDragging } = useFileExplorer();
+  const { directoryType, sortType, setDragging } = useFileExplorer();
 
   // Default sort type based on the current directory type
-  const [sortType, setSortType] = React.useState(() => {
-    return directoryType === FEDirectoryType.Recent
-      ? FESortType.DATE_DESC
-      : FESortType.NAME_ASC;
-  });
-
-  const handleNameClick = React.useCallback(() => {
-    if (sortType === FESortType.NAME_ASC) {
-      setSortType(FESortType.NAME_DESC);
-    } else if (sortType === FESortType.NAME_DESC) {
-      setSortType(FESortType.NAME_ASC);
-    } else {
-      setSortType(FESortType.NAME_ASC);
-    }
-  }, [sortType]);
-
-  const handleSizeClick = React.useCallback(() => {
-    if (sortType === FESortType.SIZE_ASC) {
-      setSortType(FESortType.SIZE_DESC);
-    } else if (sortType === FESortType.SIZE_DESC) {
-      setSortType(FESortType.SIZE_ASC);
-    } else {
-      setSortType(FESortType.SIZE_ASC);
-    }
-  }, [sortType]);
-
-  const handleDateClick = React.useCallback(() => {
-    if (sortType === FESortType.DATE_ASC) {
-      setSortType(FESortType.DATE_DESC);
-    } else if (sortType === FESortType.DATE_DESC) {
-      setSortType(FESortType.DATE_ASC);
-    } else {
-      setSortType(FESortType.DATE_ASC);
-    }
-  }, [sortType]);
-
   const sortedNodes = React.useMemo(() => {
     return nodes.slice().sort((a, b) => {
       if (sortType === FESortType.NAME_ASC) {
@@ -213,59 +140,13 @@ const ListView: React.FC<Props> = ({ nodes }) => {
   return (
     <div className="h-full">
       {sortedNodes.length > 0 ? (
-        <div
-          className={clsx(
-            "flex flex-col",
-            "window-scrollbar",
-            "w-full px-4 pb-4",
-          )}
-        >
-          <div id="fe-listView-sort-panel" className={clsx("flex")}>
-            <ListViewSortAction
-              onClick={handleNameClick}
-              type={
-                sortType === FESortType.NAME_ASC
-                  ? "asc"
-                  : sortType === FESortType.NAME_DESC
-                    ? "desc"
-                    : "unset"
-              }
-            >
-              Name
-            </ListViewSortAction>
-            <ListViewSortAction
-              onClick={handleSizeClick}
-              type={
-                sortType === FESortType.SIZE_ASC
-                  ? "asc"
-                  : sortType === FESortType.SIZE_DESC
-                    ? "desc"
-                    : "unset"
-              }
-            >
-              Size
-            </ListViewSortAction>
-            <ListViewSortAction
-              onClick={handleDateClick}
-              type={
-                sortType === FESortType.DATE_ASC
-                  ? "asc"
-                  : sortType === FESortType.DATE_DESC
-                    ? "desc"
-                    : "unset"
-              }
-            >
-              {directoryType === FEDirectoryType.Recent
-                ? "Accessed"
-                : "Modified"}
-            </ListViewSortAction>
-            <ListViewSortAction type="unset">Starred</ListViewSortAction>
-          </div>
-          <div className="h-[1px] -ml-4 -mr-1 bg-gray-300 dark:bg-gray-700" />
-          <div className="flex flex-col gap-1">
-            {sortedNodes.map((node) => {
-              return <ListViewItem key={node.id} node={node} />;
-            })}
+        <div className={clsx("flex flex-col relative", "w-full")}>
+          <div id="fe-listView-sort-panel" className={clsx("flex pl-4")}>
+            <div className="flex flex-col gap-1 w-full">
+              {sortedNodes.map((node) => {
+                return <ListViewItem key={node.id} node={node} />;
+              })}
+            </div>
           </div>
         </div>
       ) : (

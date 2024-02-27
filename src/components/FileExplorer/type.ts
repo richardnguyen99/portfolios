@@ -63,6 +63,7 @@ export type FileExplorerContextType = {
   historyState: FEHistoryState;
   dialog: FEDialog;
   directoryType: FEDirectoryType;
+  sortType: FESortType;
 
   setViewSize: React.Dispatch<React.SetStateAction<FEViewSize>>;
   setViewType: React.Dispatch<React.SetStateAction<FEViewType>>;
@@ -71,6 +72,7 @@ export type FileExplorerContextType = {
   setShowHidden: React.Dispatch<React.SetStateAction<boolean>>;
   setDialog: React.Dispatch<React.SetStateAction<FEDialog>>;
   setDirectoryType: React.Dispatch<React.SetStateAction<FEDirectoryType>>;
+  setSortType: React.Dispatch<React.SetStateAction<FESortType>>;
   dispatchHistoryState: React.Dispatch<FEHistoryAction>;
 };
 
