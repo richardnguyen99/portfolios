@@ -148,6 +148,7 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
             "selectable",
             "flex items-center border border-transparent",
             "rounded-md",
+            "cursor-default select-none",
             "hover:bg-gray-300/60 dark:hover:bg-gray-600/40",
             "[&.selected]:bg-sky-300/40 dark:[&.selected]:bg-sky-400/40",
             "[&.selected]:hover:bg-sky-300/60 dark:[&.selected]:hover:bg-sky-400/60",

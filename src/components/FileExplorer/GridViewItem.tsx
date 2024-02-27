@@ -112,6 +112,7 @@ const GridViewItem: React.FC<Props> = ({ node }) => {
             className={clsx(
               "flex flex-col items-center",
               "rounded-md p-2 border-2 border-transparent",
+              "select-none cursor-default",
               "hover:bg-gray-300/60 dark:hover:bg-gray-600/40",
               "group-[.selected]:bg-sky-300/40 dark:group-[.selected]:bg-sky-400/40",
               "group-[.selected]:hover:bg-sky-300/60 dark:group-[.selected]:hover:bg-sky-400/60",
