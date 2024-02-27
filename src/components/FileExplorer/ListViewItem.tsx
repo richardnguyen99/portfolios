@@ -137,7 +137,16 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
         onContextMenuCapture={() => {
           if (!ds) return;
 
-          ds.SelectedSet.clear();
+          const nodeElement = document.querySelector(
+            `[data-node-id="${node.id}"]`,
+          );
+
+          if (!nodeElement) return;
+
+          if (!ds.SelectedSet.has(nodeElement as HTMLDivElement)) {
+            ds.SelectedSet.clear();
+            ds.SelectedSet.add(nodeElement as HTMLDivElement);
+          }
         }}
       >
         <div
@@ -152,8 +161,14 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
             "hover:bg-gray-300/60 dark:hover:bg-gray-600/40",
             "[&.selected]:bg-sky-300/40 dark:[&.selected]:bg-sky-400/40",
             "[&.selected]:hover:bg-sky-300/60 dark:[&.selected]:hover:bg-sky-400/60",
-            '[&[data-state="open"]]:border-sky-500 dark:[&[data-state="open"]]:border-sky-400',
-            '[&[data-state="open"]]:bg-sky-300/30 dark:[&[data-state="open"]]:bg-sky-400/30',
+            {
+              // These classes are for context menu when only one item is
+              // selected.
+              '[&[data-state="open"]]:border-sky-500 dark:[&[data-state="open"]]:border-sky-400':
+                ds?.SelectedSet.size === 1,
+              '[&[data-state="open"]]:bg-sky-300/30 dark:[&[data-state="open"]]:bg-sky-400/30':
+                ds?.SelectedSet.size === 1,
+            },
           )}
           data-node-id={node.id}
         >
