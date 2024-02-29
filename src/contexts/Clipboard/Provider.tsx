@@ -99,9 +99,14 @@ const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
     [copyNode],
   );
 
-  const cut = React.useCallback((...nodes: INode[]) => {
-    dispatchClipboard({ type: ClipBoardAction.CUT, payload: nodes });
-  }, []);
+  const cut = React.useCallback(
+    async (...nodes: INode[]) => {
+      const tempNodes = await Promise.all(nodes.map(copyNode));
+
+      dispatchClipboard({ type: ClipBoardAction.CUT, payload: tempNodes });
+    },
+    [copyNode],
+  );
 
   const paste = React.useCallback(() => {
     dispatchClipboard({ type: ClipBoardAction.PASTE, payload: [] });

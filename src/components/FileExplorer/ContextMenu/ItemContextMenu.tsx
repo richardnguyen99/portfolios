@@ -22,7 +22,7 @@ type Props = {
 
 const ItemContextMenu: React.FC<Props> = ({ node }) => {
   const { addModal } = useModal();
-  const { copy } = useClipboard();
+  const { copy, cut } = useClipboard();
   const {
     directoryType,
     setDialog,
@@ -107,6 +107,10 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
     copy(node);
   }, [copy, node]);
 
+  const handleCutClick = React.useCallback(() => {
+    cut(node);
+  }, [cut, node]);
+
   return (
     <ContextMenuPrimitive.Content
       className={clsx(
@@ -154,7 +158,7 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
         </div>
         <div className="ml-auto font-mono font-light text-xs">something</div>
       </ContextMenuItem>
-      <ContextMenuItem>
+      <ContextMenuItem onClick={handleCutClick}>
         <div className="flex items-center gap-2">
           <div className="w-4 h-4"></div>
           <div>Move</div>
