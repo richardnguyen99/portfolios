@@ -11,8 +11,11 @@ import {
 } from "./type";
 import { FileType, IDirectory, IFile, INode } from "@util/fs/type";
 import { generateDirectoryId, generateFileId } from "@util/fs/id";
+import useFileTree from "@contexts/FileTree/useFileTree";
 
 const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
+  const { setHomeFolder, getHomeFolder } = useFileTree();
+
   const copyNode = React.useCallback(async (node: INode) => {
     const newNode = {
       id: "",
@@ -127,15 +130,34 @@ const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
     [copyNode],
   );
 
-  const paste = React.useCallback(() => {
-    dispatchClipboard({
-      type: ClipBoardAction.PASTE,
-      payload: {
-        nodes: [],
-        srcDir: undefined,
-      },
-    });
-  }, []);
+  const paste = React.useCallback(
+    (destDir: IDirectory) => {
+      destDir.children.push(...clipboard.nodes);
+
+      for (const node of clipboard.nodes) {
+        node.parent = destDir;
+      }
+
+      const home = getHomeFolder();
+      let homeFolder = destDir;
+
+      while (homeFolder.parent !== null && homeFolder.parent !== home.parent) {
+        homeFolder = homeFolder.parent as IDirectory;
+      }
+
+      // Update the file tree
+      setHomeFolder({ ...homeFolder, parent: null });
+
+      dispatchClipboard({
+        type: ClipBoardAction.PASTE,
+        payload: {
+          nodes: [],
+          srcDir: undefined,
+        },
+      });
+    },
+    [clipboard.nodes, getHomeFolder, setHomeFolder],
+  );
 
   React.useEffect(() => {
     console.log(clipboard);

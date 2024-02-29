@@ -38,7 +38,7 @@ export type ClipboardContextType = {
 
   copy: (...nodes: INode[]) => void;
   cut: (...nodes: INode[]) => void;
-  paste: (parent: INode) => void;
+  paste: (destDir: IDirectory) => void;
 };
 
 export type ClipboardProviderProps = {
