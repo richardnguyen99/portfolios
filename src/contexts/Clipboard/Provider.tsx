@@ -8,6 +8,8 @@ import {
   ClipBoardAction,
   ClipboardNode,
   ClipboardContextType,
+  ClipboardFile,
+  ClipboardDirectory,
 } from "./type";
 import { FileType, IDirectory, IFile, INode } from "@util/fs/type";
 import { generateDirectoryId, generateFileId } from "@util/fs/id";
@@ -15,6 +17,34 @@ import useFileTree from "@contexts/FileTree/useFileTree";
 
 const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
   const { setHomeFolder, getHomeFolder } = useFileTree();
+
+  const pasteNode = React.useCallback(
+    (node: ClipboardNode, destDir: IDirectory) => {
+      if (node.type === FileType.File) {
+        const file = node as ClipboardFile;
+
+        window.localStorage.setItem(`file-${file.id}`, file.content);
+        window.dispatchEvent(
+          new StorageEvent("storage", {
+            key: `file-${file.id}`,
+            newValue: file.content,
+            oldValue: null,
+          }),
+        );
+
+        file.content = "";
+      } else {
+        const dir = node as ClipboardDirectory;
+
+        for (const child of dir.children) {
+          pasteNode(child as ClipboardNode, dir);
+        }
+      }
+
+      node.parent = destDir;
+    },
+    [],
+  );
 
   const copyNode = React.useCallback(async (node: INode) => {
     const newNode = {
@@ -47,7 +77,7 @@ const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
     } else {
       // node is a directory
       const directory = node as IDirectory;
-      directory.id = await generateDirectoryId(directory.name);
+      newNode.id = await generateDirectoryId(directory.name);
 
       // Recursively copy all children of this directory
       (newNode as IDirectory).children = await Promise.all(
@@ -77,7 +107,6 @@ const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
             srcDir: action.payload.srcDir || null,
             nodes: action.payload.nodes.map((node) => ({
               ...node,
-              id: "",
               action: ClipBoardAction.CUT,
             })) as ClipboardNode[],
           };
@@ -132,10 +161,11 @@ const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
 
   const paste = React.useCallback(
     (destDir: IDirectory) => {
-      destDir.children.push(...clipboard.nodes);
-
       for (const node of clipboard.nodes) {
+        pasteNode(node, destDir);
+
         node.parent = destDir;
+        destDir.children.push(node);
       }
 
       const home = getHomeFolder();
@@ -156,7 +186,7 @@ const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
         },
       });
     },
-    [clipboard.nodes, getHomeFolder, setHomeFolder],
+    [clipboard.nodes, getHomeFolder, pasteNode, setHomeFolder],
   );
 
   React.useEffect(() => {
