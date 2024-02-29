@@ -22,11 +22,15 @@ export type ClipboardDirectory = IDirectory & {
 
 export type ClipboardReducerState = {
   nodes: ClipboardNode[];
+  srcDir: INode | null;
 };
 
 export type ClipboardReducerAction = {
   type: ClipBoardAction;
-  payload: INode[];
+  payload: {
+    nodes: INode[];
+    srcDir?: INode;
+  };
 };
 
 export type ClipboardContextType = {

@@ -62,7 +62,8 @@ const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
       switch (action.type) {
         case ClipBoardAction.COPY:
           return {
-            nodes: action.payload.map((node) => ({
+            srcDir: action.payload.srcDir || null,
+            nodes: action.payload.nodes.map((node) => ({
               ...node,
               action: ClipBoardAction.COPY,
             })) as ClipboardNode[],
@@ -70,7 +71,8 @@ const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
 
         case ClipBoardAction.CUT:
           return {
-            nodes: action.payload.map((node) => ({
+            srcDir: action.payload.srcDir || null,
+            nodes: action.payload.nodes.map((node) => ({
               ...node,
               id: "",
               action: ClipBoardAction.CUT,
@@ -79,6 +81,7 @@ const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
 
         case ClipBoardAction.PASTE:
           return {
+            srcDir: null,
             nodes: [] as ClipboardNode[],
           };
 
@@ -88,14 +91,22 @@ const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
     },
     {
       nodes: [] as ClipboardNode[],
+      srcDir: null,
     },
   );
 
   const copy = React.useCallback(
     async (...nodes: INode[]) => {
       const tempNodes = await Promise.all(nodes.map(copyNode));
+      const srcDir = nodes[0].parent as INode;
 
-      dispatchClipboard({ type: ClipBoardAction.COPY, payload: tempNodes });
+      dispatchClipboard({
+        type: ClipBoardAction.COPY,
+        payload: {
+          nodes: tempNodes,
+          srcDir,
+        },
+      });
     },
     [copyNode],
   );
@@ -103,18 +114,31 @@ const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
   const cut = React.useCallback(
     async (...nodes: INode[]) => {
       const tempNodes = await Promise.all(nodes.map(copyNode));
+      const srcDir = nodes[0].parent as INode;
 
-      dispatchClipboard({ type: ClipBoardAction.CUT, payload: tempNodes });
+      dispatchClipboard({
+        type: ClipBoardAction.CUT,
+        payload: {
+          nodes: tempNodes,
+          srcDir,
+        },
+      });
     },
     [copyNode],
   );
 
   const paste = React.useCallback(() => {
-    dispatchClipboard({ type: ClipBoardAction.PASTE, payload: [] });
+    dispatchClipboard({
+      type: ClipBoardAction.PASTE,
+      payload: {
+        nodes: [],
+        srcDir: undefined,
+      },
+    });
   }, []);
 
   React.useEffect(() => {
-    console.log(clipboard.nodes);
+    console.log(clipboard);
   }, [clipboard]);
 
   const value = React.useMemo<ClipboardContextType>(() => {
