@@ -46,7 +46,8 @@ const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
       const directory = node as IDirectory;
       directory.id = await generateDirectoryId(directory.name);
 
-      directory.children = await Promise.all(
+      // Recursively copy all children of this directory
+      (newNode as IDirectory).children = await Promise.all(
         directory.children.map((child) => {
           return copyNode(child);
         }),
