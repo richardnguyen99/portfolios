@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { INode } from "@util/fs/type";
+import { IDirectory, IFile, INode } from "@util/fs/type";
 
 export enum ClipBoardAction {
   COPY,
@@ -9,6 +9,14 @@ export enum ClipBoardAction {
 }
 
 export type ClipboardNode = INode & {
+  action: ClipBoardAction.COPY | ClipBoardAction.CUT;
+};
+
+export type ClipboardFile = IFile & {
+  action: ClipBoardAction.COPY | ClipBoardAction.CUT;
+};
+
+export type ClipboardDirectory = IDirectory & {
   action: ClipBoardAction.COPY | ClipBoardAction.CUT;
 };
 

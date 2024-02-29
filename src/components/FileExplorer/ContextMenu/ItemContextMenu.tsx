@@ -12,6 +12,7 @@ import DeleteFileDialogModal, {
 import PropertyDialog, { PropertyDialogProps } from "../Dialog/Property";
 import { FEDirectoryType } from "../type";
 import ContextMenuItem from "./ContextMenuItem";
+import useClipboard from "@contexts/Clipboard/hook";
 
 const Terminal = React.lazy(() => import("@components/Terminal"));
 
@@ -21,6 +22,7 @@ type Props = {
 
 const ItemContextMenu: React.FC<Props> = ({ node }) => {
   const { addModal } = useModal();
+  const { copy } = useClipboard();
   const {
     directoryType,
     setDialog,
@@ -101,6 +103,10 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
     });
   }, [handleCloseDialog, node, setDialog]);
 
+  const handleCopyClick = React.useCallback(() => {
+    copy(node);
+  }, [copy, node]);
+
   return (
     <ContextMenuPrimitive.Content
       className={clsx(
@@ -141,7 +147,7 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
 
       <ContextMenuPrimitive.Separator className="my-2 dark:bg-gray-600 h-[1px]" />
 
-      <ContextMenuItem>
+      <ContextMenuItem onClick={handleCopyClick}>
         <div className="flex items-center gap-2">
           <div className="w-4 h-4"></div>
           <div>Copy</div>
