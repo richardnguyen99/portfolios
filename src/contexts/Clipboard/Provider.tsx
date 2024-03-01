@@ -189,10 +189,6 @@ const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
     [clipboard.nodes, getHomeFolder, pasteNode, setHomeFolder],
   );
 
-  React.useEffect(() => {
-    console.log(clipboard);
-  }, [clipboard]);
-
   const value = React.useMemo<ClipboardContextType>(() => {
     return {
       nodes: clipboard.nodes,

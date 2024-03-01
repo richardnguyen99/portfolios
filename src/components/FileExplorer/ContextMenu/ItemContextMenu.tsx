@@ -57,7 +57,6 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
   }, [addModal, node]);
 
   const handleOpenItemLocationClick = React.useCallback(() => {
-    console.log("Open Item Location", node);
     const nodeParent = node.parent as IDirectory;
     setCurrDir(nodeParent);
     setDirectoryType(FEDirectoryType.File);

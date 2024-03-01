@@ -23,6 +23,7 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
   const { home } = useFileTree();
   const { searchNodeFromRoot } = useSystemCall();
 
+  const [selectedNodes, setSelectedNodes] = React.useState<INode[]>([]);
   const [dragging, setDragging] = React.useState<boolean>(false);
   const [size, setSize] = React.useState<FEViewSize>(FEViewSize.Normal);
   const [view, setView] = React.useState<FEViewType>(FEViewType.List);
@@ -102,10 +103,12 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
       directoryType,
       sortType,
       dialog,
+      selectedNodes,
 
       setDragging: setDragging,
       setViewSize: setSize,
       setViewType: setView,
+      setSelectedNodes: setSelectedNodes,
       setCurrDir,
       setShowHidden,
       setDialog,
@@ -120,6 +123,7 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
     doesShowHidden,
     dragging,
     historyState,
+    selectedNodes,
     size,
     sortType,
     view,

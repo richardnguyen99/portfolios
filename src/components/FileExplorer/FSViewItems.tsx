@@ -7,10 +7,12 @@ import { FEDirectoryType, FEViewType } from "./type";
 import ListView from "./ListView";
 import useRecentFiles from "@contexts/RecentFiles/hook";
 import useSystemCall from "@contexts/SystemCall/useSystemCall";
+import useDragSelect from "./DragSelect/hook";
 
 const FSViewItems: React.FC = () => {
-  const { currDir, viewType, directoryType, doesShowHidden } =
+  const { currDir, viewType, directoryType, doesShowHidden, setSelectedNodes } =
     useFileExplorer();
+  const { ds } = useDragSelect();
   const { searchNodeWithPath } = useSystemCall();
   const { recentFiles } = useRecentFiles();
 
@@ -39,6 +41,36 @@ const FSViewItems: React.FC = () => {
       return true;
     });
   }, [doesShowHidden, nodes]);
+
+  React.useEffect(() => {
+    if (!ds) return;
+
+    ds.subscribe("DS:end", (e) => {
+      const selectedNodes = e.items.map((item) => {
+        const itemId = item.getAttribute("data-node-id");
+
+        if (!itemId)
+          throw new Error(
+            `FSViewItems: useEffect: DS:end: data-node-id=${itemId} is not found`,
+          );
+
+        const node = nodes.find((node) => node.id === itemId);
+
+        if (!node)
+          throw new Error(
+            `FSViewItems: useEffect: DS:end: node=${itemId} is not found`,
+          );
+
+        return node;
+      });
+
+      setSelectedNodes(selectedNodes);
+    });
+
+    ds.subscribe("DS:start:pre", () => {
+      setSelectedNodes([]);
+    });
+  }, [ds, nodes, setSelectedNodes]);
 
   return (
     <div ref={containerRef} className="h-full">

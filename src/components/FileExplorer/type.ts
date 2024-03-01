@@ -56,6 +56,7 @@ export type FEDialog = {
 
 export type FileExplorerContextType = {
   currDir: INode;
+  selectedNodes: INode[];
   dragging: boolean;
   viewType: FEViewType;
   viewSize: FEViewSize;
@@ -73,6 +74,7 @@ export type FileExplorerContextType = {
   setDialog: React.Dispatch<React.SetStateAction<FEDialog>>;
   setDirectoryType: React.Dispatch<React.SetStateAction<FEDirectoryType>>;
   setSortType: React.Dispatch<React.SetStateAction<FESortType>>;
+  setSelectedNodes: React.Dispatch<React.SetStateAction<INode[]>>;
   dispatchHistoryState: React.Dispatch<FEHistoryAction>;
 };
 

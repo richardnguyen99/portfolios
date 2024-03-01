@@ -27,8 +27,6 @@ const FSView: React.FC = () => {
   const windowRef = React.useRef<HTMLElement | null>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
 
-  const [, setItemCount] = React.useState(0);
-
   React.useEffect(() => {
     const windowContainer = document.querySelector(
       `[x-data-window-id="${getId()}"]`,
@@ -58,12 +56,6 @@ const FSView: React.FC = () => {
 
     const mutationObserver = new MutationObserver((entries) => {
       if (!entries[0]) return;
-
-      const fsContent = windowContainer.querySelector(
-        "#fe-fs-content > div:nth-child(2) > div:nth-child(2)",
-      );
-
-      if (!fsContent) return;
 
       ds.setSettings({
         area: containerRef.current!,
@@ -113,19 +105,12 @@ const FSView: React.FC = () => {
     // @ts-ignore
     ds.subscribe("DS:end", dsCallback);
 
-    const add = ({ value = 1 }) => setItemCount((prev) => prev + value);
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    ds.subscribe("__add", add);
-
     return () => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       ds.unsubscribe("DS:end", dsCallback);
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      ds.unsubscribe("__add", add);
     };
   }, [containerRef, ds, setDragging, viewType]);
 
@@ -138,6 +123,7 @@ const FSView: React.FC = () => {
           <div className="w-full flex flex-col items-center">
             {viewType === FEViewType.List && <ListViewSort />}
             <div
+              id="fe-fs-view"
               ref={containerRef}
               className={clsx("relative", "h-full w-full window-scrollbar", {
                 // Evil hack to fix the scrollbar padding issue between
