@@ -1,4 +1,5 @@
 import * as React from "react";
+import { DSInputElement, DSPubCallback } from "dragselect";
 
 import { IDirectory, INode } from "@util/fs/type";
 import GridView from "./GridView";
@@ -18,6 +19,7 @@ const FSViewItems: React.FC = () => {
 
   const containerRef = React.useRef<HTMLDivElement>(null);
 
+  // Nodes of the current directory
   const nodes = React.useMemo(() => {
     if (directoryType === FEDirectoryType.Recent) {
       const recentNodes = recentFiles.map((recentFile) => {
@@ -34,6 +36,9 @@ const FSViewItems: React.FC = () => {
     return (currDir as IDirectory).children;
   }, [currDir, directoryType, recentFiles, searchNodeWithPath]);
 
+  /**
+   * Filtered nodes based on the current configuration
+   */
   const filterNodes = React.useMemo(() => {
     return nodes.filter((node) => {
       if (node.name.startsWith(".") && !doesShowHidden) return false;
@@ -42,11 +47,18 @@ const FSViewItems: React.FC = () => {
     });
   }, [doesShowHidden, nodes]);
 
-  React.useEffect(() => {
-    if (!ds) return;
-
-    ds.subscribe("DS:end", (e) => {
+  /**
+   * DragSelect callback when drag select ends
+   *
+   * @param {DSPubCallback<"DS:end", DSInputElement>} e - DragSelect end event
+   */
+  const dsEndCallback = React.useCallback<
+    DSPubCallback<"DS:end", DSInputElement>
+  >(
+    (e) => {
       const selectedNodes = e.items.map((item) => {
+        // Get the node id from the selected item, which is an actual DOM
+        // element
         const itemId = item.getAttribute("data-node-id");
 
         if (!itemId)
@@ -54,7 +66,7 @@ const FSViewItems: React.FC = () => {
             `FSViewItems: useEffect: DS:end: data-node-id=${itemId} is not found`,
           );
 
-        const node = nodes.find((node) => node.id === itemId);
+        const node = filterNodes.find((node) => node.id === itemId);
 
         if (!node)
           throw new Error(
@@ -64,13 +76,38 @@ const FSViewItems: React.FC = () => {
         return node;
       });
 
+      // Append memoized selected nodes to FileExplorer context's state
       setSelectedNodes(selectedNodes);
-    });
+    },
+    [filterNodes, setSelectedNodes],
+  );
 
-    ds.subscribe("DS:start:pre", () => {
+  /**
+   * DragSelect callback when dragselect starts
+   *
+   * @param {DSPubCallback<"DS:start:pre", DSInputElement>} _e - DragSelect start event
+   */
+  const dsStartCallback = React.useCallback<
+    DSPubCallback<"DS:start:pre", DSInputElement>
+  >(
+    (_e) => {
+      // Clear all temporary selected nodes every time drag select starts
       setSelectedNodes([]);
-    });
-  }, [ds, nodes, setSelectedNodes]);
+    },
+    [setSelectedNodes],
+  );
+
+  React.useEffect(() => {
+    if (!ds) return;
+
+    ds.subscribe("DS:end", dsEndCallback);
+    ds.subscribe("DS:start:pre", dsStartCallback);
+
+    return () => {
+      ds.unsubscribe("DS:end", dsEndCallback);
+      ds.unsubscribe("DS:start:pre", dsStartCallback);
+    };
+  }, [currDir, ds, dsEndCallback, dsStartCallback, setSelectedNodes]);
 
   return (
     <div ref={containerRef} className="h-full">

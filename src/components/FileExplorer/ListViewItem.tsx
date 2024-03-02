@@ -76,10 +76,10 @@ const ListViewItem: React.FC<Props> = ({ node }) => {
         },
       });
 
-      setCurrDir(node);
       ds?.SelectedSet.clear();
       setDragging(false);
       updateDirectory(node as IDirectory, { lastAccessed: new Date() });
+      setCurrDir(node);
     },
     [
       node,
