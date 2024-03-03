@@ -141,7 +141,7 @@ const ListView: React.FC<Props> = ({ nodes }) => {
     <div className="h-full">
       {sortedNodes.length > 0 ? (
         <div className={clsx("flex flex-col relative", "w-full")}>
-          <div id="fe-listView-sort-panel" className={clsx("flex pl-4")}>
+          <div id="fe-view-panel" className={clsx("flex pl-4")}>
             <div className="flex flex-col gap-1 w-full">
               {sortedNodes.map((node) => {
                 return <ListViewItem key={node.id} node={node} />;
