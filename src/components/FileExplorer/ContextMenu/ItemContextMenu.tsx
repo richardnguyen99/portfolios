@@ -104,9 +104,8 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
   }, [handleCloseDialog, node, setDialog]);
 
   const handleCopyClick = React.useCallback(() => {
-    console.log("selectedNodes", selectedNodes);
-    // copy(node);
-  }, [copy, node, selectedNodes]);
+    copy(...selectedNodes);
+  }, [copy, selectedNodes]);
 
   const handleCutClick = React.useCallback(() => {
     cut(node);

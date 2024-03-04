@@ -67,7 +67,7 @@ const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
     if (node.type === FileType.File) {
       const fileContent = window.localStorage.getItem(`file-${node.id}`);
 
-      if (!fileContent) {
+      if (fileContent === null) {
         throw new Error(`File ${node.id} not found`);
       }
 

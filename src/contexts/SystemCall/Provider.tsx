@@ -59,7 +59,7 @@ const SystemCallProvider: React.FC<Props> = ({ children }) => {
         return;
       }
 
-      const content = initialContent ?? "";
+      const content = initialContent || "";
 
       const newFile: IFile = {
         id: await generateFileId(content, name, parentNode),
