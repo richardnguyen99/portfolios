@@ -25,6 +25,7 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
   const { copy, cut } = useClipboard();
   const {
     directoryType,
+    selectedNodes,
     setDialog,
     setCurrDir,
     setDirectoryType,
@@ -103,8 +104,9 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
   }, [handleCloseDialog, node, setDialog]);
 
   const handleCopyClick = React.useCallback(() => {
-    copy(node);
-  }, [copy, node]);
+    console.log("selectedNodes", selectedNodes);
+    // copy(node);
+  }, [copy, node, selectedNodes]);
 
   const handleCutClick = React.useCallback(() => {
     cut(node);
