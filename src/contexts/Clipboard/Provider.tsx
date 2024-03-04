@@ -18,10 +18,83 @@ import useFileTree from "@contexts/FileTree/useFileTree";
 const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
   const { setHomeFolder, getHomeFolder } = useFileTree();
 
+  /**
+   * Get a name for a duplicate file.
+   *
+   * If a file with the same prefix exists, append " (Copy n)" to the name.
+   * If multiple copies exist, append " (Copy n)" where n is the new highest
+   * number.
+   *
+   * @example
+   * // Dir: another.1
+   * _getNameForDuplicate(dir, "another.1", "another.1");
+   * // "another.1 (Copy 1)"
+   *
+   * @example
+   * // Dir: another.1, another.1 (Copy 1)
+   * _getNameForDuplicate(dir, "another.1", "another.1");
+   * // "another.1 (Copy 2)"
+   *
+   * @example
+   * // Dir: another.1, another.1 (Copy 1), another.1 (Copy 2)
+   * _getNameForDuplicate(dir, "another.1 (Copy 1)", "another.1 (Copy 1)");
+   * // "another.1 (Copy 1) (Copy 1)"
+   *
+   *
+   * @param {IDirectory} dir - The directory to check for duplicates
+   * @param {string} name - The name of the file
+   * @param {string} existing - The prefix name of the existing file
+   * @returns {string} The new name for the duplicate file
+   */
+  const _getNameForDuplicate = React.useCallback(
+    (dir: IDirectory, name: string, prefix: string) => {
+      const prefixFiles = dir.children.filter((child) =>
+        child.name.startsWith(prefix),
+      );
+
+      if (prefixFiles.length === 0) {
+        return name;
+      }
+
+      const prefixNumbers = prefixFiles.map((file) => {
+        const input = file.name.slice(prefix.length + 1);
+        const match = input.match(/\(Copy (\d+)\)$/);
+
+        if (match) {
+          const numberMatch = input.match(/\d+/);
+
+          if (!numberMatch) {
+            throw new Error("Invalid file name");
+          }
+
+          return parseInt(numberMatch[0], 10);
+        }
+
+        return 0;
+      });
+
+      const highestNumber = Math.max(...prefixNumbers);
+      return `${prefix} (Copy ${highestNumber + 1})`;
+    },
+    [],
+  );
+
   const pasteNode = React.useCallback(
     (node: ClipboardNode, destDir: IDirectory) => {
       if (node.type === FileType.File) {
         const file = node as ClipboardFile;
+
+        const existingFile = destDir.children.find((child) =>
+          child.name.startsWith(file.name),
+        );
+
+        if (existingFile) {
+          file.name = _getNameForDuplicate(
+            destDir,
+            file.name,
+            existingFile.name,
+          );
+        }
 
         window.localStorage.setItem(`file-${file.id}`, file.content);
         window.dispatchEvent(
@@ -43,7 +116,7 @@ const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
 
       node.parent = destDir;
     },
-    [],
+    [_getNameForDuplicate],
   );
 
   const copyNode = React.useCallback(async (node: INode) => {
