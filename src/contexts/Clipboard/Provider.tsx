@@ -49,11 +49,11 @@ const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
   const _getNameForDuplicate = React.useCallback(
     (dir: IDirectory, name: string, prefix: string) => {
       const prefixFiles = dir.children.filter((child) =>
-        child.name.startsWith(prefix),
+        child.name.startsWith(prefix + " (Copy"),
       );
 
       if (prefixFiles.length === 0) {
-        return name;
+        return `${name} (Copy 1)`;
       }
 
       const prefixNumbers = prefixFiles.map((file) => {
@@ -81,20 +81,16 @@ const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
 
   const pasteNode = React.useCallback(
     (node: ClipboardNode, destDir: IDirectory) => {
+      const existingFile = destDir.children.find(
+        (child) => child.name === node.name,
+      );
+
+      if (existingFile) {
+        node.name = _getNameForDuplicate(destDir, node.name, existingFile.name);
+      }
+
       if (node.type === FileType.File) {
         const file = node as ClipboardFile;
-
-        const existingFile = destDir.children.find((child) =>
-          child.name.startsWith(file.name),
-        );
-
-        if (existingFile) {
-          file.name = _getNameForDuplicate(
-            destDir,
-            file.name,
-            existingFile.name,
-          );
-        }
 
         window.localStorage.setItem(`file-${file.id}`, file.content);
         window.dispatchEvent(
