@@ -15,15 +15,26 @@ import FileContextMenu from "./ContextMenu/FileContextMenu";
 import RecentContextMenu from "./ContextMenu/RecentContextMenu";
 import ListViewSort from "./ListViewSort";
 import useDragSelect from "./DragSelect/hook";
+import { useHotkeys } from "react-hotkeys-hook";
+import useClipboard from "@contexts/Clipboard/hook";
+import { IDirectory, INode } from "@util/fs/type";
 
 const MemoFileContextMenu = React.memo(FileContextMenu);
 const MemoRecentContextMenu = React.memo(RecentContextMenu);
 
 const FSView: React.FC = () => {
-  const { dialog, viewType, directoryType, setDragging, setSelectedNodes } =
-    useFileExplorer();
+  const {
+    selectedNodes,
+    dialog,
+    viewType,
+    directoryType,
+    currDir,
+    setDragging,
+    setSelectedNodes,
+  } = useFileExplorer();
   const { getId } = useWindow();
   const { ds } = useDragSelect();
+  const { copy, paste } = useClipboard();
 
   /**
    * Window reference to the current window DOM node. This is used to render
@@ -65,6 +76,49 @@ const FSView: React.FC = () => {
     },
     [setDragging],
   );
+
+  useHotkeys("mod+a", (e) => {
+    e.preventDefault();
+    if (!ds || !containerRef.current) return;
+
+    const items = containerRef.current.querySelectorAll(".selectable");
+    const nodes: INode[] = [];
+
+    items.forEach((item) => {
+      ds.addSelection(item as HTMLElement);
+
+      const itemId = item.getAttribute("data-node-id");
+      if (!itemId)
+        throw new Error(
+          `FSView: useHotkeys: mod+a: data-node-id=${itemId} is not found`,
+        );
+
+      const node = (currDir as IDirectory).children.find(
+        (node) => node.id === itemId,
+      );
+
+      if (!node)
+        throw new Error(
+          `FSView: useHotkeys: mod+a: node=${itemId} is not found`,
+        );
+
+      nodes.push(node);
+    });
+
+    setSelectedNodes(nodes);
+  });
+
+  useHotkeys("mod+c", () => {
+    copy(...selectedNodes);
+  });
+
+  useHotkeys("mod+v", () => {
+    paste(currDir as IDirectory);
+  });
+
+  useHotkeys("delete", () => {
+    console.log("delete");
+  });
 
   // Update the window reference when the window is ready
   React.useEffect(() => {

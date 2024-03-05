@@ -3,7 +3,7 @@ import clsx from "classnames";
 
 import useDragSelect from "./DragSelect/hook";
 import useFileExplorer from "./hook";
-import { FileType, IDirectory } from "@util/fs/type";
+import { FileType, IDirectory, IFile } from "@util/fs/type";
 import { FEDirectoryType } from "./type";
 import useRecentFiles from "@contexts/RecentFiles/hook";
 import useSystemCall from "@contexts/SystemCall/useSystemCall";
@@ -12,7 +12,7 @@ const FSFooter: React.FC = () => {
   const { ds } = useDragSelect();
   const { recentFiles } = useRecentFiles();
   const { searchNodeWithPath } = useSystemCall();
-  const { currDir, directoryType } = useFileExplorer();
+  const { currDir, directoryType, selectedNodes } = useFileExplorer();
 
   const [text, setText] = React.useState("");
 
@@ -36,34 +36,22 @@ const FSFooter: React.FC = () => {
 
     setText("");
 
-    ds.subscribe("DS:end", (e) => {
-      const items = e.items as HTMLDivElement[];
-
-      if (!items.length) return setText("");
-
+    if (!selectedNodes.length) setText("");
+    else {
       let numDirs = 0;
       let subItems = 0;
       let numFiles = 0;
       let totalSize = 0;
 
-      for (const item of items) {
-        const itemId = item.attributes.getNamedItem("data-node-id")?.value;
-
-        if (!itemId) continue;
-
-        const node = findNode(itemId);
-
-        if (!node) continue;
-
+      selectedNodes.forEach((node) => {
         if (node.type === FileType.Directory) {
           numDirs++;
           subItems += (node as IDirectory).children.length;
         } else {
-          const file = localStorage.getItem(`file-${node.id}`)!;
-          totalSize += file.length;
+          totalSize += (node as IFile).size;
           numFiles++;
         }
-      }
+      });
 
       let constructedText = "";
 
@@ -83,17 +71,16 @@ const FSFooter: React.FC = () => {
       }
 
       setText(constructedText);
-    });
+    }
 
     ds.subscribe("DS:start", () => {
       setText("");
     });
 
     return () => {
-      ds.unsubscribe("DS:end");
       ds.unsubscribe("DS:start");
     };
-  }, [currDir, ds, findNode]);
+  }, [currDir, ds, findNode, selectedNodes]);
 
   return (
     <div className="flex fixed bottom-0 right-0 z-10">
@@ -103,6 +90,7 @@ const FSFooter: React.FC = () => {
             "relative ml-auto",
             "p-1 rounded-tl-lg text-xs",
             "border-t border-l",
+            "select-none",
             "border-gray-400/45 dark:border-gray-600",
             "bg-gray-300/45 dark:bg-gray-700",
           )}
