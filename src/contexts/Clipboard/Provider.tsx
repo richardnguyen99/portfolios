@@ -210,7 +210,7 @@ const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
       }
 
       (newNode as IFile).content = fileContent;
-      (newNode as IFile).size = fileContent.length;
+      (newNode as IFile).size = (node as IFile).size;
       newNode.id = await generateFileId(fileContent, node.name);
     } else {
       // node is a directory
