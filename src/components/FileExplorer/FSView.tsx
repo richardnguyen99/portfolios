@@ -34,7 +34,7 @@ const FSView: React.FC = () => {
   } = useFileExplorer();
   const { getId } = useWindow();
   const { ds } = useDragSelect();
-  const { copy, paste } = useClipboard();
+  const { copy, cut, paste } = useClipboard();
 
   /**
    * Window reference to the current window DOM node. This is used to render
@@ -114,6 +114,10 @@ const FSView: React.FC = () => {
 
   useHotkeys("mod+v", () => {
     paste(currDir as IDirectory);
+  });
+
+  useHotkeys("mod+x", () => {
+    cut(...selectedNodes);
   });
 
   useHotkeys("delete", () => {
