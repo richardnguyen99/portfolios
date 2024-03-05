@@ -130,7 +130,6 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
           <div className="w-4 h-4"></div>
           <div>Open "{node.name}"</div>
         </div>
-        <div className="ml-auto font-mono font-light text-xs">something</div>
       </ContextMenuItem>
       {directoryType === FEDirectoryType.Recent && (
         <ContextMenuItem onClick={handleOpenItemLocationClick}>
@@ -156,21 +155,21 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
           <div className="w-4 h-4"></div>
           <div>Copy</div>
         </div>
-        <div className="ml-auto font-mono font-light text-xs">something</div>
+        <div className="ml-auto font-mono font-light text-xs">Ctrl + C</div>
       </ContextMenuItem>
       <ContextMenuItem onClick={handleCutClick}>
         <div className="flex items-center gap-2">
           <div className="w-4 h-4"></div>
           <div>Move</div>
         </div>
-        <div className="ml-auto font-mono font-light text-xs">something</div>
+        <div className="ml-auto font-mono font-light text-xs">Ctrl + X</div>
       </ContextMenuItem>
       <ContextMenuItem onClick={handleDeleteClick}>
         <div className="flex items-center gap-2">
           <div className="w-4 h-4"></div>
           <div>Delete</div>
         </div>
-        <div className="ml-auto font-mono font-light text-xs">something</div>
+        <div className="ml-auto font-mono font-light text-xs">Delete</div>
       </ContextMenuItem>
 
       <ContextMenuPrimitive.Separator className="my-2 dark:bg-gray-600 h-[1px]" />
@@ -180,7 +179,6 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
           <div className="w-4 h-4"></div>
           <div>Properties</div>
         </div>
-        <div className="ml-auto font-mono font-light text-xs">something</div>
       </ContextMenuItem>
     </ContextMenuPrimitive.Content>
   );

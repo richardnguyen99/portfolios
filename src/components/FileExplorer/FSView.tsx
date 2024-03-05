@@ -108,15 +108,15 @@ const FSView: React.FC = () => {
     setSelectedNodes(nodes);
   });
 
-  useHotkeys("mod+c", () => {
+  useHotkeys("ctrl+c", () => {
     copy(...selectedNodes);
   });
 
-  useHotkeys("mod+v", () => {
+  useHotkeys("ctrl+v", () => {
     paste(currDir as IDirectory);
   });
 
-  useHotkeys("mod+x", () => {
+  useHotkeys("ctrl+x", () => {
     cut(...selectedNodes);
   });
 
