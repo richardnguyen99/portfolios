@@ -79,6 +79,49 @@ const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
     [],
   );
 
+  const _getSourceDirectory = React.useCallback(
+    (node: IDirectory) => {
+      const home = getHomeFolder();
+      let homeFolder = node;
+      const pathList: string[] = [node.id];
+
+      while (homeFolder.parent !== null && homeFolder.parent !== home.parent) {
+        homeFolder = homeFolder.parent as IDirectory;
+        pathList.push(homeFolder.id);
+      }
+
+      return pathList.reverse();
+    },
+    [getHomeFolder],
+  );
+
+  const _getNodeWithPath = React.useCallback(
+    (root: IDirectory, path: string[]) => {
+      if (path.length === 0) {
+        return root;
+      }
+
+      if (root.id !== path[0]) {
+        return null;
+      }
+
+      let current = root;
+
+      for (let i = 1; i < path.length; i++) {
+        const child = current.children.find((child) => child.id === path[i]);
+
+        if (!child) {
+          return null;
+        }
+
+        current = child as IDirectory;
+      }
+
+      return current;
+    },
+    [],
+  );
+
   const pasteNode = React.useCallback(
     (node: ClipboardNode, destDir: IDirectory) => {
       const existingFile = destDir.children.find(
@@ -111,8 +154,34 @@ const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
       }
 
       node.parent = destDir;
+      destDir.children.push(node);
     },
     [_getNameForDuplicate],
+  );
+
+  const moveNode = React.useCallback(
+    (node: ClipboardNode, destDir: IDirectory, srcDirPath: string[]) => {
+      if (srcDirPath.length === 0) {
+        return;
+      }
+
+      if (destDir.id === srcDirPath[srcDirPath.length - 1]) {
+        return;
+      }
+
+      const home = getHomeFolder();
+      destDir.children.push(node);
+      node.parent = destDir;
+
+      const srcDir = _getNodeWithPath(home, srcDirPath);
+
+      if (srcDir === null) {
+        throw new Error("Source directory not found");
+      }
+
+      srcDir.children = srcDir.children.filter((child) => child.id !== node.id);
+    },
+    [_getNodeWithPath, getHomeFolder],
   );
 
   const copyNode = React.useCallback(async (node: INode) => {
@@ -159,12 +228,21 @@ const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
     return newNode;
   }, []);
 
+  const cutNode = React.useCallback((node: INode) => {
+    const newNode = {
+      ...node,
+      parent: null,
+    };
+
+    return newNode;
+  }, []);
+
   const [clipboard, dispatchClipboard] = React.useReducer(
     (state: ClipboardReducerState, action: ClipboardReducerAction) => {
       switch (action.type) {
         case ClipBoardAction.COPY:
           return {
-            srcDir: action.payload.srcDir || null,
+            srcDir: [...action.payload.srcDir],
             nodes: action.payload.nodes.map((node) => ({
               ...node,
               action: ClipBoardAction.COPY,
@@ -173,7 +251,7 @@ const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
 
         case ClipBoardAction.CUT:
           return {
-            srcDir: action.payload.srcDir || null,
+            srcDir: [...action.payload.srcDir],
             nodes: action.payload.nodes.map((node) => ({
               ...node,
               action: ClipBoardAction.CUT,
@@ -182,7 +260,7 @@ const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
 
         case ClipBoardAction.PASTE:
           return {
-            srcDir: null,
+            srcDir: [] as string[],
             nodes: [] as ClipboardNode[],
           };
 
@@ -192,49 +270,56 @@ const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
     },
     {
       nodes: [] as ClipboardNode[],
-      srcDir: null,
+      srcDir: [] as string[],
     },
   );
 
   const copy = React.useCallback(
     async (...nodes: INode[]) => {
+      if (nodes.length === 0) {
+        return;
+      }
+
       const tempNodes = await Promise.all(nodes.map(copyNode));
-      const srcDir = nodes[0].parent as INode;
 
       dispatchClipboard({
         type: ClipBoardAction.COPY,
         payload: {
           nodes: tempNodes,
-          srcDir,
+          srcDir: _getSourceDirectory(nodes[0].parent as IDirectory),
         },
       });
     },
-    [copyNode],
+    [_getSourceDirectory, copyNode],
   );
 
   const cut = React.useCallback(
     async (...nodes: INode[]) => {
-      const tempNodes = await Promise.all(nodes.map(copyNode));
-      const srcDir = nodes[0].parent as INode;
+      if (nodes.length === 0) {
+        return;
+      }
+
+      const tempNodes = nodes.map(cutNode);
 
       dispatchClipboard({
         type: ClipBoardAction.CUT,
         payload: {
           nodes: tempNodes,
-          srcDir,
+          srcDir: _getSourceDirectory(nodes[0].parent as IDirectory),
         },
       });
     },
-    [copyNode],
+    [_getSourceDirectory, cutNode],
   );
 
   const paste = React.useCallback(
     (destDir: IDirectory) => {
       for (const node of clipboard.nodes) {
-        pasteNode(node, destDir);
-
-        node.parent = destDir;
-        destDir.children.push(node);
+        if (node.action === ClipBoardAction.COPY) {
+          pasteNode(node, destDir);
+        } else {
+          moveNode(node, destDir, clipboard.srcDir);
+        }
       }
 
       const home = getHomeFolder();
@@ -251,11 +336,18 @@ const ClipboardProvider: React.FC<ClipboardProviderProps> = ({ children }) => {
         type: ClipBoardAction.PASTE,
         payload: {
           nodes: [],
-          srcDir: undefined,
+          srcDir: [],
         },
       });
     },
-    [clipboard.nodes, getHomeFolder, pasteNode, setHomeFolder],
+    [
+      clipboard.nodes,
+      clipboard.srcDir,
+      getHomeFolder,
+      moveNode,
+      pasteNode,
+      setHomeFolder,
+    ],
   );
 
   const value = React.useMemo<ClipboardContextType>(() => {

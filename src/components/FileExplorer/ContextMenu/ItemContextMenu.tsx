@@ -108,8 +108,8 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
   }, [copy, selectedNodes]);
 
   const handleCutClick = React.useCallback(() => {
-    cut(node);
-  }, [cut, node]);
+    cut(...selectedNodes);
+  }, [cut, selectedNodes]);
 
   return (
     <ContextMenuPrimitive.Content
