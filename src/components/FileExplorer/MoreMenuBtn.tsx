@@ -46,7 +46,6 @@ const ForwardedMoreMenuItem = React.forwardRef(MoreMenuItemComponent);
 const MoreMenuBtn: React.FC = () => {
   const { doesShowHidden, setShowHidden, currDir } = useFileExplorer();
   const { addModal } = useModal();
-
   const handleSetHiddenClick = React.useCallback(() => {
     setShowHidden((prev) => !prev);
   }, [setShowHidden]);
@@ -72,8 +71,11 @@ const MoreMenuBtn: React.FC = () => {
     <div>
       <Menu as="div" className="relative inline-block text-left">
         <div>
-          <Menu.Button as={IconBtn}>
-            <ThreeBarsIcon />
+          <Menu.Button as="div">
+            <IconBtn hideTooltipOnClick>
+              <ThreeBarsIcon />
+              <p>More actions</p>
+            </IconBtn>
           </Menu.Button>
         </div>
         <Transition

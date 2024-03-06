@@ -217,12 +217,14 @@ const AddressBar: React.FC = () => {
           onClick={handlePreviousClick}
         >
           <ChevronLeftIcon />
+          <p>Backward</p>
         </IconBtn>
         <IconBtn
           aria-disabled={historyState.index >= historyState.history.length - 1}
           onClick={handleNextClick}
         >
           <ChevronRightIcon />
+          <p>Forward</p>
         </IconBtn>
       </div>
       <div
