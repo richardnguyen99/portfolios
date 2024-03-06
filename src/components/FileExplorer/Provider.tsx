@@ -8,13 +8,13 @@ import {
   type FileExplorerProviderProps,
   type FEHistory,
   FESortType,
-  FEHistoryState,
-  FEHistoryAction,
   FEDirectoryType,
 } from "./type";
 import { FileType, IDirectory, INode } from "@util/fs/type";
 import useFileTree from "@contexts/FileTree/useFileTree";
 import useSystemCall from "@contexts/SystemCall/useSystemCall";
+import useHistoryState from "./hooks/useHistoryState";
+import useContextMenuState from "./hooks/useContextMenuState";
 
 const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
   children,
@@ -23,6 +23,7 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
   const { home } = useFileTree();
   const { searchNodeFromRoot } = useSystemCall();
 
+  const [selectedNodes, setSelectedNodes] = React.useState<INode[]>([]);
   const [dragging, setDragging] = React.useState<boolean>(false);
   const [size, setSize] = React.useState<FEViewSize>(FEViewSize.Normal);
   const [view, setView] = React.useState<FEViewType>(FEViewType.List);
@@ -44,52 +45,21 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
       : FESortType.NAME_ASC;
   });
 
-  const [historyState, setHistoryState] = React.useReducer(
-    (state: FEHistoryState, action: FEHistoryAction) => {
-      switch (action.type) {
-        case "push":
-          return {
-            index: state.index + 1,
-            history: [
-              ...state.history.slice(0, state.index + 1),
-              action.payload,
-            ],
-          };
-        case "pop":
-          return {
-            index: state.index - 1,
-            history: state.history.slice(0, state.index),
-          };
-        case "previous":
-          return {
-            index: state.index - 1,
-            history: state.history,
-          };
-        case "next":
-          return {
-            index: state.index + 1,
-            history: state.history,
-          };
-        case "manual":
-          return {
-            index: action.payload.index,
-            history: [...action.payload.history],
-          };
-        default:
-          return state;
-      }
-    },
-    {
-      index: 0,
-      history: [
-        {
-          id: currDir?.id ?? "",
-          name: currDir?.name ?? "",
-          parentId: currDir?.parent?.id ?? "",
-        },
-      ] as FEHistory[],
-    },
-  );
+  const [historyState, dispatchHistoryState] = useHistoryState({
+    index: 0,
+    history: [
+      {
+        id: currDir?.id ?? "",
+        name: currDir?.name ?? "",
+        parentId: currDir?.parent?.id ?? "",
+      },
+    ] as FEHistory[],
+  });
+
+  const [contextMenuState, dispatchContextMenuState] = useContextMenuState({
+    open: false,
+    storedNodes: [],
+  });
 
   const contextValue = React.useMemo<FileExplorerContextType>(() => {
     return {
@@ -102,27 +72,35 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
       directoryType,
       sortType,
       dialog,
+      selectedNodes,
+      contextMenuState,
 
-      setDragging: setDragging,
+      setDragging,
       setViewSize: setSize,
       setViewType: setView,
+      setSelectedNodes: setSelectedNodes,
       setCurrDir,
       setShowHidden,
       setDialog,
       setDirectoryType,
       setSortType,
-      dispatchHistoryState: setHistoryState,
+      dispatchHistoryState,
+      dispatchContextMenuState,
     };
   }, [
     currDir,
-    dialog,
-    directoryType,
-    doesShowHidden,
     dragging,
-    historyState,
-    size,
-    sortType,
     view,
+    size,
+    doesShowHidden,
+    historyState,
+    directoryType,
+    sortType,
+    dialog,
+    selectedNodes,
+    contextMenuState,
+    dispatchHistoryState,
+    dispatchContextMenuState,
   ]);
 
   const updateNode = React.useCallback(
@@ -179,14 +157,14 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
 
       if (newNode) {
         setCurrDir(newNode);
-        setHistoryState({
+        dispatchHistoryState({
           type: "pop",
         });
       }
     }
 
     setDragging(false);
-  }, [currDir, historyState, searchNodeFromRoot]);
+  }, [currDir, dispatchHistoryState, historyState, searchNodeFromRoot]);
 
   if (!currDir) return null;
 

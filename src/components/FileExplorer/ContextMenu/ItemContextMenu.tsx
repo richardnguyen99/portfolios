@@ -12,6 +12,7 @@ import DeleteFileDialogModal, {
 import PropertyDialog, { PropertyDialogProps } from "../Dialog/Property";
 import { FEDirectoryType } from "../type";
 import ContextMenuItem from "./ContextMenuItem";
+import useClipboard from "@contexts/Clipboard/hook";
 
 const Terminal = React.lazy(() => import("@components/Terminal"));
 
@@ -21,8 +22,10 @@ type Props = {
 
 const ItemContextMenu: React.FC<Props> = ({ node }) => {
   const { addModal } = useModal();
+  const { copy, cut } = useClipboard();
   const {
     directoryType,
+    selectedNodes,
     setDialog,
     setCurrDir,
     setDirectoryType,
@@ -55,7 +58,6 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
   }, [addModal, node]);
 
   const handleOpenItemLocationClick = React.useCallback(() => {
-    console.log("Open Item Location", node);
     const nodeParent = node.parent as IDirectory;
     setCurrDir(nodeParent);
     setDirectoryType(FEDirectoryType.File);
@@ -101,6 +103,14 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
     });
   }, [handleCloseDialog, node, setDialog]);
 
+  const handleCopyClick = React.useCallback(() => {
+    copy(...selectedNodes);
+  }, [copy, selectedNodes]);
+
+  const handleCutClick = React.useCallback(() => {
+    cut(...selectedNodes);
+  }, [cut, selectedNodes]);
+
   return (
     <ContextMenuPrimitive.Content
       className={clsx(
@@ -120,7 +130,6 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
           <div className="w-4 h-4"></div>
           <div>Open "{node.name}"</div>
         </div>
-        <div className="ml-auto font-mono font-light text-xs">something</div>
       </ContextMenuItem>
       {directoryType === FEDirectoryType.Recent && (
         <ContextMenuItem onClick={handleOpenItemLocationClick}>
@@ -141,26 +150,26 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
 
       <ContextMenuPrimitive.Separator className="my-2 dark:bg-gray-600 h-[1px]" />
 
-      <ContextMenuItem>
+      <ContextMenuItem onClick={handleCopyClick}>
         <div className="flex items-center gap-2">
           <div className="w-4 h-4"></div>
           <div>Copy</div>
         </div>
-        <div className="ml-auto font-mono font-light text-xs">something</div>
+        <div className="ml-auto font-mono font-light text-xs">Ctrl + C</div>
       </ContextMenuItem>
-      <ContextMenuItem>
+      <ContextMenuItem onClick={handleCutClick}>
         <div className="flex items-center gap-2">
           <div className="w-4 h-4"></div>
           <div>Move</div>
         </div>
-        <div className="ml-auto font-mono font-light text-xs">something</div>
+        <div className="ml-auto font-mono font-light text-xs">Ctrl + X</div>
       </ContextMenuItem>
       <ContextMenuItem onClick={handleDeleteClick}>
         <div className="flex items-center gap-2">
           <div className="w-4 h-4"></div>
           <div>Delete</div>
         </div>
-        <div className="ml-auto font-mono font-light text-xs">something</div>
+        <div className="ml-auto font-mono font-light text-xs">Delete</div>
       </ContextMenuItem>
 
       <ContextMenuPrimitive.Separator className="my-2 dark:bg-gray-600 h-[1px]" />
@@ -170,7 +179,6 @@ const ItemContextMenu: React.FC<Props> = ({ node }) => {
           <div className="w-4 h-4"></div>
           <div>Properties</div>
         </div>
-        <div className="ml-auto font-mono font-light text-xs">something</div>
       </ContextMenuItem>
     </ContextMenuPrimitive.Content>
   );

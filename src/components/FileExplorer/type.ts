@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { INode } from "@util/fs/type";
+import { DSInputElement } from "dragselect";
 
 export enum FESortType {
   NAME_ASC = 0,
@@ -54,8 +55,23 @@ export type FEDialog = {
   props: object | null;
 };
 
+export type FEContextMenuState = {
+  open: boolean;
+  storedNodes: DSInputElement[] | HTMLElement[];
+};
+
+export type FEContextMenuAction =
+  | {
+      type: "open";
+      payload: {
+        nodes: DSInputElement[] | HTMLElement[];
+      };
+    }
+  | { type: "close" };
+
 export type FileExplorerContextType = {
   currDir: INode;
+  selectedNodes: INode[];
   dragging: boolean;
   viewType: FEViewType;
   viewSize: FEViewSize;
@@ -64,6 +80,7 @@ export type FileExplorerContextType = {
   dialog: FEDialog;
   directoryType: FEDirectoryType;
   sortType: FESortType;
+  contextMenuState: FEContextMenuState;
 
   setViewSize: React.Dispatch<React.SetStateAction<FEViewSize>>;
   setViewType: React.Dispatch<React.SetStateAction<FEViewType>>;
@@ -73,7 +90,9 @@ export type FileExplorerContextType = {
   setDialog: React.Dispatch<React.SetStateAction<FEDialog>>;
   setDirectoryType: React.Dispatch<React.SetStateAction<FEDirectoryType>>;
   setSortType: React.Dispatch<React.SetStateAction<FESortType>>;
+  setSelectedNodes: React.Dispatch<React.SetStateAction<INode[]>>;
   dispatchHistoryState: React.Dispatch<FEHistoryAction>;
+  dispatchContextMenuState: React.Dispatch<FEContextMenuAction>;
 };
 
 export type FileExplorerProviderProps = {

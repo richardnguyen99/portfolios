@@ -21,6 +21,7 @@ const GridView: React.FC<Props> = ({ nodes }) => {
 
   return nodes.length > 0 ? (
     <div
+      id="fe-view-panel"
       className={clsx(
         "grid grid-cols-[repeat(auto-fill,_minmax(88px,_0fr))]",
         "[grid-gap:_1.5rem]",

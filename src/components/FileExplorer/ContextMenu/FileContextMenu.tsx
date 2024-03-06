@@ -9,6 +9,8 @@ import AddNewFolderDialog from "../Dialog/AddNewFolder";
 import AddNewFileDialog from "../Dialog/AddNewFile";
 import PropertyDialog, { PropertyDialogProps } from "../Dialog/Property";
 import ContextMenuItem from "./ContextMenuItem";
+import useClipboard from "@contexts/Clipboard/hook";
+import { IDirectory } from "@util/fs/type";
 
 const Terminal = React.lazy(() => import("@components/Terminal"));
 
@@ -17,6 +19,7 @@ const FileContextMenuRenderer: React.ForwardRefRenderFunction<
   ContextMenuPrimitive.ContextMenuContentProps
 > = (props, ref) => {
   const { addModal } = useModal();
+  const { nodes, paste } = useClipboard();
   const { currDir, setDialog } = useFileExplorer();
 
   const handleOpenTerminalClick = React.useCallback(() => {
@@ -76,6 +79,14 @@ const FileContextMenuRenderer: React.ForwardRefRenderFunction<
     });
   }, [handleCloseDialog, setDialog]);
 
+  const handlePasteClick = React.useCallback(() => {
+    if (nodes.length === 0) {
+      return;
+    }
+
+    paste(currDir as IDirectory);
+  }, [currDir, nodes, paste]);
+
   const handlePropertyClick = React.useCallback(() => {
     setDialog({
       open: true,
@@ -123,6 +134,15 @@ const FileContextMenuRenderer: React.ForwardRefRenderFunction<
         <div className="flex items-center gap-2">
           <div className="w-4 h-4"></div>
           <div>Open in Terminal</div>
+        </div>
+      </ContextMenuItem>
+
+      <ContextMenuPrimitive.Separator className="my-2 dark:bg-gray-600 h-[1px]" />
+
+      <ContextMenuItem onClick={handlePasteClick} disabled={nodes.length === 0}>
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-4"></div>
+          <div>Paste</div>
         </div>
       </ContextMenuItem>
 

@@ -10,7 +10,10 @@ export const generateDirectoryId = (
     .digest(
       "SHA-256",
       new TextEncoder().encode(
-        name + crypto.getRandomValues(new Uint32Array(1))[0] + DIR_MAGIC_NUM,
+        name +
+          crypto.getRandomValues(new Uint32Array(1))[0] +
+          DIR_MAGIC_NUM +
+          new Date().getTime(),
       ),
     )
     .then((hash) => {
@@ -26,7 +29,7 @@ export const generateDirectoryId = (
 export const generateFileId = (
   content: string,
   _fileName: string,
-  _parentNode: INode,
+  _parentNode?: INode,
 ): Promise<string> => {
   const FILE_MAGIC_NUM: number = 0x7fffffff;
 
@@ -36,7 +39,8 @@ export const generateFileId = (
       new TextEncoder().encode(
         content +
           crypto.getRandomValues(new Uint32Array(1))[0] +
-          FILE_MAGIC_NUM,
+          FILE_MAGIC_NUM +
+          new Date().getTime(),
       ),
     )
     .then((hash) => {
