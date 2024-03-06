@@ -23,7 +23,7 @@ const IconBtn = React.forwardRef<HTMLButtonElement, Props>(
 
     const { dragging } = useFileExplorer();
 
-    const { getId } = useWindow();
+    const { getId, getActiveState } = useWindow();
 
     const windowRef = React.useRef<HTMLDivElement | null>(null);
 
@@ -39,6 +39,7 @@ const IconBtn = React.forwardRef<HTMLButtonElement, Props>(
       <Tooltip
         boundary={windowRef.current ?? undefined}
         hideOnClick={hideTooltipOnClick}
+        disabled={!getActiveState()}
       >
         <button
           ref={ref as React.RefObject<HTMLButtonElement>}

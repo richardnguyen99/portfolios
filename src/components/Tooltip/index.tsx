@@ -21,6 +21,11 @@ export interface TooltipProps {
    * Whether the tooltip should be hidden when clicked.
    */
   hideOnClick?: boolean;
+
+  /**
+   * Whether the tooltip should be disabled.
+   */
+  disabled?: boolean;
 }
 
 export type Props = TooltipProps & React.HTMLAttributes<HTMLDivElement>;
@@ -34,6 +39,7 @@ const Tooltip: React.FC<Props> = ({
   placement = "bottom-start",
   boundary,
   hideOnClick = false,
+  disabled = false,
   ...rest
 }) => {
   if (children.length !== 2) {
@@ -66,9 +72,10 @@ const Tooltip: React.FC<Props> = ({
     setIsOpen(false);
   }
 
-  function openModal() {
+  const openModal = React.useCallback(() => {
+    if (disabled) return;
     setIsOpen(true);
-  }
+  }, [disabled]);
 
   const handleClickCapture = React.useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -82,7 +89,7 @@ const Tooltip: React.FC<Props> = ({
         }
       }
     },
-    [hideOnClick, isOpen],
+    [hideOnClick, isOpen, openModal],
   );
 
   return (
@@ -131,9 +138,9 @@ const Tooltip: React.FC<Props> = ({
               "inline-block items-center justify-center": true,
               "whitespace-nowrap text-xs font-bold": true,
               "rounded-lg p-1.5  border": true,
-              "bg-zinc-300 dark:bg-zinc-800 ": true,
-              "border-zinc-400/50 dark:border-zinc-600 ": true,
-              "shadow-zinc-800 dark:shadow-zinc-800/60": true,
+              "bg-gray-300 dark:bg-gray-800 ": true,
+              "border-gray-400/50 dark:border-gray-600 ": true,
+              "shadow-gray-800 dark:shadow-gray-800/60": true,
             })}
           >
             {children[1]}

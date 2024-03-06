@@ -7,7 +7,6 @@ import IconBtn from "./IconBtn";
 import useFileExplorer from "./hook";
 import useModal from "@contexts/Modal/useModal";
 import { ModalProps } from "@contexts/Modal/type";
-import useWindow from "@components/Window/useWindow";
 
 const Terminal = React.lazy(() => import("@components/Terminal"));
 
