@@ -32,19 +32,11 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
   const [directoryType, setDirectoryType] = React.useState<FEDirectoryType>(
     FEDirectoryType.File,
   );
-  const [dialog, setDialog] = React.useState<FileExplorerContextType["dialog"]>(
-    {
-      open: false,
-      dialog: null,
-      props: null,
-    },
-  );
   const [sortType, setSortType] = React.useState(() => {
     return directoryType === FEDirectoryType.Recent
       ? FESortType.DATE_DESC
       : FESortType.NAME_ASC;
   });
-
   const [historyState, dispatchHistoryState] = useHistoryState({
     index: 0,
     history: [
@@ -55,6 +47,13 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
       },
     ] as FEHistory[],
   });
+  const [dialog, setDialog] = React.useState<FileExplorerContextType["dialog"]>(
+    {
+      open: false,
+      dialog: null,
+      props: null,
+    },
+  );
 
   const [contextMenuState, dispatchContextMenuState] = useContextMenuState({
     open: false,

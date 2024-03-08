@@ -69,6 +69,129 @@ export type FEContextMenuAction =
     }
   | { type: "close" };
 
+export type FETabState = {
+  currDir: INode;
+  selectedNodes: INode[];
+  dragging: boolean;
+  viewType: FEViewType;
+  viewSize: FEViewSize;
+  showHidden: boolean;
+  directoryType: FEDirectoryType;
+  sortType: FESortType;
+  historyState: FEHistoryState;
+  contextMenuState: FEContextMenuState;
+};
+
+export type FETabReducerState = {
+  currentTab: number;
+  tabs: FETabState[];
+};
+
+export enum FETabReducerActionType {
+  SET_CURR_DIR,
+  SET_SELECTED_NODES,
+  SET_DRAGGING,
+  SET_VIEW_TYPE,
+  SET_VIEW_SIZE,
+  SET_SHOW_HIDDEN,
+  SET_DIRECTORY_TYPE,
+  SET_SORT_TYPE,
+  UPDATE_HISTORY_STATE,
+  UPDATE_CONTEXT_MENU_STATE,
+}
+
+export type FETabReducerSetCurrDirAction = {
+  type: FETabReducerActionType.SET_CURR_DIR;
+  payload: {
+    tab: number;
+    currDir: INode;
+  };
+};
+
+export type FETabReducerSetSelectedNodesAction = {
+  type: FETabReducerActionType.SET_SELECTED_NODES;
+  payload: {
+    tab: number;
+    selectedNodes: INode[];
+  };
+};
+
+export type FETabReducerSetDraggingAction = {
+  type: FETabReducerActionType.SET_DRAGGING;
+  payload: {
+    tab: number;
+    dragging: boolean;
+  };
+};
+
+export type FETabReducerSetViewTypeAction = {
+  type: FETabReducerActionType.SET_VIEW_TYPE;
+  payload: {
+    tab: number;
+    viewType: FEViewType;
+  };
+};
+
+export type FETabReducerSetViewSizeAction = {
+  type: FETabReducerActionType.SET_VIEW_SIZE;
+  payload: {
+    tab: number;
+    viewSize: FEViewSize;
+  };
+};
+
+export type FETabReducerSetShowHiddenAction = {
+  type: FETabReducerActionType.SET_SHOW_HIDDEN;
+  payload: {
+    tab: number;
+    showHidden: boolean;
+  };
+};
+
+export type FETabReducerSetDirectoryTypeAction = {
+  type: FETabReducerActionType.SET_DIRECTORY_TYPE;
+  payload: {
+    tab: number;
+    directoryType: FEDirectoryType;
+  };
+};
+
+export type FETabReducerSetSortTypeAction = {
+  type: FETabReducerActionType.SET_SORT_TYPE;
+  payload: {
+    tab: number;
+    sortType: FESortType;
+  };
+};
+
+export type FETabReducerUpdateHistoryStateAction = {
+  type: FETabReducerActionType.UPDATE_HISTORY_STATE;
+  payload: {
+    tab: number;
+    action: FEHistoryAction;
+  };
+};
+
+export type FETabReducerUpdateContextMenuStateAction = {
+  type: FETabReducerActionType.UPDATE_CONTEXT_MENU_STATE;
+  payload: {
+    tab: number;
+    action: FEContextMenuAction;
+  };
+};
+
+export type FETabReducerAction =
+  | FETabReducerSetCurrDirAction
+  | FETabReducerSetSelectedNodesAction
+  | FETabReducerSetDraggingAction
+  | FETabReducerSetViewTypeAction
+  | FETabReducerSetViewSizeAction
+  | FETabReducerSetShowHiddenAction
+  | FETabReducerSetDirectoryTypeAction
+  | FETabReducerSetSortTypeAction
+  | FETabReducerUpdateHistoryStateAction
+  | FETabReducerUpdateContextMenuStateAction;
+
 export type FileExplorerContextType = {
   currDir: INode;
   selectedNodes: INode[];
