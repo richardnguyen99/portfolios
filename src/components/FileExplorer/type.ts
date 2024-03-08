@@ -1,7 +1,7 @@
 import * as React from "react";
 import { DSInputElement } from "dragselect";
 
-import { INode } from "@util/fs/type";
+import { IDirectory, INode } from "@util/fs/type";
 
 export enum FESortType {
   NAME_ASC = 0,
@@ -181,6 +181,13 @@ export type FETabReducerUpdateContextMenuStateAction = {
   };
 };
 
+export type FETabReducerUpdateHomeAction = {
+  type: FETabReducerActionType.UPDATE_TABS_HOME;
+  payload: {
+    newHome: IDirectory;
+  };
+};
+
 export type FETabReducerAction =
   | FETabReducerSetCurrDirAction
   | FETabReducerSetSelectedNodesAction
@@ -191,7 +198,8 @@ export type FETabReducerAction =
   | FETabReducerSetDirectoryTypeAction
   | FETabReducerSetSortTypeAction
   | FETabReducerUpdateHistoryStateAction
-  | FETabReducerUpdateContextMenuStateAction;
+  | FETabReducerUpdateContextMenuStateAction
+  | FETabReducerUpdateHomeAction;
 
 export type FileExplorerContextType = {
   currDir: INode;

@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { INode } from "@util/fs/type";
+import { FileType, IDirectory, INode } from "@util/fs/type";
 import {
   FEContextMenuAction,
   FEContextMenuState,
@@ -22,6 +22,7 @@ import {
   FETabReducerState,
   FETabReducerUpdateContextMenuStateAction,
   FETabReducerUpdateHistoryStateAction,
+  FETabReducerUpdateHomeAction,
   FEViewSize,
   FEViewType,
 } from "../type";
@@ -251,6 +252,53 @@ const updateHistoryState = (
   };
 };
 
+const _getUpdatedNode = (startDir: IDirectory, searchDir: IDirectory) => {
+  const stack = [startDir];
+  const visited = new Set<IDirectory>();
+  let foundNode: IDirectory | null = null;
+
+  while (stack.length > 0) {
+    const node = stack.pop() as IDirectory;
+
+    if (node.id === searchDir.id) {
+      foundNode = node;
+      break;
+    }
+
+    if (visited.has(node)) {
+      continue;
+    }
+
+    visited.add(node);
+
+    for (let i = node.children.length - 1; i >= 0; i--) {
+      const child = node.children[i];
+
+      if (child.type === FileType.Directory) {
+        stack.push(child as IDirectory);
+      }
+    }
+  }
+
+  return foundNode;
+};
+
+const updateHomeState = (
+  state: FETabReducerState,
+  payload: FETabReducerUpdateHomeAction["payload"],
+) => {
+  const { newHome } = payload;
+
+  return {
+    ...state,
+    tabs: state.tabs.map((t) => {
+      const newCurrDir = _getUpdatedNode(newHome, t.currDir as IDirectory);
+
+      return newCurrDir ? { ...t, currDir: newCurrDir } : t;
+    }),
+  };
+};
+
 const useTabState = (initialDirectory: INode) => {
   const [tabState, dispatchTabState] = React.useReducer(
     (state: FETabReducerState, action: FETabReducerAction) => {
@@ -293,6 +341,10 @@ const useTabState = (initialDirectory: INode) => {
 
         case FETabReducerActionType.UPDATE_CONTEXT_MENU_STATE: {
           return updateContextMenuState(state, action.payload);
+        }
+
+        case FETabReducerActionType.UPDATE_TABS_HOME: {
+          return updateHomeState(state, action.payload);
         }
 
         default: {
