@@ -26,7 +26,7 @@ import {
   FEViewType,
 } from "../type";
 
-const getInitialTabState = (initialDirectory: INode) => {
+const getInitialTabState = (initialDirectory: INode): FETabReducerState => {
   return {
     currentTab: 0,
     tabs: [
@@ -61,7 +61,7 @@ const getInitialTabState = (initialDirectory: INode) => {
 const updateCurrDirState = (
   state: FETabReducerState,
   payload: FETabReducerSetCurrDirAction["payload"],
-) => {
+): FETabReducerState => {
   const { tab, currDir } = payload;
 
   return {
@@ -73,7 +73,7 @@ const updateCurrDirState = (
 const updateSelectedNodesState = (
   state: FETabReducerState,
   payload: FETabReducerSetSelectedNodesAction["payload"],
-) => {
+): FETabReducerState => {
   const { tab, selectedNodes } = payload;
 
   return {
@@ -85,7 +85,7 @@ const updateSelectedNodesState = (
 const updateDraggingState = (
   state: FETabReducerState,
   payload: FETabReducerSetDraggingAction["payload"],
-) => {
+): FETabReducerState => {
   const { tab, dragging } = payload;
 
   return {
@@ -97,7 +97,7 @@ const updateDraggingState = (
 const updateViewTypeState = (
   state: FETabReducerState,
   payload: FETabReducerSetViewTypeAction["payload"],
-) => {
+): FETabReducerState => {
   const { tab, viewType } = payload;
 
   return {
@@ -109,7 +109,7 @@ const updateViewTypeState = (
 const updateViewSizeState = (
   state: FETabReducerState,
   payload: FETabReducerSetViewSizeAction["payload"],
-) => {
+): FETabReducerState => {
   const { tab, viewSize } = payload;
 
   return {
@@ -121,7 +121,7 @@ const updateViewSizeState = (
 const updateShowHiddenState = (
   state: FETabReducerState,
   payload: FETabReducerSetShowHiddenAction["payload"],
-) => {
+): FETabReducerState => {
   const { tab, showHidden } = payload;
 
   return {
@@ -133,7 +133,7 @@ const updateShowHiddenState = (
 const updateSortTypeState = (
   state: FETabReducerState,
   payload: FETabReducerSetSortTypeAction["payload"],
-) => {
+): FETabReducerState => {
   const { tab, sortType } = payload;
 
   return {
@@ -145,7 +145,7 @@ const updateSortTypeState = (
 const updateDirectoryTypeState = (
   state: FETabReducerState,
   payload: FETabReducerSetDirectoryTypeAction["payload"],
-) => {
+): FETabReducerState => {
   const { tab, directoryType } = payload;
   let newSortType = state.tabs[tab].sortType;
   const currDirType = state.tabs[tab].directoryType;
@@ -182,7 +182,7 @@ const _getUpdatedContextMenuState = (
 const updateContextMenuState = (
   state: FETabReducerState,
   payload: FETabReducerUpdateContextMenuStateAction["payload"],
-) => {
+): FETabReducerState => {
   const { tab, action } = payload;
   const currentContextMenuState = state.tabs[tab].contextMenuState;
 

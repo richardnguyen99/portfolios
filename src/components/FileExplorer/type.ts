@@ -1,7 +1,7 @@
 import * as React from "react";
+import { DSInputElement } from "dragselect";
 
 import { INode } from "@util/fs/type";
-import { DSInputElement } from "dragselect";
 
 export enum FESortType {
   NAME_ASC = 0,
@@ -98,6 +98,7 @@ export enum FETabReducerActionType {
   SET_SORT_TYPE,
   UPDATE_HISTORY_STATE,
   UPDATE_CONTEXT_MENU_STATE,
+  UPDATE_TABS_HOME,
 }
 
 export type FETabReducerSetCurrDirAction = {
