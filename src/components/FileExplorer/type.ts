@@ -108,7 +108,7 @@ export enum FETabReducerActionType {
 export type FETabReducerSetCurrDirAction = {
   type: FETabReducerActionType.SET_CURR_DIR;
   payload: {
-    tab: number;
+    tabIdx: number;
     currDir: INode;
     historyAction?: FEHistoryAction;
   };
@@ -117,7 +117,7 @@ export type FETabReducerSetCurrDirAction = {
 export type FETabReducerSetSelectedNodesAction = {
   type: FETabReducerActionType.SET_SELECTED_NODES;
   payload: {
-    tab: number;
+    tabIdx: number;
     selectedNodes: INode[];
   };
 };
@@ -125,7 +125,7 @@ export type FETabReducerSetSelectedNodesAction = {
 export type FETabReducerSetDraggingAction = {
   type: FETabReducerActionType.SET_DRAGGING;
   payload: {
-    tab: number;
+    tabIdx: number;
     dragging: boolean;
   };
 };
@@ -133,7 +133,7 @@ export type FETabReducerSetDraggingAction = {
 export type FETabReducerSetViewTypeAction = {
   type: FETabReducerActionType.SET_VIEW_TYPE;
   payload: {
-    tab: number;
+    tabIdx: number;
     viewType: FEViewType;
   };
 };
@@ -141,7 +141,7 @@ export type FETabReducerSetViewTypeAction = {
 export type FETabReducerSetViewSizeAction = {
   type: FETabReducerActionType.SET_VIEW_SIZE;
   payload: {
-    tab: number;
+    tabIdx: number;
     viewSize: FEViewSize;
   };
 };
@@ -149,7 +149,7 @@ export type FETabReducerSetViewSizeAction = {
 export type FETabReducerSetShowHiddenAction = {
   type: FETabReducerActionType.SET_SHOW_HIDDEN;
   payload: {
-    tab: number;
+    tabIdx: number;
     showHidden: boolean;
   };
 };
@@ -157,7 +157,7 @@ export type FETabReducerSetShowHiddenAction = {
 export type FETabReducerSetDirectoryTypeAction = {
   type: FETabReducerActionType.SET_DIRECTORY_TYPE;
   payload: {
-    tab: number;
+    tabIdx: number;
     directoryType: FEDirectoryType;
   };
 };
@@ -165,7 +165,7 @@ export type FETabReducerSetDirectoryTypeAction = {
 export type FETabReducerSetSortTypeAction = {
   type: FETabReducerActionType.SET_SORT_TYPE;
   payload: {
-    tab: number;
+    tabIdx: number;
     sortType: FESortType;
   };
 };
@@ -173,7 +173,7 @@ export type FETabReducerSetSortTypeAction = {
 export type FETabReducerUpdateHistoryStateAction = {
   type: FETabReducerActionType.UPDATE_HISTORY_STATE;
   payload: {
-    tab: number;
+    tabIdx: number;
     action: FEHistoryAction;
   };
 };
@@ -181,7 +181,7 @@ export type FETabReducerUpdateHistoryStateAction = {
 export type FETabReducerUpdateContextMenuStateAction = {
   type: FETabReducerActionType.UPDATE_CONTEXT_MENU_STATE;
   payload: {
-    tab: number;
+    tabIdx: number;
     action: FEContextMenuAction;
   };
 };
@@ -196,7 +196,7 @@ export type FETabReducerUpdateHomeAction = {
 export type FETabReducerUpdateBackwardFileAction = {
   type: FETabReducerActionType.UPDATE_BACKWARD_FILE;
   payload: {
-    tab: number;
+    tabIdx: number;
     newDir: IDirectory;
   };
 };
@@ -204,7 +204,7 @@ export type FETabReducerUpdateBackwardFileAction = {
 export type FETabReducerUpdateForwardFileAction = {
   type: FETabReducerActionType.UPDATE_FORWARD_FILE;
   payload: {
-    tab: number;
+    tabIdx: number;
     newDir: IDirectory;
   };
 };
@@ -212,7 +212,7 @@ export type FETabReducerUpdateForwardFileAction = {
 export type FETabReducerUpdateBackwardRecentAction = {
   type: FETabReducerActionType.UPDATE_BACKWARD_RECENT;
   payload: {
-    tab: number;
+    tabIdx: number;
     newDir: IDirectory;
   };
 };
@@ -220,7 +220,7 @@ export type FETabReducerUpdateBackwardRecentAction = {
 export type FETabReducerUpdateForwardRecentAction = {
   type: FETabReducerActionType.UPDATE_FORWARD_RECENT;
   payload: {
-    tab: number;
+    tabIdx: number;
     newDir: IDirectory;
   };
 };

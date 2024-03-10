@@ -7,6 +7,7 @@ import IconBtn from "./IconBtn";
 import useFileExplorer from "./hook";
 import useModal from "@contexts/Modal/useModal";
 import { ModalProps } from "@contexts/Modal/type";
+import { FETabReducerActionType } from "./type";
 
 const Terminal = React.lazy(() => import("@components/Terminal"));
 
@@ -44,28 +45,34 @@ const MoreMenuItemComponent = (
 const ForwardedMoreMenuItem = React.forwardRef(MoreMenuItemComponent);
 
 const MoreMenuBtn: React.FC = () => {
-  const { doesShowHidden, setShowHidden, currDir } = useFileExplorer();
+  const { tabState, currentTab, dispatchTabState } = useFileExplorer();
   const { addModal } = useModal();
   const handleSetHiddenClick = React.useCallback(() => {
-    setShowHidden((prev) => !prev);
-  }, [setShowHidden]);
+    dispatchTabState({
+      type: FETabReducerActionType.SET_SHOW_HIDDEN,
+      payload: {
+        tabIdx: tabState.currentTabIdx,
+        showHidden: !currentTab.showHidden,
+      },
+    });
+  }, [currentTab.showHidden, dispatchTabState, tabState.currentTabIdx]);
 
   const handleOpenTerminalClick = React.useCallback(() => {
     const newTerminal: ModalProps = {
       id: crypto.getRandomValues(new Uint32Array(1))[0].toFixed(0),
-      title: currDir.name,
+      title: currentTab.currDir.name,
       active: true,
       isFullScreen: false,
       isFullScreenAllowed: true,
       type: "terminal",
       component: Terminal,
       componentProps: {
-        initialDir: currDir,
+        initialDir: currentTab.currDir,
       },
     };
 
     addModal(newTerminal);
-  }, [addModal, currDir]);
+  }, [addModal, currentTab.currDir]);
 
   return (
     <div>
@@ -112,7 +119,7 @@ const MoreMenuBtn: React.FC = () => {
                     active={active}
                     onClick={handleSetHiddenClick}
                   >
-                    {doesShowHidden ? "Hide" : "Show"} hidden folders
+                    {currentTab.showHidden ? "Hide" : "Show"} hidden folders
                   </ForwardedMoreMenuItem>
                 )}
               </Menu.Item>
