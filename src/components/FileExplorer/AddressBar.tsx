@@ -7,20 +7,21 @@ import useFileExplorer from "./hook";
 import useFileTree from "@contexts/FileTree/useFileTree";
 import { FileType, INode, type IDirectory } from "@util/fs/type";
 import useSystemCall from "@contexts/SystemCall/useSystemCall";
-import { FEDirectoryType } from "./type";
+import { FEDirectoryType, FETabReducerActionType } from "./type";
 
 const AddressBtn: React.FC<
   React.PropsWithChildren<
     { node: INode; nodeIdx: number } & React.HTMLAttributes<HTMLButtonElement>
   >
 > = ({ node, nodeIdx, ...rest }) => {
-  const { historyState, setCurrDir, dispatchHistoryState } = useFileExplorer();
+  const { currentTab, tabState, dispatchTabState } = useFileExplorer();
   const { searchNodeFromRoot } = useSystemCall();
 
   const handleClick = React.useCallback(
     (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       e.preventDefault();
 
+      const historyState = currentTab.historyState;
       if (nodeIdx < 0 || nodeIdx >= historyState.history.length - 1) {
         return;
       }
@@ -29,22 +30,28 @@ const AddressBtn: React.FC<
       const newNode = searchNodeFromRoot(currTab.id);
 
       if (newNode) {
-        setCurrDir(newNode);
-        dispatchHistoryState({
-          type: "manual",
+        dispatchTabState({
+          type: FETabReducerActionType.SET_CURR_DIR,
           payload: {
-            index: nodeIdx,
-            history: [...historyState.history.slice(0, nodeIdx + 1)],
+            tab: tabState.currentTabIdx,
+            currDir: newNode,
+            historyAction: {
+              type: "manual",
+              payload: {
+                index: nodeIdx,
+                history: [...historyState.history.slice(0, nodeIdx + 1)],
+              },
+            },
           },
         });
       }
     },
     [
-      dispatchHistoryState,
-      historyState.history,
+      currentTab.historyState,
+      dispatchTabState,
       nodeIdx,
       searchNodeFromRoot,
-      setCurrDir,
+      tabState.currentTabIdx,
     ],
   );
 
@@ -67,20 +74,12 @@ const AddressBtn: React.FC<
 
 const AddressBar: React.FC = () => {
   const { home } = useFileTree();
-  const {
-    dragging,
-    currDir,
-    historyState,
-    setCurrDir,
-    setDirectoryType,
-    dispatchHistoryState,
-  } = useFileExplorer();
+  const { currentTab, tabState, dispatchTabState } = useFileExplorer();
   const { searchNodeFromRoot } = useSystemCall();
-  const { directoryType } = useFileExplorer();
 
   const addressList = React.useMemo(() => {
     const pathList = [];
-    let currentDir = currDir;
+    let currentDir = tabState.tabs[tabState.currentTabIdx].currDir as INode;
 
     while (currentDir && currentDir.id !== home.id) {
       pathList.push(currentDir);
@@ -90,11 +89,13 @@ const AddressBar: React.FC = () => {
     pathList.push(home);
 
     return pathList.reverse();
-  }, [currDir, home]);
+  }, [home, tabState.currentTabIdx, tabState.tabs]);
 
   const handlePreviousClick = React.useCallback(
     (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       e.preventDefault();
+
+      const historyState = currentTab.historyState;
 
       if (historyState.index <= 0) {
         return;
@@ -104,50 +105,56 @@ const AddressBar: React.FC = () => {
       const newNode = searchNodeFromRoot(currTab.id);
 
       if (newNode) {
-        setCurrDir(newNode);
-        setDirectoryType(FEDirectoryType.File);
-
-        dispatchHistoryState({
-          type: "previous",
+        dispatchTabState({
+          type: FETabReducerActionType.UPDATE_BACKWARD_FILE,
+          payload: {
+            tab: tabState.currentTabIdx,
+            newDir: newNode as IDirectory,
+          },
         });
       } else {
-        if (currTab.name === "Recent") {
-          setDirectoryType(FEDirectoryType.Recent);
-          setCurrDir({
-            id: "recent",
-            name: "Recent",
-            type: FileType.Directory,
-            children: [],
-            parent: null,
-            owner: "richard",
-            readPermission: true,
-            writePermission: true,
-            executePermission: true,
-            lastAccessed: new Date(),
-            lastChanged: new Date(),
-            lastCreated: new Date(),
-            lastModified: new Date(),
-          } as IDirectory);
-
-          dispatchHistoryState({
-            type: "previous",
-          });
+        if (currTab.name !== "Recent") {
+          throw new Error(
+            `Invalid history state(ID: ${currTab.id}, Name: ${currTab.name})`,
+          );
         }
+
+        dispatchTabState({
+          type: FETabReducerActionType.UPDATE_BACKWARD_RECENT,
+          payload: {
+            tab: tabState.currentTabIdx,
+            newDir: {
+              id: "recent",
+              name: "Recent",
+              type: FileType.Directory,
+              children: [],
+              parent: null,
+              owner: "richard",
+              readPermission: true,
+              writePermission: true,
+              executePermission: true,
+              lastAccessed: new Date(),
+              lastChanged: new Date(),
+              lastCreated: new Date(),
+              lastModified: new Date(),
+            } as IDirectory,
+          },
+        });
       }
     },
     [
-      dispatchHistoryState,
-      historyState.history,
-      historyState.index,
+      currentTab.historyState,
+      dispatchTabState,
       searchNodeFromRoot,
-      setCurrDir,
-      setDirectoryType,
+      tabState.currentTabIdx,
     ],
   );
 
   const handleNextClick = React.useCallback(
     (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
       e.preventDefault();
+
+      const historyState = currentTab.historyState;
 
       if (historyState.index >= historyState.history.length - 1) {
         return;
@@ -157,50 +164,53 @@ const AddressBar: React.FC = () => {
       const newNode = searchNodeFromRoot(currTab.id);
 
       if (newNode) {
-        setCurrDir(newNode);
-        setDirectoryType(FEDirectoryType.File);
-        dispatchHistoryState({
-          type: "next",
+        dispatchTabState({
+          type: FETabReducerActionType.UPDATE_FORWARD_FILE,
+          payload: {
+            tab: tabState.currentTabIdx,
+            newDir: newNode as IDirectory,
+          },
         });
       } else {
         if (currTab.name === "Recent") {
-          setDirectoryType(FEDirectoryType.Recent);
-          setCurrDir({
-            id: "recent",
-            name: "Recent",
-            type: FileType.Directory,
-            children: [],
-            parent: null,
-            owner: "richard",
-            readPermission: true,
-            writePermission: true,
-            executePermission: true,
-            lastAccessed: new Date(),
-            lastChanged: new Date(),
-            lastCreated: new Date(),
-            lastModified: new Date(),
-          } as IDirectory);
-
-          dispatchHistoryState({
-            type: "next",
+          dispatchTabState({
+            type: FETabReducerActionType.UPDATE_FORWARD_RECENT,
+            payload: {
+              tab: tabState.currentTabIdx,
+              newDir: {
+                id: "recent",
+                name: "Recent",
+                type: FileType.Directory,
+                children: [],
+                parent: null,
+                owner: "richard",
+                readPermission: true,
+                writePermission: true,
+                executePermission: true,
+                lastAccessed: new Date(),
+                lastChanged: new Date(),
+                lastCreated: new Date(),
+                lastModified: new Date(),
+              } as IDirectory,
+            },
           });
         }
       }
     },
     [
-      dispatchHistoryState,
-      historyState.history,
-      historyState.index,
+      currentTab.historyState,
+      dispatchTabState,
       searchNodeFromRoot,
-      setCurrDir,
-      setDirectoryType,
+      tabState.currentTabIdx,
     ],
   );
 
   React.useEffect(() => {
+    const historyState = currentTab.historyState;
+
     if (typeof historyState === "undefined") return;
     if (historyState.history.length <= 0) return;
-  }, [historyState]);
+  }, [currentTab.historyState]);
 
   return (
     <div
@@ -213,14 +223,17 @@ const AddressBar: React.FC = () => {
     >
       <div id="fe-history" className="flex flex-[0_0_auto] gap-3 items-center">
         <IconBtn
-          aria-disabled={historyState.index <= 0}
+          aria-disabled={currentTab.historyState.index <= 0}
           onClick={handlePreviousClick}
         >
           <ChevronLeftIcon />
           <p>Backward</p>
         </IconBtn>
         <IconBtn
-          aria-disabled={historyState.index >= historyState.history.length - 1}
+          aria-disabled={
+            currentTab.historyState.index >=
+            currentTab.historyState.history.length - 1
+          }
           onClick={handleNextClick}
         >
           <ChevronRightIcon />
@@ -236,11 +249,13 @@ const AddressBar: React.FC = () => {
           "h-8 p-2 text-sm",
           "bg-[rgba(219,223,229,1)] dark:bg-[rgba(45,55,71,1)]",
           {
-            "hover:bg-gray-300 dark:hover:bg-gray-700": !dragging,
+            "hover:bg-gray-300 dark:hover:bg-gray-700":
+              !tabState.tabs[tabState.currentTabIdx].dragging,
           },
         )}
       >
-        {directoryType === FEDirectoryType.Recent ? (
+        {tabState.tabs[tabState.currentTabIdx].directoryType ===
+        FEDirectoryType.Recent ? (
           <AddressBtn
             node={
               {
@@ -296,10 +311,11 @@ const AddressBar: React.FC = () => {
               "dark:focus:ring-gray-500",
               "placeholder-gray-500 dark:placeholder-gray-400",
               {
-                "cursor-default": dragging,
-                "hover:bg-gray-300 dark:hover:bg-gray-700": !dragging,
+                "cursor-default": currentTab.dragging,
+                "hover:bg-gray-300 dark:hover:bg-gray-700":
+                  !currentTab.dragging,
                 "hover:border-gray-400/50 dark:hover:border-gray-600":
-                  !dragging,
+                  !currentTab.dragging,
               },
             )}
           />

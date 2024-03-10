@@ -83,7 +83,7 @@ export type FETabState = {
 };
 
 export type FETabReducerState = {
-  currentTab: number;
+  currentTabIdx: number;
   tabs: FETabState[];
 };
 
@@ -99,6 +99,10 @@ export enum FETabReducerActionType {
   UPDATE_HISTORY_STATE,
   UPDATE_CONTEXT_MENU_STATE,
   UPDATE_TABS_HOME,
+  UPDATE_BACKWARD_FILE,
+  UPDATE_BACKWARD_RECENT,
+  UPDATE_FORWARD_FILE,
+  UPDATE_FORWARD_RECENT,
 }
 
 export type FETabReducerSetCurrDirAction = {
@@ -106,6 +110,7 @@ export type FETabReducerSetCurrDirAction = {
   payload: {
     tab: number;
     currDir: INode;
+    historyAction?: FEHistoryAction;
   };
 };
 
@@ -188,6 +193,38 @@ export type FETabReducerUpdateHomeAction = {
   };
 };
 
+export type FETabReducerUpdateBackwardFileAction = {
+  type: FETabReducerActionType.UPDATE_BACKWARD_FILE;
+  payload: {
+    tab: number;
+    newDir: IDirectory;
+  };
+};
+
+export type FETabReducerUpdateForwardFileAction = {
+  type: FETabReducerActionType.UPDATE_FORWARD_FILE;
+  payload: {
+    tab: number;
+    newDir: IDirectory;
+  };
+};
+
+export type FETabReducerUpdateBackwardRecentAction = {
+  type: FETabReducerActionType.UPDATE_BACKWARD_RECENT;
+  payload: {
+    tab: number;
+    newDir: IDirectory;
+  };
+};
+
+export type FETabReducerUpdateForwardRecentAction = {
+  type: FETabReducerActionType.UPDATE_FORWARD_RECENT;
+  payload: {
+    tab: number;
+    newDir: IDirectory;
+  };
+};
+
 export type FETabReducerAction =
   | FETabReducerSetCurrDirAction
   | FETabReducerSetSelectedNodesAction
@@ -199,32 +236,19 @@ export type FETabReducerAction =
   | FETabReducerSetSortTypeAction
   | FETabReducerUpdateHistoryStateAction
   | FETabReducerUpdateContextMenuStateAction
+  | FETabReducerUpdateBackwardFileAction
+  | FETabReducerUpdateForwardFileAction
+  | FETabReducerUpdateBackwardRecentAction
+  | FETabReducerUpdateForwardRecentAction
   | FETabReducerUpdateHomeAction;
 
 export type FileExplorerContextType = {
-  currDir: INode;
-  selectedNodes: INode[];
-  dragging: boolean;
-  viewType: FEViewType;
-  viewSize: FEViewSize;
-  doesShowHidden: boolean;
-  historyState: FEHistoryState;
   dialog: FEDialog;
-  directoryType: FEDirectoryType;
-  sortType: FESortType;
-  contextMenuState: FEContextMenuState;
+  tabState: FETabReducerState;
+  currentTab: FETabState;
 
-  setViewSize: React.Dispatch<React.SetStateAction<FEViewSize>>;
-  setViewType: React.Dispatch<React.SetStateAction<FEViewType>>;
-  setDragging: React.Dispatch<React.SetStateAction<boolean>>;
-  setCurrDir: React.Dispatch<React.SetStateAction<INode>>;
-  setShowHidden: React.Dispatch<React.SetStateAction<boolean>>;
   setDialog: React.Dispatch<React.SetStateAction<FEDialog>>;
-  setDirectoryType: React.Dispatch<React.SetStateAction<FEDirectoryType>>;
-  setSortType: React.Dispatch<React.SetStateAction<FESortType>>;
-  setSelectedNodes: React.Dispatch<React.SetStateAction<INode[]>>;
-  dispatchHistoryState: React.Dispatch<FEHistoryAction>;
-  dispatchContextMenuState: React.Dispatch<FEContextMenuAction>;
+  dispatchTabState: React.Dispatch<FETabReducerAction>;
 };
 
 export type FileExplorerProviderProps = {

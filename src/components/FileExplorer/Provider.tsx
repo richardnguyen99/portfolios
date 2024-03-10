@@ -2,51 +2,20 @@ import * as React from "react";
 
 import FileExplorerContext from "./Context";
 import {
-  FEViewSize,
-  FEViewType,
+  FETabReducerActionType,
   FileExplorerContextType,
   type FileExplorerProviderProps,
-  type FEHistory,
-  FESortType,
-  FEDirectoryType,
 } from "./type";
-import { FileType, IDirectory, INode } from "@util/fs/type";
 import useFileTree from "@contexts/FileTree/useFileTree";
-import useSystemCall from "@contexts/SystemCall/useSystemCall";
-import useHistoryState from "./hooks/useHistoryState";
-import useContextMenuState from "./hooks/useContextMenuState";
+import useTabState from "./hooks/useTabState";
 
 const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
   children,
   initialDirectory,
 }) => {
   const { home } = useFileTree();
-  const { searchNodeFromRoot } = useSystemCall();
 
-  const [selectedNodes, setSelectedNodes] = React.useState<INode[]>([]);
-  const [dragging, setDragging] = React.useState<boolean>(false);
-  const [size, setSize] = React.useState<FEViewSize>(FEViewSize.Normal);
-  const [view, setView] = React.useState<FEViewType>(FEViewType.List);
-  const [doesShowHidden, setShowHidden] = React.useState<boolean>(false);
-  const [currDir, setCurrDir] = React.useState<INode>(initialDirectory);
-  const [directoryType, setDirectoryType] = React.useState<FEDirectoryType>(
-    FEDirectoryType.File,
-  );
-  const [sortType, setSortType] = React.useState(() => {
-    return directoryType === FEDirectoryType.Recent
-      ? FESortType.DATE_DESC
-      : FESortType.NAME_ASC;
-  });
-  const [historyState, dispatchHistoryState] = useHistoryState({
-    index: 0,
-    history: [
-      {
-        id: currDir?.id ?? "",
-        name: currDir?.name ?? "",
-        parentId: currDir?.parent?.id ?? "",
-      },
-    ] as FEHistory[],
-  });
+  const [tabState, dispatchTabState] = useTabState(initialDirectory);
   const [dialog, setDialog] = React.useState<FileExplorerContextType["dialog"]>(
     {
       open: false,
@@ -55,117 +24,61 @@ const FileExplorerProvider: React.FC<FileExplorerProviderProps> = ({
     },
   );
 
-  const [contextMenuState, dispatchContextMenuState] = useContextMenuState({
-    open: false,
-    storedNodes: [],
-  });
+  const currentTab = React.useMemo(() => {
+    return tabState.tabs[tabState.currentTabIdx];
+  }, [tabState.currentTabIdx, tabState.tabs]);
 
   const contextValue = React.useMemo<FileExplorerContextType>(() => {
     return {
-      currDir,
-      dragging,
-      viewType: view,
-      viewSize: size,
-      doesShowHidden,
-      historyState,
-      directoryType,
-      sortType,
       dialog,
-      selectedNodes,
-      contextMenuState,
+      tabState,
+      currentTab,
 
-      setDragging,
-      setViewSize: setSize,
-      setViewType: setView,
-      setSelectedNodes: setSelectedNodes,
-      setCurrDir,
-      setShowHidden,
       setDialog,
-      setDirectoryType,
-      setSortType,
-      dispatchHistoryState,
-      dispatchContextMenuState,
+      dispatchTabState,
     };
-  }, [
-    currDir,
-    dragging,
-    view,
-    size,
-    doesShowHidden,
-    historyState,
-    directoryType,
-    sortType,
-    dialog,
-    selectedNodes,
-    contextMenuState,
-    dispatchHistoryState,
-    dispatchContextMenuState,
-  ]);
+  }, [currentTab, dialog, dispatchTabState, tabState]);
 
-  const updateNode = React.useCallback(
-    (startNode: IDirectory, searchNode: IDirectory) => {
-      const stack = [startNode];
-      const visited = new Set<IDirectory>();
-      let foundNode: IDirectory | null = null;
+  // React.useEffect(() => {
+  // const newNode = updateNode(home, currDir as IDirectory);
 
-      while (stack.length > 0) {
-        const node = stack.pop() as IDirectory;
+  // if (!newNode) {
+  // setCurrDir((prev) => ({ ...prev }));
 
-        if (node.id === searchNode.id) {
-          foundNode = node;
-          break;
-        }
+  // return;
+  // }
 
-        if (visited.has(node)) {
-          continue;
-        }
-
-        visited.add(node);
-
-        for (let i = node.children.length - 1; i >= 0; i--) {
-          const child = node.children[i];
-
-          if (child.type === FileType.Directory) {
-            stack.push(child as IDirectory);
-          }
-        }
-      }
-
-      return foundNode;
-    },
-    [],
-  );
+  // setCurrDir(newNode as INode);
+  // // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [home, updateNode]);
 
   React.useEffect(() => {
-    const newNode = updateNode(home, currDir as IDirectory);
-
-    if (!newNode) {
-      setCurrDir((prev) => ({ ...prev }));
-
-      return;
-    }
-
-    setCurrDir(newNode as INode);
+    dispatchTabState({
+      type: FETabReducerActionType.UPDATE_TABS_HOME,
+      payload: {
+        newHome: home,
+      },
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [home, updateNode]);
+  }, [home]);
 
-  React.useEffect(() => {
-    if (!currDir) {
-      const prevTab = historyState.history[historyState.index - 1];
-      const newNode = searchNodeFromRoot(prevTab.id);
+  // React.useEffect(() => {
+  // if (!currDir) {
+  // const prevTab = historyState.history[historyState.index - 1];
+  // const newNode = searchNodeFromRoot(prevTab.id);
 
-      if (newNode) {
-        setCurrDir(newNode);
-        dispatchHistoryState({
-          type: "pop",
-        });
-      }
-    }
+  // if (newNode) {
+  // setCurrDir(newNode);
+  // dispatchHistoryState({
+  // type: "pop",
+  // });
+  // }
+  // }
 
-    setDragging(false);
-  }, [currDir, dispatchHistoryState, historyState, searchNodeFromRoot]);
+  // setDragging(false);
+  // }, [currDir, dispatchHistoryState, historyState, searchNodeFromRoot]);
 
-  if (!currDir) return null;
+  if (!currentTab.currDir) return null;
 
   return (
     <FileExplorerContext.Provider value={contextValue}>

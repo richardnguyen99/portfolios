@@ -20,6 +20,7 @@ import {
   FETabReducerSetViewSizeAction,
   FETabReducerSetViewTypeAction,
   FETabReducerState,
+  FETabReducerUpdateBackwardFileAction,
   FETabReducerUpdateContextMenuStateAction,
   FETabReducerUpdateHistoryStateAction,
   FETabReducerUpdateHomeAction,
@@ -29,7 +30,7 @@ import {
 
 const getInitialTabState = (initialDirectory: INode): FETabReducerState => {
   return {
-    currentTab: 0,
+    currentTabIdx: 0,
     tabs: [
       {
         currDir: initialDirectory,
@@ -63,11 +64,18 @@ const updateCurrDirState = (
   state: FETabReducerState,
   payload: FETabReducerSetCurrDirAction["payload"],
 ): FETabReducerState => {
-  const { tab, currDir } = payload;
+  const { tab, currDir, historyAction } = payload;
+
+  let historyState = state.tabs[tab].historyState;
+  if (historyAction) {
+    historyState = _getUpdatedHistoryState(historyState, historyAction);
+  }
 
   return {
     ...state,
-    tabs: state.tabs.map((t, i) => (i === tab ? { ...t, currDir } : t)),
+    tabs: state.tabs.map((t, i) =>
+      i === tab ? { ...t, currDir, historyState } : t,
+    ),
   };
 };
 
@@ -299,6 +307,86 @@ const updateHomeState = (
   };
 };
 
+const updateBackwardFileState = (
+  state: FETabReducerState,
+  payload: FETabReducerUpdateBackwardFileAction["payload"],
+) => {
+  const { tab, newDir } = payload;
+  const newHistoryState = _getUpdatedHistoryState(
+    state.tabs[tab].historyState,
+    {
+      type: "previous",
+    },
+  );
+
+  return {
+    ...state,
+    tabs: state.tabs.map((t, i) =>
+      i === tab ? { ...t, currDir: newDir, historyState: newHistoryState } : t,
+    ),
+  };
+};
+
+const updateBackwardRecentState = (
+  state: FETabReducerState,
+  payload: FETabReducerUpdateBackwardFileAction["payload"],
+) => {
+  const { tab, newDir } = payload;
+  const newHistoryState = _getUpdatedHistoryState(
+    state.tabs[tab].historyState,
+    {
+      type: "previous",
+    },
+  );
+
+  return {
+    ...state,
+    tabs: state.tabs.map((t, i) =>
+      i === tab ? { ...t, currDir: newDir, historyState: newHistoryState } : t,
+    ),
+  };
+};
+
+const updateForwardFileState = (
+  state: FETabReducerState,
+  payload: FETabReducerUpdateBackwardFileAction["payload"],
+) => {
+  const { tab, newDir } = payload;
+  const newHistoryState = _getUpdatedHistoryState(
+    state.tabs[tab].historyState,
+    {
+      type: "next",
+    },
+  );
+
+  return {
+    ...state,
+    tabs: state.tabs.map((t, i) =>
+      i === tab ? { ...t, currDir: newDir, historyState: newHistoryState } : t,
+    ),
+  };
+};
+
+const updateForwardRecentState = (
+  state: FETabReducerState,
+  payload: FETabReducerUpdateBackwardFileAction["payload"],
+) => {
+  const { tab, newDir } = payload;
+  const newHistoryState = _getUpdatedHistoryState(
+    state.tabs[tab].historyState,
+    {
+      type: "previous",
+    },
+  );
+
+  return {
+    ...state,
+    tabs: state.tabs.map((t, i) =>
+      i === tab ? { ...t, currDir: newDir, historyState: newHistoryState } : t,
+    ),
+  };
+};
+
 const useTabState = (initialDirectory: INode) => {
   const [tabState, dispatchTabState] = React.useReducer(
     (state: FETabReducerState, action: FETabReducerAction) => {
@@ -345,6 +433,22 @@ const useTabState = (initialDirectory: INode) => {
 
         case FETabReducerActionType.UPDATE_TABS_HOME: {
           return updateHomeState(state, action.payload);
+        }
+
+        case FETabReducerActionType.UPDATE_BACKWARD_FILE: {
+          return updateBackwardFileState(state, action.payload);
+        }
+
+        case FETabReducerActionType.UPDATE_BACKWARD_RECENT: {
+          return updateBackwardRecentState(state, action.payload);
+        }
+
+        case FETabReducerActionType.UPDATE_FORWARD_FILE: {
+          return updateForwardFileState(state, action.payload);
+        }
+
+        case FETabReducerActionType.UPDATE_FORWARD_RECENT: {
+          return updateForwardRecentState(state, action.payload);
         }
 
         default: {
